@@ -52,14 +52,14 @@ def __main__():
     # AUTOTUNE = tf.data.experimental.AUTOTUNE
     # train_ds = train_ds.cache().prefetch(buffer_size=AUTOTUNE)
 
-    test_ds = Train_Gen.flow_from_directory(testFolder, 
+    test_ds = Test_Gen.flow_from_directory(testFolder, 
                                             target_size = (imgHeight, imgWidth), 
                                             batch_size = testBatchSize, 
                                             class_mode = 'input')
 
     model = Unet(pretrained_weights=None, input_size=input_shape)
 
-    model.compile(optimizer = Adam(lr = lr), loss = 'binary_crossentropy')
+    model.compile(optimizer = Adam(lr = lr), loss = 'mse')
 
     if verbose:
         model.summary()
@@ -68,11 +68,14 @@ def __main__():
     cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpointDir,
                                                  save_weights_only=True,
                                                  verbose=1,
-                                                 save_freq=int(trainBatchSize/10))
+                                                 save_freq=int(epochs*10))
 
     model.fit(train_ds, batch_size = trainBatchSize, epochs = epochs, callbacks=[cp_callback])
 
     generated_images = model.predict(test_ds)
-    print(generated_images.shape)
+
+    for i, image in enumerate(generated_images):
+      img = tf.keras.preprocessing.image.array_to_img(image)
+      img.save(outFolder+f"/generate_img_{i}.png")
 
 __main__()
