@@ -1,9 +1,6 @@
 from keras.models import *
 from keras.layers import *
 from keras.optimizers import *
-from keras.callbacks import ModelCheckpoint, LearningRateScheduler
-from keras import backend as keras
-
 
 def Unet(pretrained_weights = None,input_size=(128, 128, 3)):
     inputs = Input(input_size)
