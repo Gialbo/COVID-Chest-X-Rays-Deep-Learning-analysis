@@ -12,7 +12,7 @@ From this dataset we applied some preprocessing techniques in order to have the 
 * [`train_test_split.py`](./data/train_test_split.py): create a new folder divided in two subfolders: train and test. These folders are needed to define the ImageDataGenerator for training.
 * [`resize_images.py`](./data/resize_images.py): resize all the images in the dataset to 224x224 pizels.
 
-After these passages, we are ready to train our models. Our final dataset can be downloaded [`here`](https://drive.google.com/drive/folders/1-7se3aMXMXtDF89ALV07pru3kELmWTTo?usp=sharing)
+After these passages, we are ready to train our models. Our final dataset can be downloaded [`here`](https://drive.google.com/drive/folders/1-7se3aMXMXtDF89ALV07pru3kELmWTTo?usp=sharing) and it was created using the version 2 of the original dataset.
 
 ## [`Models`](./models)
 ...
