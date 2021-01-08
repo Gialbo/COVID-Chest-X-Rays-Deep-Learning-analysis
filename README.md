@@ -8,6 +8,7 @@ Final project code for the course "Bioinformatics", A.Y. 2020/2021.
 The dataset contains X-rays images from different patients with different patologies: there are 1200 COVID-19 positive images, 1341 normal images, and 1345 viral pneumonia images. The dataset can be downloaded from [`here`](https://www.kaggle.com/tawsifurrahman/covid19-radiography-database).
 From this dataset we applied some preprocessing techniques in order to have the data ready for our experiments.
 * [`train_test_split.py`](./data/train_test_split.py): create a new folder divided in two subfolders: train and test. These folders are needed to define the ImageDataGenerator for training.
+* [`resize_images.py`](./data/resize_images.py): resize all the images in the dataset to 224x224 pizels.
 
 ## [`Models`](./models)
 ...
