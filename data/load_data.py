@@ -1,6 +1,6 @@
 def load_data(dir, img_size, batch_size, validation_split=0.2, generate_validation=True, generate_test=True):
 
-    # Create datasetes from folders
+    # Load data from path and return the datasets (train, validation, test)
 
     #train_dir = '/content/drive/MyDrive/BIOINF/covid-project/COVID-19-xrays-resized/train'
     #test_dir = '/content/drive/MyDrive/BIOINF/covid-project/COVID-19-xrays-resized/test'
