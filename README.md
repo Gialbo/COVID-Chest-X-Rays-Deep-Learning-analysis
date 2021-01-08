@@ -1,6 +1,8 @@
 # COVID 19 Chest X-Rays Deep Learning analysis
 Comparison of different segmentation and synthetic data generation methods applied to chest X Rays from COVID-19 patients. We plan to compare different methods such as UNET, autoencoders, GAN, colorization techniques. \
-Final project code for the course "Bioinformatics", A.Y. 2020/2021.
+Final project code for the course "Bioinformatics", A.Y. 2020/2021. \
+<img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/results/gan-one-class.gif" width="40%">
+
 
 # Project Structure
 
@@ -17,7 +19,7 @@ From this dataset we applied some preprocessing techniques in order to have the 
 ...
 
 ## [`Results`](./results)
-...
+* [`gan-one-class.gif`](./results/gan-one-class.gif) shows how the generator is learning to generate true X-rays images. We keep the latent space fixed and we take the output of the generator every 10 epochs for a total of 400 epochs. In this case we are using all the classes merged together, so one class is used.
 
 
 
