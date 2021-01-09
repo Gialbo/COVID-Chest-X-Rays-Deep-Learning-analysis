@@ -35,6 +35,10 @@ def Unet(pretrained_weights = None,input_size=(128, 128, 3)):
     conv5 = Conv2D(1024, 3, activation='relu', padding='same', kernel_initializer='he_normal')(conv5)
     drop5 = Dropout(0.5)(conv5)
 
+    gap1 = GlobalAveragePooling2D()(drop5)
+    fc1 = Dense(128)(gap1)
+    out_enc = Dense(1, name="out_enc")(fc1)
+
     up6 = Conv2D(512, 2, activation='relu', padding='same', kernel_initializer='he_normal')(UpSampling2D(size=(2,2))(drop5))
     merge6 = concatenate([conv4,up6], axis = 3)
     conv6 = Conv2D(512, 3, activation='relu', padding='same', kernel_initializer='he_normal')(merge6)
@@ -61,9 +65,9 @@ def Unet(pretrained_weights = None,input_size=(128, 128, 3)):
     conv9 = Dropout(0.2)(conv9)
     conv9 = Conv2D(2, 3, activation='relu', padding='same', kernel_initializer='he_normal')(conv9)
 
-    conv10 = Conv2D(3, (3, 3), activation='sigmoid', padding='same')(conv9)
+    out_dec = Conv2D(3, (3, 3), activation='sigmoid', padding='same', name="out_dec")(conv9)
 
-    model = Model(inputs, conv10)    
+    model = Model(inputs, outputs=[out_enc, out_dec])    
     #model.summary()
 
     if(pretrained_weights):
