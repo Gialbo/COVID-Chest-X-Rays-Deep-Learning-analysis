@@ -1,6 +1,7 @@
 from keras.optimizers import Adam
 import tensorflow as tf
 import argparse
+import matplotlib.pyplot as plt
 
 from models.unet import Unet
 from models.generator import Generator
@@ -26,7 +27,6 @@ def train_step(images, generator, discriminator, trainBatchSize, noise_dim, gene
     with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
         generated_images = generator(noise, training=True)
 
-        print(generated_images.shape)
         real_output_enc = discriminator(images, training=True)[0]
         fake_output_enc = discriminator(generated_images, training=True)[0]
 
@@ -77,8 +77,9 @@ def __main__():
 
     input_shape = (imgHeight, imgWidth, 3)
 
-    Train_Gen = tf.keras.preprocessing.image.ImageDataGenerator(1./255)
-    Test_Gen = tf.keras.preprocessing.image.ImageDataGenerator(1./255)
+
+    Train_Gen = tf.keras.preprocessing.image.ImageDataGenerator(rescale = 1./255)
+    Test_Gen = tf.keras.preprocessing.image.ImageDataGenerator(rescale = 1./255)
 
     train_ds = Train_Gen.flow_from_directory(trainFolder, 
                                             target_size = (imgHeight, imgWidth), 
@@ -102,10 +103,15 @@ def __main__():
     # Create a callback that saves the model's weights
 
     for epoch in range(epochs):
+        print(f"Starting epoch {epoch}")
         for batch in train_ds.next():
             train_step(batch, generator, discriminator, trainBatchSize, noise_dim, generator_optimizer, discriminator_optimizer)
+            generated_image = generator.predict(tf.random.normal([1, noise_dim]))
+            img = tf.keras.preprocessing.image.array_to_img(generated_image[0])
+            img.save(outFolder+f"/generate_img_epoch_{epoch}.png")
 
-    generated_images = model.predict(test_ds)
+
+    generated_images = generator.predict(tf.random.normal([1, noise_dim]))
 
     for i, image in enumerate(generated_images):
       img = tf.keras.preprocessing.image.array_to_img(image)

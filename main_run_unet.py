@@ -39,8 +39,8 @@ def __main__():
 
     input_shape = (imgHeight, imgWidth, 3)
 
-    Train_Gen = tf.keras.preprocessing.image.ImageDataGenerator(1./255)
-    Test_Gen = tf.keras.preprocessing.image.ImageDataGenerator(1./255)
+    Train_Gen = tf.keras.preprocessing.image.ImageDataGenerator(rescale = 1./255)
+    Test_Gen = tf.keras.preprocessing.image.ImageDataGenerator(rescale = 1./255)
 
     train_ds = Train_Gen.flow_from_directory(trainFolder, 
                                             target_size = (imgHeight, imgWidth), 
