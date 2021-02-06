@@ -46,7 +46,7 @@ def train_step(images, generator, discriminator, trainBatchSize, noise_dim, gene
 
 def __main__():
     """
-    Main entry point of the Unet, reads arguments, prepare datasets and run the algorihm 
+    Main entry point of the Unet-GAN, reads arguments, prepare datasets and run the algorihm 
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('--trainDir', type=str, default='./COVID-19-xrays-sample/train', help='Folder of the train dataset')
@@ -107,8 +107,13 @@ def __main__():
         for batch in train_ds.next():
             train_step(batch, generator, discriminator, trainBatchSize, noise_dim, generator_optimizer, discriminator_optimizer)
             generated_image = generator.predict(tf.random.normal([1, noise_dim]))
-            img = tf.keras.preprocessing.image.array_to_img(generated_image[0])
-            img.save(outFolder+f"/generate_img_epoch_{epoch}.png")
+
+            if epoch % 10 == 0:
+                img = tf.keras.preprocessing.image.array_to_img(generated_image[0])
+                img.save(outFolder+f"/generated_img_epoch_{epoch}.png")
+
+                img = tf.keras.preprocessing.image.array_to_img(discriminator(generated_image[0], training=False)[1])
+                img.save(outFolder+f"/decoded_img_epoch_{epoch}.png")
 
 
     generated_images = generator.predict(tf.random.normal([1, noise_dim]))
