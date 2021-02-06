@@ -112,7 +112,7 @@ def __main__():
                 img = tf.keras.preprocessing.image.array_to_img(generated_image[0])
                 img.save(outFolder+f"/generated_img_epoch_{epoch}.png")
 
-                img = tf.keras.preprocessing.image.array_to_img(discriminator(generated_image[0], training=False)[1])
+                img = tf.keras.preprocessing.image.array_to_img(discriminator(generated_image, training=False)[1][0])
                 img.save(outFolder+f"/decoded_img_epoch_{epoch}.png")
 
 
