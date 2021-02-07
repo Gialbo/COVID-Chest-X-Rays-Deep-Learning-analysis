@@ -75,7 +75,7 @@ def __main__():
     lr = args.learningRate
     verbose = args.verbose
 
-    input_shape = (imgHeight, imgWidth, 3)
+    input_shape = (imgHeight, imgWidth, 1)
 
 
     Train_Gen = tf.keras.preprocessing.image.ImageDataGenerator(rescale = 1./255)
@@ -84,14 +84,17 @@ def __main__():
     train_ds = Train_Gen.flow_from_directory(trainFolder, 
                                             target_size = (imgHeight, imgWidth), 
                                             batch_size = trainBatchSize, 
-                                            class_mode = 'input')
+                                            class_mode = 'input',
+                                            color_mode='grayscale')
 
     test_ds = Test_Gen.flow_from_directory(testFolder, 
                                             target_size = (imgHeight, imgWidth), 
                                             batch_size = testBatchSize, 
-                                            class_mode = 'input')
+                                            class_mode = 'input',
+                                            color_mode='grayscale')
 
     noise_dim = 100
+    
 
     discriminator = Unet(pretrained_weights=None, input_size=input_shape)
 

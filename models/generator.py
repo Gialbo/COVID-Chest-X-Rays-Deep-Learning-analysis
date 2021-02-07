@@ -30,7 +30,7 @@ def Generator(input_size=(100, )):
     conv5 = BatchNormalization()(conv4)
     conv5 = LeakyReLU()(conv4)
 
-    output = Conv2DTranspose(3, (5, 5), strides=(2, 2), padding='same', use_bias=False, activation='tanh')(conv5)
+    output = Conv2DTranspose(1, (5, 5), strides=(2, 2), padding='same', use_bias=False, activation='tanh')(conv5)
 
     model = Model(inputs, output)
     return model

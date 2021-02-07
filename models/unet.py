@@ -2,7 +2,7 @@ from keras.models import *
 from keras.layers import *
 from keras.optimizers import *
 
-def Unet(pretrained_weights = None,input_size=(128, 128, 3)):
+def Unet(pretrained_weights = None, input_size=(128, 128, 1)):
     inputs = Input(input_size)
 
     conv1 = Conv2D(64, 3, activation='relu', padding='same', kernel_initializer='he_normal')(inputs)
@@ -65,7 +65,7 @@ def Unet(pretrained_weights = None,input_size=(128, 128, 3)):
     conv9 = Dropout(0.2)(conv9)
     conv9 = Conv2D(2, 3, activation='relu', padding='same', kernel_initializer='he_normal')(conv9)
 
-    out_dec = Conv2D(3, (3, 3), activation='sigmoid', padding='same', name="out_dec")(conv9)
+    out_dec = Conv2D(1, (1, 1), activation='sigmoid', padding='same', name="out_dec")(conv9)
 
     model = Model(inputs, outputs=[out_enc, out_dec])    
     #model.summary()
