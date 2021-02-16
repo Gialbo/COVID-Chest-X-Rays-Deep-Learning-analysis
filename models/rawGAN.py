@@ -82,8 +82,8 @@ class rawGAN():
 
 
     def _build_model(self):
-        discriminator = self.create_discriminator(self.input_shape)
-        generator = self.create_generator(self.input_shape)
+        discriminator = self.create_discriminator()
+        generator = self.create_generator()
         disc_optimizer = optimizers.Adam(lr=self.discriminator_lr, beta_1=0.5,clipvalue=5)
         discriminator.compile(disc_optimizer, "binary_crossentropy", metrics="accuracy")
         discriminator.trainable = False
