@@ -17,10 +17,13 @@ From this dataset we applied some preprocessing techniques in order to have the 
 After these passages, we are ready to train our models. Our final dataset can be downloaded [`here`](https://drive.google.com/drive/folders/1-7se3aMXMXtDF89ALV07pru3kELmWTTo?usp=sharing) and it was created using the version 2 of the original dataset.
 
 ## [`Models`](./models)
-...
+* [`rawGAN.py`](./models/rawGAN.py): first trial using a Generative Adversial Network to generate from scratch X-Rays images. With this first trial we combine all together the three classes of our dataset to find a good set of hyperparameters to use in the following trials;
+
 
 ## [`Experiments`](./experiments)
-...
+<!---
+* [`rawGANexperiment.ipynb`](./experiments/rawGANexperiment.ipynb): notebook reporting the experiment using the rawGAN class.
+--->
 
 ## [`Results`](./results)
 * [`gan-one-class.gif`](./results/gan-one-class.gif) shows how the generator is learning to generate true X-rays images. We keep the latent space fixed and we take the output of the generator every 10 epochs for a total of 400 epochs. In this case we are using all the classes merged together, so one class is used.
@@ -30,4 +33,6 @@ After these passages, we are ready to train our models. Our final dataset can be
 # References
 [M.E.H. Chowdhury, T. Rahman, A. Khandakar, R. Mazhar, M.A. Kadir, Z.B. Mahbub, K.R. Islam, M.S. Khan, A. Iqbal, N. Al-Emadi, M.B.I. Reaz, M. T. Islam, “Can AI help in screening Viral and COVID-19 pneumonia?” IEEE Access, Vol. 8, 2020, pp. 132665 - 132676.](https://arxiv.org/ftp/arxiv/papers/2003/2003.13145.pdf)
 
-[Evaluation of Deep Convolutional Generative Adversarial Networks for data augmentation of chest X-ray images](https://arxiv.org/pdf/2009.01181.pdf)
+[Kora Venu, Sagar and Ravula, Sridhar, "Evaluation of Deep Convolutional Generative Adversarial Networks for data augmentation of chest X-ray images", Future Internet, MDPI AG, 2020](https://arxiv.org/pdf/2009.01181.pdf)
+
+[M. Mirza, S. Osindero, "Conditional Generative Adversarial Nets", 2014](https://arxiv.org/pdf/1411.1784.pdf)
