@@ -8,22 +8,11 @@ from tensorflow.keras.layers import LeakyReLU, Activation
 from tensorflow.keras.layers import Flatten, Dense, Dropout
 from tensorflow.keras.layers import Reshape, Input
 from tensorflow.keras import optimizers
+import matplotlib.pyplot as plt
 
 class rawGAN:
 
-    #hyperparameters used
-    # rawGAN
-    # input_shape
-    # alpha 0.2
-    # drop_rate 0.4
-    # discriminator_lr 5e-5
-    # img_height = 128
-    # img_width = 128
-    # input_shape = (img_height, img_width, 3)
-    # LATENT_SIZE = 100
-    # LR = 1e-4
-
-    def __init(self,
+    def __init__(self,
                 n_epochs,
                 batch_size,
                 input_shape,
@@ -31,7 +20,7 @@ class rawGAN:
                 alpha,
                 drop_rate,
                 discriminator_lr,
-                generator_lr)
+                generator_lr):
 
         self.n_epochs = n_epochs
         self.batch_size = batch_size
@@ -41,6 +30,8 @@ class rawGAN:
         self.drop_rate = drop_rate
         self.discriminator_lr = discriminator_lr
         self.generator_lr = generator_lr
+
+        self._build_model
 
     def create_discriminator():
 
@@ -90,7 +81,7 @@ class rawGAN:
         return model
 
 
-    def build_model():
+    def _build_model():
         discriminator = create_discriminator(self.input_shape)
         generator = create_generator(self.input_shape)
         disc_optimizer = optimizers.Adam(lr=self.discriminator_lr, beta_1=0.5,clipvalue=5)
@@ -102,6 +93,7 @@ class rawGAN:
 
         gan_optimizer = optimizers.Adam(lr=self.generator_lr, beta_1=0.5)
         self.gan.compile(loss="binary_crossentropy", optimizer= gan_optimizer)
+        print("GAN model created")
         #self.gan.summary()
 
     def generate_latent_points():
@@ -125,6 +117,6 @@ class rawGAN:
             plt.imshow(img)
         plt.savefig('{}/image_at_epoch_{:04d}.png'.format(dir, epoch))
     
-    plt.show()
+        plt.show()
 
     #def train_model(model):
