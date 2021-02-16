@@ -10,17 +10,29 @@ from tensorflow.keras.layers import Reshape, Input
 from tensorflow.keras import optimizers
 import matplotlib.pyplot as plt
 
-class rawGAN:
+class rawGAN():
+
+    #hyperparameters used
+    # rawGAN
+    # input_shape
+    # alpha 0.2
+    # drop_rate 0.4
+    # discriminator_lr 5e-5
+    # img_height = 128
+    # img_width = 128
+    # input_shape = (img_height, img_width, 3)
+    # LATENT_SIZE = 100
+    # LR = 1e-4
 
     def __init__(self,
-                n_epochs,
-                batch_size,
-                input_shape,
-                latent_size,
-                alpha,
-                drop_rate,
-                discriminator_lr,
-                generator_lr):
+                  n_epochs,
+                  batch_size,
+                  input_shape,
+                  latent_size,
+                  alpha,
+                  drop_rate,
+                  discriminator_lr,
+                  generator_lr):
 
         self.n_epochs = n_epochs
         self.batch_size = batch_size
@@ -31,9 +43,9 @@ class rawGAN:
         self.discriminator_lr = discriminator_lr
         self.generator_lr = generator_lr
 
-        self._build_model
+        self._build_model()
 
-    def create_discriminator():
+    def create_discriminator(self):
 
         leaky = tf.keras.layers.LeakyReLU(self.alpha)
 
@@ -52,7 +64,7 @@ class rawGAN:
         model = Model(inputs=inputs, outputs=outputs)
         return model
 
-    def create_generator():
+    def create_generator(self):
 
         width = self.input_shape[0]
         height = self.input_shape[1]
@@ -81,7 +93,7 @@ class rawGAN:
         return model
 
 
-    def _build_model():
+    def _build_model(self):
         discriminator = create_discriminator(self.input_shape)
         generator = create_generator(self.input_shape)
         disc_optimizer = optimizers.Adam(lr=self.discriminator_lr, beta_1=0.5,clipvalue=5)
@@ -96,7 +108,7 @@ class rawGAN:
         print("GAN model created")
         #self.gan.summary()
 
-    def generate_latent_points():
+    def generate_latent_points(self):
 	    # generate points in the latent space
         x_input = np.random.randn(self.latent_dim * self.batch_size)
         # reshape into a batch of inputs for the network
