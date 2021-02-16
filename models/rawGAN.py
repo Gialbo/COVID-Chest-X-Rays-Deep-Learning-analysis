@@ -12,27 +12,15 @@ import matplotlib.pyplot as plt
 
 class rawGAN():
 
-    #hyperparameters used
-    # rawGAN
-    # input_shape
-    # alpha 0.2
-    # drop_rate 0.4
-    # discriminator_lr 5e-5
-    # img_height = 128
-    # img_width = 128
-    # input_shape = (img_height, img_width, 3)
-    # LATENT_SIZE = 100
-    # LR = 1e-4
-
     def __init__(self,
-                  n_epochs,
-                  batch_size,
-                  input_shape,
-                  latent_size,
-                  alpha,
-                  drop_rate,
-                  discriminator_lr,
-                  generator_lr):
+                  n_epochs=400,
+                  batch_size=128,
+                  input_shape=(128, 128, 3),
+                  latent_size=100,
+                  alpha=0.2,
+                  drop_rate=0.4,
+                  discriminator_lr=5e-5,
+                  generator_lr=1e-4):
 
         self.n_epochs = n_epochs
         self.batch_size = batch_size
@@ -94,8 +82,8 @@ class rawGAN():
 
 
     def _build_model(self):
-        discriminator = create_discriminator(self.input_shape)
-        generator = create_generator(self.input_shape)
+        discriminator = self.create_discriminator(self.input_shape)
+        generator = self.create_generator(self.input_shape)
         disc_optimizer = optimizers.Adam(lr=self.discriminator_lr, beta_1=0.5,clipvalue=5)
         discriminator.compile(disc_optimizer, "binary_crossentropy", metrics="accuracy")
         discriminator.trainable = False
