@@ -43,5 +43,5 @@ def load_data(dir, img_size, batch_size, validation_split=0.2, generate_validati
                                                     
         return train_ds, validation_ds, test_ds
 
-    else if generate_validation == False and generate_test == False:
+    elif generate_validation == False and generate_test == False:
         return train_ds
