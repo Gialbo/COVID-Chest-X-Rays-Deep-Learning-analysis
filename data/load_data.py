@@ -1,3 +1,5 @@
+import tensorflow as tf
+
 def load_data(dir, img_size, batch_size, generate_validation=True, generate_test=True, validation_split=0.2):
 
     # Load data from path and return the datasets (train, validation, test)
