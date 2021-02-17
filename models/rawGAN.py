@@ -30,6 +30,7 @@ class rawGAN():
         self.drop_rate = drop_rate
         self.discriminator_lr = discriminator_lr
         self.generator_lr = generator_lr
+        
 
         self._build_model()
 
@@ -64,10 +65,10 @@ class rawGAN():
         dim1 = width // 4     # because we have 3 transpose conv layers with strides 2,1 -> 
                                 # -> we are upsampling by a factor of 4 -> 2*2*1
         dim2 = height // 4
-        x = Dense( dim1 * dim2 * n1, activation="relu")(inputs) #20*20*3
+        x = Dense( dim1 * dim2 * 16, activation="relu")(inputs) #20*20*3
         x = BatchNormalization()(x)
         
-        x = Reshape((dim1, dim2, n1))(x)
+        x = Reshape((dim1, dim2, 16))(x)
 
         # now add conv 2D transpose: transposed convoultional or deconvolution
         x = Conv2DTranspose(64, (3, 3), strides=(2, 2), padding="same", activation=leaky)(x)
@@ -98,10 +99,75 @@ class rawGAN():
 
     def generate_latent_points(self):
 	    # generate points in the latent space
-        x_input = np.random.randn(self.latent_dim * self.batch_size)
+        x_input = np.random.randn(self.latent_size * self.batch_size)
         # reshape into a batch of inputs for the network
-        x_input = x_input.reshape(self.batch_size, self.latent_dim )
-        return 
+        x_input = x_input.reshape(self.batch_size, self.latent_size )
+
+    
+
+    def train_model(self, train, training_size, benchmarkNoise, checkpoint_prefix):
+
+        NUM_EPOCHS=400
+        # creating dictionaries for history and accuracy for the plots
+        self.history = {}
+        self.history['G_loss'] = []
+        self.history['D_loss_true'] = []
+        self.history['D_loss_fake'] = []
+        self.accuracy = {}
+        self.accuracy['Acc_true'] = []
+        self.accuracy['Acc_fake'] = []
+
+        batchesPerEpoch = int(training_size / self.batch_size)
+        print("Batches per epoch ", batchesPerEpoch)
+            
+
+        for epoch in range(self.n_epochs):
+            print("Starting epoch ", epoch)
+            
+            for b in (range(batchesPerEpoch)):
+            
+                if b == batchesPerEpoch / 2:
+                    print("Half epoch done")
+
+                # GENERATE NOISE
+                noise =  self.generate_latent_points(self.latent_size, self.batch_size)
+
+                # now train the discriminator to differentiate between true and fake images
+
+                # DISCRIMINATOR TRAINING ON REAL IMAGES
+                trueImages, _ = next(train)
+                # true images: label = 1
+                y = np.ones((trueImages.shape[0]))
+                discLoss, discAcc = self.discriminator.train_on_batch(trueImages, y)
+                self.history['D_loss_true'].append(discLoss)          
+                self.accuracy['Acc_true'].append(discAcc)
+
+                # GENERATOR GENERATING ON FAKE IMAGES
+                genImages=self.generator.predict(noise)
+                # fake images: label = 0
+                y = np.zeros((self.batch_size))
+
+                # DISCRIMINATOR TRAINING ON FAKE IMAGES
+                discLoss, discAcc = self.discriminator.train_on_batch(genImages, y)
+                self.history['D_loss_fake'].append(discLoss)          
+                self.accuracy['Acc_fake'].append(discAcc)
+
+                # GENERATOR TRAINING ON FAKE IMAGES (label 1 for fake images in this case)
+                noise = np.random.uniform(-1, 1, size=(self.batch_size,self.latent_size))
+                fake_labels = [1] * self.batch_size
+                fake_labels = np.reshape(fake_labels, (-1,))
+                ganLoss = self.gan.train_on_batch(noise, fake_labels)
+                self.history['G_loss'].append(ganLoss)
+            
+            # at the end of each epoch 
+            print("epoch " + str(epoch) + ": discriminator loss " + str(discLoss)+  " ( "  + str(discAcc) + " ) - generator loss " + str(ganLoss))
+
+            images = generator.predict(benchmarkNoise)
+            if (epoch % 10) == 0:
+                self.plot_fake_figures(images,4)
+
+            if (epoch % 50) == 0:
+                checkpoint.save(file_prefix = checkpoint_prefix)
         
     @staticmethod
     def plot_fake_figures(x, n, dir='/content/drive/MyDrive/BIOINF/images_GAN/one-class'):
@@ -120,4 +186,4 @@ class rawGAN():
     
         plt.show()
 
-    #def train_model(model):
+    
