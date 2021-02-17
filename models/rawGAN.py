@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tensorflow import keras
+import tensorflow.keras as keras
 import numpy as np
 from tensorflow.keras import Sequential, Model
 from tensorflow.keras.layers import BatchNormalization
@@ -92,8 +92,8 @@ class rawGAN():
         disc_outputs = self.discriminator(self.generator(noise))
         self.gan = Model(inputs=noise, outputs=disc_outputs)
 
-        gan_optimizer = optimizers.Adam(lr=self.generator_lr, beta_1=0.5)
-        self.gan.compile(loss="binary_crossentropy", optimizer= gan_optimizer)
+        self.gan_optimizer = optimizers.Adam(lr=self.generator_lr, beta_1=0.5)
+        self.gan.compile(loss="binary_crossentropy", optimizer= self.gan_optimizer)
         print("GAN model created")
         #self.gan.summary()
 
@@ -102,12 +102,12 @@ class rawGAN():
         x_input = np.random.randn(self.latent_size * self.batch_size)
         # reshape into a batch of inputs for the network
         x_input = x_input.reshape(self.batch_size, self.latent_size )
+        return x_input
 
     
 
     def train_model(self, train, training_size, benchmarkNoise, checkpoint_prefix):
 
-        NUM_EPOCHS=400
         # creating dictionaries for history and accuracy for the plots
         self.history = {}
         self.history['G_loss'] = []
@@ -130,7 +130,7 @@ class rawGAN():
                     print("Half epoch done")
 
                 # GENERATE NOISE
-                noise =  self.generate_latent_points(self.latent_size, self.batch_size)
+                noise =  self.generate_latent_points()
 
                 # now train the discriminator to differentiate between true and fake images
 
@@ -162,15 +162,15 @@ class rawGAN():
             # at the end of each epoch 
             print("epoch " + str(epoch) + ": discriminator loss " + str(discLoss)+  " ( "  + str(discAcc) + " ) - generator loss " + str(ganLoss))
 
-            images = generator.predict(benchmarkNoise)
+            images = self.generator.predict(benchmarkNoise)
             if (epoch % 10) == 0:
-                self.plot_fake_figures(images,4)
+                self.plot_fake_figures(images,4, epoch)
 
             if (epoch % 50) == 0:
                 checkpoint.save(file_prefix = checkpoint_prefix)
         
     @staticmethod
-    def plot_fake_figures(x, n, dir='/content/drive/MyDrive/BIOINF/images_GAN/one-class'):
+    def plot_fake_figures(x, n, epoch, dir='/content/drive/MyDrive/BIOINF/images_GAN/one-class'):
         fig = plt.figure(figsize=(6,6))
         for i in range(n*n):
             plt.subplot(n,n,i+1)
@@ -185,5 +185,3 @@ class rawGAN():
         plt.savefig('{}/image_at_epoch_{:04d}.png'.format(dir, epoch))
     
         plt.show()
-
-    
