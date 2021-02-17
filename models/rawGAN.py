@@ -1,6 +1,7 @@
 import tensorflow as tf
 import tensorflow.keras as keras
 import numpy as np
+import pandas as pd
 from tensorflow.keras import Sequential, Model
 from tensorflow.keras.layers import BatchNormalization
 from tensorflow.keras.layers import Conv2DTranspose, Conv2D, MaxPooling2D, BatchNormalization, SpatialDropout2D
@@ -184,4 +185,9 @@ class rawGAN():
             plt.imshow(img)
         plt.savefig('{}/image_at_epoch_{:04d}.png'.format(dir, epoch))
     
+        plt.show()
+
+    def plot_losses(history):
+        pd.DataFrame(history).plot(figsize=(10,8))
+        plt.grid(True)
         plt.show()
