@@ -82,13 +82,13 @@ class rawGAN():
 
 
     def _build_model(self):
-        discriminator = self.create_discriminator()
-        generator = self.create_generator()
+        self.discriminator = self.create_discriminator()
+        self.generator = self.create_generator()
         disc_optimizer = optimizers.Adam(lr=self.discriminator_lr, beta_1=0.5,clipvalue=5)
-        discriminator.compile(disc_optimizer, "binary_crossentropy", metrics="accuracy")
-        discriminator.trainable = False
+        self.discriminator.compile(disc_optimizer, "binary_crossentropy", metrics="accuracy")
+        self.discriminator.trainable = False
         noise = Input((self.latent_size))
-        disc_outputs = discriminator(generator(noise))
+        disc_outputs = self.discriminator(self.generator(noise))
         self.gan = Model(inputs=noise, outputs=disc_outputs)
 
         gan_optimizer = optimizers.Adam(lr=self.generator_lr, beta_1=0.5)
@@ -103,6 +103,7 @@ class rawGAN():
         x_input = x_input.reshape(self.batch_size, self.latent_dim )
         return 
         
+    @staticmethod
     def plot_fake_figures(x, n, dir='/content/drive/MyDrive/BIOINF/images_GAN/one-class'):
         fig = plt.figure(figsize=(6,6))
         for i in range(n*n):
