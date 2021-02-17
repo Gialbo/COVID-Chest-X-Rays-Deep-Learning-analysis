@@ -1,4 +1,4 @@
-def load_data(dir, img_size, batch_size, validation_split=0, generate_validation=False, generate_test=False):
+def load_data(dir, img_size, batch_size, generate_validation=True, generate_test=True, validation_split=0.2):
 
     # Load data from path and return the datasets (train, validation, test)
 
@@ -12,7 +12,7 @@ def load_data(dir, img_size, batch_size, validation_split=0, generate_validation
     test_dir = dir + '/test'
 
     if generate_validation == True:
-        Train_Gen = tf.keras.preprocessing.image.ImageDataGenerator(rescale = 1./255, validation_split)
+        Train_Gen = tf.keras.preprocessing.image.ImageDataGenerator(rescale = 1./255, validation_split=validation_split)
         
         train_ds = Train_Gen.flow_from_directory(train_dir, 
                                                     target_size = (img_height, img_width), 
