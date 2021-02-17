@@ -10,7 +10,7 @@ Final project code for the course "Bioinformatics", A.Y. 2020/2021. \
 The dataset contains X-rays images from different patients with different patologies: there are 1200 COVID-19 positive images, 1341 normal images, and 1345 viral pneumonia images. The dataset can be downloaded from [`here`](https://www.kaggle.com/tawsifurrahman/covid19-radiography-database).
 From this dataset we applied some preprocessing techniques in order to have the data ready for our experiments. 
 * [`train_test_split.py`](./data/train_test_split.py): create a new folder divided in two subfolders: train and test. These folders are needed to define the ImageDataGenerator for training.
-* [`resize_images.py`](./data/resize_images.py): resize all the images in the dataset to 224x224 pizels.
+* [`resize_images.py`](./data/resize_images.py): resize all the images in the dataset to 224x224 pixels.
 * [`load_data.py`](./data/load_data.py): load data from path and return the datasets (train, validation, test)
 * [`images_to_gif.py`](./data/images_to_gif.py): create a gif with generated images from GAN 
 
@@ -18,10 +18,11 @@ After these passages, we are ready to train our models. Our final dataset can be
 
 ## [`Models`](./models)
 * [`rawGAN.py`](./models/rawGAN.py): first trial using a Generative Adversial Network to generate from scratch X-Rays images. With this first trial we combine all together the three classes of our dataset to find a good set of hyperparameters to use in the following trials;
+* [`cGAN.py`](./models/cGAN.py): starting from the rawGAN, we added to the model to ability to distinguish between the tree different classes. This type is called Conditional GAN;
 
 
 ## [`Experiments`](./experiments)
-* [`rawGANexperiment.ipynb`](./experiments/rawGANexperiment.ipynb): notebook reporting the experiment using the rawGAN class.
+* [`rawGANexperiment.ipynb`](./experiments/rawGANexperiment.ipynb): notebook reporting the experiment using the rawGAN model.
 
 
 ## [`Results`](./results)
