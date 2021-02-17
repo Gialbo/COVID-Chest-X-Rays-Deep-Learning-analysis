@@ -21,9 +21,8 @@ After these passages, we are ready to train our models. Our final dataset can be
 
 
 ## [`Experiments`](./experiments)
-<!---
 * [`rawGANexperiment.ipynb`](./experiments/rawGANexperiment.ipynb): notebook reporting the experiment using the rawGAN class.
---->
+
 
 ## [`Results`](./results)
 * [`gan-one-class.gif`](./results/gan-one-class.gif) shows how the generator is learning to generate true X-rays images. We keep the latent space fixed and we take the output of the generator every 10 epochs for a total of 400 epochs. In this case we are using all the classes merged together, so one class is used.
