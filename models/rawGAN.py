@@ -26,7 +26,7 @@ class rawGAN():
         self.batch_size = batch_size
         self.input_shape = input_shape
         self.latent_size = latent_size
-        self.apha = alpha
+        self.alpha = alpha
         self.drop_rate = drop_rate
         self.discriminator_lr = discriminator_lr
         self.generator_lr = generator_lr
