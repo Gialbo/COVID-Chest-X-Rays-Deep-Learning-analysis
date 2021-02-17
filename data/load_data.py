@@ -1,4 +1,4 @@
-def load_data(dir, img_size, batch_size, validation_split=0.2, generate_validation=True, generate_test=True):
+def load_data(dir, img_size, batch_size, validation_split=0, generate_validation=False, generate_test=False):
 
     # Load data from path and return the datasets (train, validation, test)
 
