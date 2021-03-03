@@ -103,8 +103,6 @@ def __main__():
     generator_optimizer = tf.keras.optimizers.Adam(1e-4)
     discriminator_optimizer = tf.keras.optimizers.Adam(1e-4)
 
-    # Create a callback that saves the model's weights
-
     for epoch in range(epochs):
         print(f"Starting epoch {epoch}")
         for batch in train_ds.next():
