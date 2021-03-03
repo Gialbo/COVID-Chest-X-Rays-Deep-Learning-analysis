@@ -18,7 +18,7 @@ class unetGAN():
                   discriminator_lr=5e-5,
                   generator_lr=1e-4,
                   logging_step=10,
-                  imgdir="outImages"):
+                  out_images="outImages"):
         
         self.n_epochs = n_epochs
         self.batch_size = batch_size
@@ -29,7 +29,7 @@ class unetGAN():
         self.discriminator_lr = discriminator_lr
         self.generator_lr = generator_lr
         self.logging_step = logging_step
-        self.outImages = outImages
+        self.out_images = out_images
 
         self._build_model()
     
@@ -207,7 +207,7 @@ class unetGAN():
             epoch_gen_loss = []
             epoch_disc_loss = []
 
-            print("Stariing epoch ", epoch)
+            print("Starting epoch ", epoch)
 
             for step in (range(batchesPerEpoch)):
                 batch, _ = next(train_ds)
@@ -224,18 +224,18 @@ class unetGAN():
             
             if epoch % self.logging_step == 0:
                 generator_images = self.generator.predict(benchmark_noise)
-                self.plot_fake_figures(generator_images, 4, epoch, self.imgDir, "generated")
+                
+                print("Generated images: ")
+                self.plot_fake_figures(generator_images, 4, epoch, self.out_images, "generated")
 
-                decoded_images = self.discriminator(generator_images, training=False)
-                self.plot_fake_figures(decoded_images, 4, epoch, self.imgDir, "decoded")
+                print("Decoded maps: ")
+                decoded_images = self.discriminator(generator_images, training=False)[1]
+                self.plot_fake_figures(decoded_images, 4, epoch, self.out_images, "decoded")
 
-                checkpoint.save(file_prefix = checkpoint_prefix)
-
-
-
+                # checkpoint.save(file_prefix = checkpoint_prefix)
     
     @staticmethod
-    def plot_fake_figures(x, n, epoch, dir,image_type):
+    def plot_fake_figures(x, n, epoch, img_dir,image_type):
         fig = plt.figure(figsize=(6,6))
         for i in range(n*n):
             plt.subplot(n,n,i+1)
@@ -244,10 +244,9 @@ class unetGAN():
             plt.grid(False)
             img=x[i,:,:,:]
             # rescale for visualization purposes
-            #img = np.repeat(img, 3, axis=-1)
-            img = ((img*127.5) + 127.5).astype("uint8")
-            plt.imshow(img)
-        plt.savefig('{}/{image_type}_at_epoch_{:04d}.png'.format(dir, epoch))
+            img = tf.keras.preprocessing.image.array_to_img(img)
+            plt.imshow(img, cmap="gray")
+        plt.savefig('{}/{}_at_epoch_{:04d}.png'.format(img_dir, image_type, epoch))
     
         plt.show()
 
@@ -255,15 +254,3 @@ class unetGAN():
         pd.DataFrame(history).plot(figsize=(10,8))
         plt.grid(True)
         plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
