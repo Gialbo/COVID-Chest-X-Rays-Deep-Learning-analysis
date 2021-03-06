@@ -8,6 +8,8 @@ from tensorflow.keras.models import Model
 
 def inceptionNet():
 
+  labels = ["covid-19", "normal", "viral-pneumonia"]
+
   basemodel = InceptionV3(
     include_top = False, 
     weights = 'imagenet', 
