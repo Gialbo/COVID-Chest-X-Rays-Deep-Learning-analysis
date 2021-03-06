@@ -7,7 +7,7 @@ Final project code for the course "Bioinformatics", A.Y. 2020/2021. \
 # Project Structure
 
 ##  [`Data`](./data)
-The dataset contains X-rays images from different patients with different patologies: there are 1200 COVID-19 positive images, 1341 normal images, and 1345 viral pneumonia images.
+The dataset contains X-rays images from different patients with different patologies: there are 1027 COVID-19 positive images, 1206 normal images, and 1210 viral pneumonia images.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/dataDistribution.png"> 
