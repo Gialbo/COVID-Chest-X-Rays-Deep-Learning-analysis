@@ -17,12 +17,14 @@ From this dataset we applied some preprocessing techniques in order to have the 
 After these passages, we are ready to train our models. Our final dataset can be downloaded [`here`](https://drive.google.com/drive/folders/1-7se3aMXMXtDF89ALV07pru3kELmWTTo?usp=sharing) and it was created using the version 2 of the original dataset.
 
 ## [`Models`](./models)
+* [`inceptionNet.py`](./models/inceptionNet.py): CNN model used for the classification task. We first loaded the inceptionV3 model with imagenet weight and added more layers at the top. We do not freeze any layer, so during training the preloaded weights from Imagenet will be updated;
 * [`rawGAN.py`](./models/rawGAN.py): first trial using a Generative Adversial Network to generate from scratch X-Rays images. With this first trial we combine all together the three classes of our dataset to find a good set of hyperparameters to use in the following trials;
 * [`cGAN.py`](./models/cGAN.py): starting from the rawGAN, we added to the model to ability to distinguish between the tree different classes. This type is called Conditional GAN;
 
 
 ## [`Experiments`](./experiments)
-* [`rawGANexperiment.ipynb`](./experiments/rawGANexperiment.ipynb): notebook reporting the experiment using the rawGAN model.
+* [`inceptionNet.ipynb`](./experiments/inceptionNet.ipynb): notebook reporting the experiment using the inceptionNet model.
+* [`rawGAN.ipynb`](./experiments/rawGAN.ipynb): notebook reporting the experiment using the rawGAN model.
 
 
 ## [`Results`](./results)
