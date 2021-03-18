@@ -64,6 +64,10 @@ The folder containing the images used for the documentation.
 
 
 ### Synthetic images generation: covidGAN
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidGAN/imagesCompared.png">
+ </p>
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/results/covidGAN/covidGAN-faster.gif" width="40%">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidGAN/accuracy.png" width="400">
