@@ -38,25 +38,36 @@ The folder containing the images used for the documentation.
 ## [`Results`](./results)
 ### Classification Task: inceptionNet
 <p align="center">
-  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/InceptionNetLoss.png" width="400">
-  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/InceptionNetAccuracy.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNet/InceptionNetLoss.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNet/InceptionNetAccuracy.png" width="400">
  </p>
  
  <p align="center">
-  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/InceptionNetPrecision.png">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNet/InceptionNetPrecision.png">
  </p>
  
  <p align="center">
-  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/InceptionNetRecall.png">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNet/InceptionNetRecall.png">
  </p>
  
  <p align="center">
-  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/InceptionNetConfMatrix.png">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNet/InceptionNetConfMatrix.png">
  </p>
 
-### Synthetic images generation: rawGAN
-* [`gan-one-class.gif`](./results/gan-one-class.gif) shows how the generator is learning to generate true X-rays images. We keep the latent space fixed and we take the output of the generator every 10 epochs for a total of 400 epochs. In this case we are using all the classes merged together, so one class is used. Here we can see the learning process of the generator. 
-<img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/results/gan-one-class.gif" width="40%">
+
+### Synthetic images generation: covidGAN
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/results/covidGAN/covidGAN-faster.gif" width="40%">
+</p>
+ 
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidGAN/loss.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidGAN/lossCloseUp.png" width="400">
+</p>
+
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidGAN/accuracy.png">
+</p>
 
 # References
 [M.E.H. Chowdhury, T. Rahman, A. Khandakar, R. Mazhar, M.A. Kadir, Z.B. Mahbub, K.R. Islam, M.S. Khan, A. Iqbal, N. Al-Emadi, M.B.I. Reaz, M. T. Islam, “Can AI help in screening Viral and COVID-19 pneumonia?” IEEE Access, Vol. 8, 2020, pp. 132665 - 132676.](https://arxiv.org/ftp/arxiv/papers/2003/2003.13145.pdf)
