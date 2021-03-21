@@ -171,7 +171,7 @@ class covidGAN():
             #if (epoch % 50) == 0:
                 #checkpoint.save(file_prefix = checkpoint_prefix)
 
-    def plot_losses(self, data xaxis, yaxis, ylim=0):
+    def plot_losses(self, data, xaxis, yaxis, ylim=0):
       pd.DataFrame(data).plot(figsize=(10,8))
       plt.grid(True)
       plt.xlabel(xaxis)
