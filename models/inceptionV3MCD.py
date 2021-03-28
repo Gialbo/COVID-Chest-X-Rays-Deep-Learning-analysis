@@ -1,8 +1,10 @@
-"""Inception V3 model for Keras with the MC dropout
-"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
+"""Inception V3 model for Keras with the MC dropout
+"""
+
 
 import os
 

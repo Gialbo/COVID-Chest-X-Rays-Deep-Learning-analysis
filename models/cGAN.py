@@ -5,7 +5,7 @@ import pandas as pd
 from tensorflow.keras import Sequential, Model
 from tensorflow.keras.layers import BatchNormalization, Concatenate
 from tensorflow.keras.layers import Conv2DTranspose, Conv2D, MaxPooling2D, BatchNormalization, SpatialDropout2D
-from tensorflow.keras.layers import LeakyReLU, Activation
+from tensorflow.keras.layers import LeakyReLU, Activation,Embedding
 from tensorflow.keras.layers import Flatten, Dense, Dropout
 from tensorflow.keras.layers import Reshape, Input
 from tensorflow.keras import optimizers
@@ -16,13 +16,13 @@ class cGAN():
     def __init__(self,
                   n_epochs=400,
                   batch_size=128,
-                  input_shape=(128, 128, 3),
+                  input_shape=(128, 128, 1),
                   latent_size=100,
                   n_classes = 3,
                   alpha=0.2,
-                  drop_rate=0.4,
-                  discriminator_lr=5e-5,
-                  generator_lr=1e-4):
+                  drop_rate=0.5,
+                  discriminator_lr=3e-5,
+                  generator_lr=2e-4):
 
         self.n_epochs = n_epochs
         self.batch_size = batch_size
@@ -41,9 +41,11 @@ class cGAN():
 
         # label input
         in_label = Input(shape=(1,))
+        # embedding for categorical input
+        li = Embedding(self.n_classes, 30)(in_label)
         # scale up to image dimensions with linear activation
         n_nodes = self.input_shape[0] * self.input_shape[1]
-        li = Dense(n_nodes)(in_label)
+        li = Dense(n_nodes)(li)
         # reshape to additional channel
         li = Reshape((self.input_shape[0], self.input_shape[1], 1))(li)
         # image input
@@ -75,19 +77,21 @@ class cGAN():
 
 
         dim1 = width // 4     # because we have 3 transpose conv layers with strides 2,1 -> 
-                                # -> we are upsampling by a factor of 4 -> 2*2*1
+                                # -> we are upsampling by a factor of 4 -> 2*2*2*1
         dim2 = height // 4
         
         in_label = Input(shape=(1,))
+        # embedding for categorical input
+        li = Embedding(self.n_classes, 30)(in_label)
         n_nodes = dim1 * dim2
-        li = Dense(n_nodes)(in_label)
+        li = Dense(n_nodes)(li)
         li = Reshape((dim1, dim2, 1))(li)
         in_lat = Input(shape=(self.latent_size,))
         
-        x = Dense( dim1 * dim2 * 16, activation="relu")(in_lat) #20*20*3
+        x = Dense( dim1 * dim2 * 12, activation="relu")(in_lat) 
         x = BatchNormalization()(x)
         
-        x = Reshape((dim1, dim2, 16))(x)
+        x = Reshape((dim1, dim2, 12))(x)
 
         merge = Concatenate()([x, li])
 
@@ -115,10 +119,9 @@ class cGAN():
         gen_output = self.generator.output
         gan_output = self.discriminator([gen_output, gen_label])
         self.gan = Model(inputs=[gen_noise, gen_label], outputs=gan_output)
-        self.gan_optimizer = optimizers.Adam(lr=self.generator_lr, beta_1=0.5)
+        self.gan_optimizer = optimizers.Adam(lr=self.generator_lr, beta_1=0.6)
         self.gan.compile(loss="binary_crossentropy", optimizer= self.gan_optimizer)
         print("GAN model created")
-        #self.gan.summary()
 
     def generate_latent_points(self):
 	      # generate points in the latent space
@@ -162,10 +165,10 @@ class cGAN():
                 # DISCRIMINATOR TRAINING ON REAL IMAGES
                 trueImages, trueLabels = next(train)
                 # true images: label = 1
-                y = np.ones((trueImages.shape[0], 1))
-                discLoss, discAcc = self.discriminator.train_on_batch([trueImages, trueLabels], y)
+                y = np.ones((trueImages.shape[0], 1))*0.9
+                discLoss, discAccTrue = self.discriminator.train_on_batch([trueImages, trueLabels], y)
                 self.history['D_loss_true'].append(discLoss)          
-                self.accuracy['Acc_true'].append(discAcc)
+                self.accuracy['Acc_true'].append(discAccTrue)
 
                 # GENERATOR GENERATING ON FAKE IMAGES AND LABELS
                 genImages =self.generator.predict([noise_img, noise_labels])
@@ -173,9 +176,9 @@ class cGAN():
                 y = np.zeros((self.batch_size, 1))
 
                 # DISCRIMINATOR TRAINING ON FAKE IMAGES
-                discLoss, discAcc = self.discriminator.train_on_batch([genImages, noise_labels], y)
+                discLoss, discAccFalse = self.discriminator.train_on_batch([genImages, noise_labels], y)
                 self.history['D_loss_fake'].append(discLoss)          
-                self.accuracy['Acc_fake'].append(discAcc)
+                self.accuracy['Acc_fake'].append(discAccFalse)
 
                 # GENERATOR TRAINING ON FAKE IMAGES (label 1 for fake images in this case)
 
@@ -187,7 +190,8 @@ class cGAN():
                 self.history['G_loss'].append(ganLoss)
             
             # at the end of each epoch 
-            print("epoch " + str(epoch) + ": discriminator loss " + str(discLoss)+  " ( "  + str(discAcc) + " ) - generator loss " + str(ganLoss))
+            print("epoch " + str(epoch) + ": discriminator loss " + str(discLoss)+  " - generator loss " + str(ganLoss))
+            print("accuracy false: " + str(discAccFalse))
 
             images = self.generator.predict([benchmarkImages, benchmarkLabels])
             if (epoch % 10) == 0:
@@ -195,9 +199,18 @@ class cGAN():
 
             if (epoch % 50) == 0:
                 checkpoint.save(file_prefix = checkpoint_prefix)
+
+    def plot_losses(self, data, xaxis, yaxis, ylim=0):
+      pd.DataFrame(data).plot(figsize=(10,8))
+      plt.grid(True)
+      plt.xlabel(xaxis)
+      plt.ylabel(yaxis)
+      if ylim!=0:
+        plt.ylim(0, ylim)
+      plt.show()
         
     @staticmethod
-    def plot_fake_figures(x, n, epoch, dir='/content/drive/MyDrive/BIOINF/images_GAN/one-class'):
+    def plot_fake_figures(x, n, epoch, dir='/content/drive/MyDrive/BIOINF/images_GAN/cGAN'):
         fig = plt.figure(figsize=(6,6))
         for i in range(n*n):
             plt.subplot(n,n,i+1)
@@ -208,12 +221,7 @@ class cGAN():
             # rescale for visualization purposes
             #img = np.repeat(img, 3, axis=-1)
             img = ((img*127.5) + 127.5).astype("uint8")
-            plt.imshow(img, cmap="gray_r")
+            plt.imshow(img.reshape(128, 128), cmap='gray')
         plt.savefig('{}/image_at_epoch_{:04d}.png'.format(dir, epoch))
     
-        plt.show()
-
-    def plot_losses(history):
-        pd.DataFrame(history).plot(figsize=(10,8))
-        plt.grid(True)
         plt.show()
