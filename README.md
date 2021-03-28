@@ -62,10 +62,13 @@ The folder containing the images used for the documentation.
 
 ## Classification results on test set 
 In the table below are reported the results on the classification task. The recall and precision values are reported for the classes in the following order: covid-19, normal and viral pneumonia.
+
+<center>
 | Model                         |    Accuracy   | Loss    | Recall                 | Precision             |
 | --------------------------    | ------------- | --------| -----------------------| ----------------------|
 | inceptionNet (deterministic)  |     0.9347    |  0.3558 | 0.9739; 0.9776; 0.8582 | 1; 0.8618; 0.9664     |
 | inceptionNetMCD               |     0.9191    |  0.2434 | 1; 0.8358; 0.9254      | 0.9055; 0.9655; 0.8921|
+</center>
 
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/allPredictions.png">
