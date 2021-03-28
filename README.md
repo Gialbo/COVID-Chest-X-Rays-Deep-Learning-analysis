@@ -29,15 +29,20 @@ The dataset is provided by CDI (Centro Diagnostico Italiano) and it contains X-r
 
 ## [`Models`](./models)
 * [`inceptionNet.py`](./models/inceptionNet.py): CNN model used for the classification task on *COVID-19 Radiography Database*. We first loaded the inceptionV3 model with imagenet weight and added more layers at the top. We do not freeze any layer, so during training the preloaded weights from Imagenet will be updated;
-* [`rawGAN.py`](./models/rawGAN.py): first trial using a Generative Adversial Network to generate from scratch X-Rays images. With this first trial we combine all together the three classes of *COVID-19 Radiography Database* to find a good set of hyperparameters to use in the following trials;
+* [`inceptionV3MCD.py`](./models/inceptionV3MCD.py): modified version of InceptionV3 implemented in Keras. To each block a dropout layer is added at the end of it. The rate of the dropout layer can be passed calling the function;
+* [`inceptionNetMCD.py`](./models/inceptionNetMCD.py): Monte Carlo Dropout inceptionNet. The main difference are the following: the inceptionNetV3MCD is used and dropout layers are added after every fully connected layer. 
+
 * [`covidGAN.py`](./models/rawGAN.py):  Generative Adversial Network to generate synthetic images from *AI for COVID* database.
-<!-- * [`cGAN.py`](./models/cGAN.py): starting from the rawGAN, we added to the model to ability to distinguish between the tree different classes. This type is called Conditional GAN; -->
+<!-- * [`cGAN.py`](./models/cGAN.py): starting from the rawGAN, we added to the model to ability to distinguish between the tree different classes. This type is called Conditional GAN; 
+* [`rawGAN.py`](./models/rawGAN.py): first trial using a Generative Adversial Network to generate from scratch X-Rays images. With this first trial we combine all together the three classes of *COVID-19 Radiography Database* to find a good set of hyperparameters to use in the following trials;
+* -->
 
 
 ## [`Experiments`](./experiments)
 * [`inceptionNet.ipynb`](./experiments/inceptionNet.ipynb): notebook reporting the experiment using the inceptionNet model.
-* [`rawGAN.ipynb`](./experiments/rawGAN.ipynb): notebook reporting the experiment using the rawGAN model.
+* [`inceptionNetMCD.ipynb`](./experiments/inceptionNetMCD.ipynb): notebook reporting the experiment using the modified version of the inceptionNet model with Monte Carlo dropout.
 * [`covidGAN.ipynb`](./experiments/rawGAN.ipynb): notebook reporting the experiment using the covidGAN model.
+<!-- * [`rawGAN.ipynb`](./experiments/rawGAN.ipynb): notebook reporting the experiment using the rawGAN model. -->
 
 
 ## [`Images`](./images)
@@ -63,17 +68,24 @@ The folder containing the images used for the documentation.
 ## Classification results on test set 
 In the table below are reported the results on the classification task. The recall and precision values are reported for the classes in the following order: covid-19, normal and viral pneumonia.
 
-<center>
+
 | Model                         |    Accuracy   | Loss    | Recall                 | Precision             |
 | --------------------------    | ------------- | --------| -----------------------| ----------------------|
 | inceptionNet (deterministic)  |     0.9347    |  0.3558 | 0.9739; 0.9776; 0.8582 | 1; 0.8618; 0.9664     |
 | inceptionNetMCD               |     0.9191    |  0.2434 | 1; 0.8358; 0.9254      | 0.9055; 0.9655; 0.8921|
-</center>
 
+
+To compare the uncertainty of both networks, the following strategies are used:
+* inceptionNet (deterministic): in the deterministic net, the uncertainty of a prediction can be computed looking at the output softmax vector. The uncertainty of the whole test set is expressed as the standard deviation of the softmax vector for every image.
+* inceptionNetMCD: in the Monte Carlo Dropout setting, we compute for n times the predictions of the net (n is set to 100). In this case the uncertainty is the following:
+...
+
+Once we compute the uncertainties for both networks, the experiments can be easily compared using barplots. A low level of uncertainty means the network is sure about the prediction and viceversa. The deterministic net (left) behave as expected, even if the accuracy is high on the test set, most of the prediction are highly unsure. Instead the Monte Carlo Dropout network (ight) is more confident in the predictions. The behaviour can be fully exploited filtering the prediction in correct and wrong.
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/allPredictions.png">
  </p>
  
+Plotting only correct or wrong predictions shows how the Monte Carlo Dropout network is working in the desired way. For correct prediction, most of them have a lower uncertainty. Instead, for the wrong ones, the uncertainty is very high, even if it is lower than the max value found with the deterministic model.
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/correctPredictions.png">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/wrongPredictions.png">
