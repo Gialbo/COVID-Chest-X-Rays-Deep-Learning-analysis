@@ -1,6 +1,6 @@
 # COVID 19 Chest X-Rays Deep Learning analysis
 Comparison of different segmentation and synthetic data generation methods applied to chest X Rays from COVID-19 patients. We plan to compare different methods such as UNET, autoencoders, GAN, colorization techniques. \
-Final project code for the course "Bioinformatics", A.Y. 2020/2021. \
+Final project code for the course "Bioinformatics", A.Y. 2020/2021. 
 # Table of Contents
 1. [Data](#data)
 2. [Models](#models)
@@ -64,9 +64,8 @@ The dataset is provided by CDI (Centro Diagnostico Italiano) and it contains X-r
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNet/recall.png">
  </p>
 
-### Classification Task: deterministic vs Monte Carlo Dropout inceptionNet
+### Classification Task: deterministic inceptionNet vs Monte Carlo Dropout inceptionNet
 
-## Classification results on test set 
 In the table below are reported the results on the classification task. The recall and precision values are reported for the classes in the following order: covid-19, normal and viral pneumonia.
 
 
