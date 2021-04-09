@@ -85,7 +85,7 @@ To compare the uncertainty of both networks, the following strategies are used:
 * inceptionNetMCD: in the Monte Carlo Dropout setting, we compute for n times the predictions of the net (n is set to 100). In this case the uncertainty is the following:
 ...
 
-Once we compute the uncertainties for both networks, the experiments can be easily compared using barplots. A low level of uncertainty means the network is sure about the prediction and viceversa. The deterministic net (left) behave as expected, even if the accuracy is high on the test set, most of the prediction are highly unsure. Instead the Monte Carlo Dropout network (ight) is more confident in the predictions. The behaviour can be fully exploited filtering the prediction in correct and wrong.
+Once we compute the uncertainties for both networks, the experiments can be easily compared using barplots. A low level of uncertainty means the network is sure about the prediction and viceversa. The deterministic net (left) behave as expected, even if the accuracy is high on the test set, most of the prediction are highly unsure. Instead the Monte Carlo Dropout network (right) is more confident in the predictions. The behaviour can be fully exploited filtering the prediction in correct and wrong.
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/allPredictions.png">
  </p>
@@ -113,10 +113,12 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
 </p>
 
 # References
-[M.E.H. Chowdhury, T. Rahman, A. Khandakar, R. Mazhar, M.A. Kadir, Z.B. Mahbub, K.R. Islam, M.S. Khan, A. Iqbal, N. Al-Emadi, M.B.I. Reaz, M. T. Islam, “Can AI help in screening Viral and COVID-19 pneumonia?” IEEE Access, Vol. 8, 2020, pp. 132665 - 132676.](https://arxiv.org/ftp/arxiv/papers/2003/2003.13145.pdf)
+[Can AI help in screening Viral and COVID-19 pneumonia? ( Chowdhury et al., IEEE Access, Vol. 8, 2020, pp. 132665 - 132676.)](https://arxiv.org/ftp/arxiv/papers/2003/2003.13145.pdf)
 
 [AIforCOVID: predicting the clinical outcomes in patients with COVID-19 applying AI to chest-X-rays. An Italian multicenter study.](http://arxiv.org/abs/2012.06531)
 
-[Kora Venu, Sagar and Ravula, Sridhar, "Evaluation of Deep Convolutional Generative Adversarial Networks for data augmentation of chest X-ray images", Future Internet, MDPI AG, 2020](https://arxiv.org/pdf/2009.01181.pdf)
+[Uncertainty quantification using Bayesian neural networks in classification: Application to biomedical image segmentation (Kwon et al., 2019)](https://openreview.net/pdf?id=Sk_P2Q9sG)
 
-[M. Mirza, S. Osindero, "Conditional Generative Adversarial Nets", 2014](https://arxiv.org/pdf/1411.1784.pdf)
+[Evaluation of Deep Convolutional Generative Adversarial Networks for data augmentation of chest X-ray images (Venu et al., Future Internet, MDPI AG, 2020)](https://arxiv.org/pdf/2009.01181.pdf)
+
+[Conditional Generative Adversarial Nets (Mirza et al. 2014)](https://arxiv.org/pdf/1411.1784.pdf)
