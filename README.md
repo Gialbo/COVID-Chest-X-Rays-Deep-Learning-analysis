@@ -83,7 +83,12 @@ In the table below are reported the results on the classification task. The reca
 To compare the uncertainty of both networks, the following strategies are used:
 * inceptionNet (deterministic): in the deterministic net, the uncertainty of a prediction can be computed looking at the output softmax vector. The uncertainty of the whole test set is expressed as the standard deviation of the softmax vector for every image.
 * inceptionNetMCD: in the Monte Carlo Dropout setting, we compute for n times the predictions of the net (n is set to 100). In this case the uncertainty is the following:
-...
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/uncertainty_formula.png"  width="300"> 
+</p>
+  <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/uncertainty_formula_desc.png" width="450" >
+
+
 
 Once we compute the uncertainties for both networks, the experiments can be easily compared using barplots. A low level of uncertainty means the network is sure about the prediction and viceversa. The deterministic net (left) behave as expected, even if the accuracy is high on the test set, most of the prediction are highly unsure. Instead the Monte Carlo Dropout network (right) is more confident in the predictions. The behaviour can be fully exploited filtering the prediction in correct and wrong.
  <p align="center">
