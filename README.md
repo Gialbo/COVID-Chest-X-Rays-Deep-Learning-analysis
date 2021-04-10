@@ -38,8 +38,8 @@ The dataset is provided by CDI (Centro Diagnostico Italiano) and it contains X-r
 
 * [`covidGAN.py`](./models/rawGAN.py):  Generative Adversial Network to generate synthetic images from *AI for COVID* database.
 * [`cGAN.py`](./models/cGAN.py): starting from the covidGAN, we added to the model to ability to distinguish between the tree different classes. This architecture is called Conditional GAN; 
-<-- * [`rawGAN.py`](./models/rawGAN.py): first trial using a Generative Adversial Network to generate from scratch X-Rays images. With this first trial we combine all together the three classes of *COVID-19 Radiography Database* to find a good set of hyperparameters to use in the following trials;
-* -->
+<!-- [`rawGAN.py`](./models/rawGAN.py): first trial using a Generative Adversial Network to generate from scratch X-Rays images. With this first trial we combine all together the three classes of *COVID-19 Radiography Database* to find a good set of hyperparameters to use in the following trials -->
+
 
 
 ## [`Experiments`](./experiments)
