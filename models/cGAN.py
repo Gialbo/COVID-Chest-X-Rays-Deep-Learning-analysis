@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 class cGAN():
 
     def __init__(self,
-                  n_epochs=1000,
+                  n_epochs=750,
                   batch_size=512,
                   input_shape=(128, 128, 1),
                   latent_size=100,
@@ -204,7 +204,7 @@ class cGAN():
 
             images = self.generator.predict([benchmarkImages, benchmarkLabels])
             if (epoch % 10) == 0:
-                self.plot_fake_figures(images,3, epoch)
+                self.plot_fake_figures(images, benchmarkLabels, 3, epoch)
 
             if (epoch % 50) == 0:
                 checkpoint.save(file_prefix = checkpoint_prefix)
@@ -219,17 +219,24 @@ class cGAN():
       plt.show()
 
     @staticmethod
-    def plot_fake_figures(x, n, epoch, dir='/content/drive/MyDrive/BIOINF/images_GAN/cGAN1'):
+    def plot_fake_figures(x, labels, n, epoch, dir='/content/drive/MyDrive/BIOINF/images_GAN/cGAN'):
+
+        labels_dict = {
+          0: "covid-19",
+          1: "normal",
+          2: "viral-pneumonia"
+        }
+
         fig = plt.figure(figsize=(6,6))
         for i in range(n*n):
             plt.subplot(n,n,i+1)
             plt.xticks([])
             plt.yticks([])
-            plt.grid(False)
             img=x[i,:,:,:]
             # rescale for visualization purposes
             #img = np.repeat(img, 3, axis=-1)
             img = ((img*127.5) + 127.5).astype("uint8")
+            plt.xlabel(labels_dict[labels[i]])
             plt.imshow(img.reshape(128, 128), cmap='gray')
         plt.savefig('{}/image_at_epoch_{:04d}.png'.format(dir, epoch))
     
