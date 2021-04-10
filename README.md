@@ -37,8 +37,8 @@ The dataset is provided by CDI (Centro Diagnostico Italiano) and it contains X-r
 * [`inceptionNetMCD.py`](./models/inceptionNetMCD.py): Monte Carlo Dropout inceptionNet. The main difference are the following: the inceptionNetV3MCD is used and dropout layers are added after every fully connected layer. 
 
 * [`covidGAN.py`](./models/rawGAN.py):  Generative Adversial Network to generate synthetic images from *AI for COVID* database.
-<!-- * [`cGAN.py`](./models/cGAN.py): starting from the rawGAN, we added to the model to ability to distinguish between the tree different classes. This type is called Conditional GAN; 
-* [`rawGAN.py`](./models/rawGAN.py): first trial using a Generative Adversial Network to generate from scratch X-Rays images. With this first trial we combine all together the three classes of *COVID-19 Radiography Database* to find a good set of hyperparameters to use in the following trials;
+* [`cGAN.py`](./models/cGAN.py): starting from the covidGAN, we added to the model to ability to distinguish between the tree different classes. This architecture is called Conditional GAN; 
+<-- * [`rawGAN.py`](./models/rawGAN.py): first trial using a Generative Adversial Network to generate from scratch X-Rays images. With this first trial we combine all together the three classes of *COVID-19 Radiography Database* to find a good set of hyperparameters to use in the following trials;
 * -->
 
 
@@ -46,6 +46,7 @@ The dataset is provided by CDI (Centro Diagnostico Italiano) and it contains X-r
 * [`inceptionNet.ipynb`](./experiments/inceptionNet.ipynb): notebook reporting the experiment using the inceptionNet model.
 * [`inceptionNetMCD.ipynb`](./experiments/inceptionNetMCD.ipynb): notebook reporting the experiment using the modified version of the inceptionNet model with Monte Carlo dropout.
 * [`covidGAN.ipynb`](./experiments/rawGAN.ipynb): notebook reporting the experiment using the covidGAN model.
+<!-- * * [`cGAN.ipynb`](./experiments/cGAN.ipynb): notebook reporting the experiment using the cGAN model. -->
 <!-- * [`rawGAN.ipynb`](./experiments/rawGAN.ipynb): notebook reporting the experiment using the rawGAN model. -->
 
 
@@ -116,6 +117,10 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidGAN/loss.png" width="400">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidGAN/lossCloseUp.png" width="400">
 </p>
+
+### Synthetic images generation: cGAN
+... work in progress ...
+
 
 # References
 [Can AI help in screening Viral and COVID-19 pneumonia? ( Chowdhury et al., IEEE Access, Vol. 8, 2020, pp. 132665 - 132676.)](https://arxiv.org/ftp/arxiv/papers/2003/2003.13145.pdf)
