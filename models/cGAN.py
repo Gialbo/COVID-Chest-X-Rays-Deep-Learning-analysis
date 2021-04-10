@@ -6,7 +6,7 @@ from tensorflow.keras import Sequential, Model
 from tensorflow.keras.layers import BatchNormalization, Concatenate
 from tensorflow.keras.layers import Conv2DTranspose, Conv2D, MaxPooling2D, BatchNormalization, SpatialDropout2D
 from tensorflow.keras.layers import LeakyReLU, Activation,Embedding
-from tensorflow.keras.layers import Flatten, Dense, Dropout
+from tensorflow.keras.layers import Flatten, Dense, Dropout, Add
 from tensorflow.keras.layers import Reshape, Input
 from tensorflow.keras import optimizers
 import matplotlib.pyplot as plt
@@ -14,14 +14,14 @@ import matplotlib.pyplot as plt
 class cGAN():
 
     def __init__(self,
-                  n_epochs=400,
-                  batch_size=128,
+                  n_epochs=1000,
+                  batch_size=512,
                   input_shape=(128, 128, 1),
                   latent_size=100,
                   n_classes = 3,
                   alpha=0.2,
                   drop_rate=0.5,
-                  discriminator_lr=3e-5,
+                  discriminator_lr=6e-5,
                   generator_lr=2e-4):
 
         self.n_epochs = n_epochs
@@ -42,7 +42,7 @@ class cGAN():
         # label input
         in_label = Input(shape=(1,))
         # embedding for categorical input
-        li = Embedding(self.n_classes, 30)(in_label)
+        li = Embedding(self.n_classes, 10)(in_label)
         # scale up to image dimensions with linear activation
         n_nodes = self.input_shape[0] * self.input_shape[1]
         li = Dense(n_nodes)(li)
@@ -76,18 +76,19 @@ class cGAN():
         leaky = tf.keras.layers.LeakyReLU(self.alpha)
 
 
-        dim1 = width // 4     # because we have 3 transpose conv layers with strides 2,1 -> 
-                                # -> we are upsampling by a factor of 4 -> 2*2*2*1
-        dim2 = height // 4
+        dim1 = width // 16     
+        dim2 = height // 16
         
         in_label = Input(shape=(1,))
         # embedding for categorical input
-        li = Embedding(self.n_classes, 30)(in_label)
+        li = Embedding(self.n_classes, 10)(in_label)
+        # embedding con 3/1 -> comportamento simile a non condizionale
+
         n_nodes = dim1 * dim2
         li = Dense(n_nodes)(li)
         li = Reshape((dim1, dim2, 1))(li)
+
         in_lat = Input(shape=(self.latent_size,))
-        
         x = Dense( dim1 * dim2 * 12, activation="relu")(in_lat) 
         x = BatchNormalization()(x)
         
@@ -96,10 +97,18 @@ class cGAN():
         merge = Concatenate()([x, li])
 
         # now add conv 2D transpose: transposed convoultional or deconvolution
-        x = Conv2DTranspose(64, (3, 3), strides=(2, 2), padding="same", activation=leaky)(merge)
+        #x_shortcut = merge
+        x = Conv2DTranspose(128, (3, 3), strides=(2, 2), padding="same", activation=leaky)(merge)
         x = BatchNormalization()(x)
-        x = Conv2DTranspose(128, (3, 3), strides=(2, 2), padding="same", activation=leaky)(x)
+        x = Conv2DTranspose(64, (3, 3), strides=(2, 2), padding="same")(x)
         x = BatchNormalization()(x)
+        #x = Add()([merge, x_shortcut])
+
+        x = Conv2DTranspose(32, (3, 3), strides=(2, 2), padding="same", activation=leaky)(x)
+        x = BatchNormalization()(x)
+        x = Conv2DTranspose(16, (3, 3), strides=(2, 2), padding="same")(x)
+        x = BatchNormalization()(x)
+
         # now add final layer
         outputs = Conv2DTranspose(channels, (3, 3), strides=(1, 1), padding="same", activation="tanh")(x)
 
@@ -112,14 +121,14 @@ class cGAN():
         self.generator = self.create_generator()
 
         disc_optimizer = optimizers.Adam(lr=self.discriminator_lr, beta_1=0.5,clipvalue=5)
-        self.discriminator.compile(disc_optimizer, "binary_crossentropy", metrics="accuracy")
+        self.discriminator.compile(optimizer=disc_optimizer, loss="binary_crossentropy", metrics="accuracy")
 
         self.discriminator.trainable = False
         gen_noise, gen_label = self.generator.input
         gen_output = self.generator.output
         gan_output = self.discriminator([gen_output, gen_label])
         self.gan = Model(inputs=[gen_noise, gen_label], outputs=gan_output)
-        self.gan_optimizer = optimizers.Adam(lr=self.generator_lr, beta_1=0.6)
+        self.gan_optimizer = optimizers.Adam(lr=self.generator_lr)#, beta_1=0.5,clipvalue=5)
         self.gan.compile(loss="binary_crossentropy", optimizer= self.gan_optimizer)
         print("GAN model created")
 
@@ -185,13 +194,13 @@ class cGAN():
                 # GENERATE NOISE
                 noise_img, noise_labels  =  self.generate_latent_points()
 
-                fake_labels = np.zeros((self.batch_size, 1))
+                fake_labels = np.ones((self.batch_size, 1))
                 ganLoss = self.gan.train_on_batch([noise_img, noise_labels], fake_labels)
                 self.history['G_loss'].append(ganLoss)
             
             # at the end of each epoch 
             print("epoch " + str(epoch) + ": discriminator loss " + str(discLoss)+  " - generator loss " + str(ganLoss))
-            print("accuracy false: " + str(discAccFalse))
+            print("accuracy true: " + str(discAccTrue) + " accuracy false: " + str(discAccFalse))
 
             images = self.generator.predict([benchmarkImages, benchmarkLabels])
             if (epoch % 10) == 0:
@@ -208,9 +217,9 @@ class cGAN():
       if ylim!=0:
         plt.ylim(0, ylim)
       plt.show()
-        
+
     @staticmethod
-    def plot_fake_figures(x, n, epoch, dir='/content/drive/MyDrive/BIOINF/images_GAN/cGAN'):
+    def plot_fake_figures(x, n, epoch, dir='/content/drive/MyDrive/BIOINF/images_GAN/cGAN1'):
         fig = plt.figure(figsize=(6,6))
         for i in range(n*n):
             plt.subplot(n,n,i+1)
@@ -225,3 +234,5 @@ class cGAN():
         plt.savefig('{}/image_at_epoch_{:04d}.png'.format(dir, epoch))
     
         plt.show()
+
+    
