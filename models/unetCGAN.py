@@ -9,17 +9,19 @@ from keras.optimizers import *
 class unetCGAN():
   def __init__(self,
                   n_epochs=1500,
-                  batch_size=64,
+                  batch_size=256,
                   input_shape=(128, 128, 1),
                   latent_size=100,
                   alpha=0.2,
                   drop_rate=0.4,
                   num_classes = 3,
-                  discriminator_lr=5e-5,
+                  discriminator_lr=1e-4,
                   generator_lr=1e-4,
                   logging_step=10,
+                  r1_gamma=10,
                   out_images_path="outImages",
-                  checkpoint_dir="checkpoints"):
+                  checkpoint_dir="checkpoints",
+                  use_residual=False):
         
         self.n_epochs = n_epochs
         self.batch_size = batch_size
@@ -31,8 +33,10 @@ class unetCGAN():
         self.discriminator_lr = discriminator_lr
         self.generator_lr = generator_lr
         self.logging_step = logging_step
+        self.r1_gamma = r1_gamma
         self.out_images_path = out_images_path
-        self.checkpoint_dir = "checkpoints"
+        self.checkpoint_dir = checkpoint_dir
+        self.use_residual = use_residual
 
         self.model = self._build_model()
 
@@ -89,29 +93,29 @@ class unetCGAN():
 
     gap1 = GlobalAveragePooling2D()(drop5)
 
-    # TODO: Evaluate if correct to shrink to 1 output
+    # # TODO: Evaluate if correct to shrink to 1 output
     fc1 = Dense(128)(gap1)
     out_enc = Dense(1, name="out_enc")(fc1)
 
-    up6 = Conv2D(256, 2, activation=leaky, padding='same', kernel_initializer='he_normal')(UpSampling2D(size=(2,2))(drop5))
+    up6 = Conv2DTranspose(256, 2, strides=(2, 2), activation=leaky, padding='same', kernel_initializer='he_normal')(drop5)
     merge6 = concatenate([conv4,up6], axis = 3)
     conv6 = Conv2D(256, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(merge6)
     conv6 = Dropout(0.2)(conv6)
     conv6 = Conv2D(512, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv6)
 
-    up7 = Conv2D(128, 2, activation=leaky, padding='same', kernel_initializer='he_normal')(UpSampling2D(size=(2,2))(conv6))
+    up7 = Conv2DTranspose(128, 2, strides=(2, 2), activation=leaky, padding='same', kernel_initializer='he_normal')(conv6)
     merge7 = concatenate([conv3,up7], axis = 3)
     conv7 = Conv2D(128, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(merge7)
     conv7 = Dropout(0.2)(conv7)
     conv7 = Conv2D(128, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv7)
 
-    up8 = Conv2D(64, 2, activation=leaky, padding='same', kernel_initializer='he_normal')(UpSampling2D(size=(2,2))(conv7))
+    up8 = Conv2DTranspose(64, 2, strides=(2, 2), activation=leaky, padding='same', kernel_initializer='he_normal')(conv7)
     merge8 = concatenate([conv2,up8], axis = 3)
     conv8 = Conv2D(64, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(merge8)
     conv8 = Dropout(0.2)(conv8)
     conv8 = Conv2D(64, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv8)
 
-    up9 = Conv2D(32, 2, activation=leaky, padding='same', kernel_initializer='he_normal')(UpSampling2D(size=(2,2))(conv8))
+    up9 = Conv2DTranspose(32, 2, strides=(2, 2), activation=leaky, padding='same', kernel_initializer='he_normal')(conv8)
     merge9 = concatenate([conv1,up9], axis = 3)
     conv9 = Conv2D(32, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(merge9)
     conv9 = Dropout(0.2)(conv9)
@@ -125,11 +129,72 @@ class unetCGAN():
 
     return model 
 
+  def create_residual_generator(self):
+    leaky = tf.keras.layers.LeakyReLU(self.alpha)
+
+    input_noise = Input(shape=self.latent_size)
+
+    input_label = Input(shape=(1,))
+
+    # Embedding for categorical input
+    li = Embedding(self.num_classes, 50)(input_label)
+    
+    # Match initial image size
+    n_nodes = 8 * 8
+    li = Dense(n_nodes)(li)
+    # reshape to add additional channel
+    li = Reshape((8, 8, 1))(li)
+
+    dense1 = Dense(8*8*256, use_bias=False, input_shape=(self.latent_size,))(input_noise)
+    dense1 = BatchNormalization()(dense1)
+    dense1 = leaky(dense1)
+    dense1 = Reshape((8, 8, 256))(dense1)
+
+    merge = Concatenate()([dense1, li])
+
+    up1 = Conv2DTranspose(256, 2, strides=(2, 2), activation=leaky, padding='same', kernel_initializer='he_normal')(merge)
+    conv1 = Conv2D(256, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(up1)
+    conv1 = Dropout(0.2)(conv1)
+    conv1 = Conv2D(512, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv1)
+
+    # Residual connection
+    up_res_1 = UpSampling2D(size=(2,2))(up1)
+
+    up2 = Conv2DTranspose(128, 2, strides=(2, 2), activation=leaky, padding='same', kernel_initializer='he_normal')(conv1)
+    merge2 = concatenate([up_res_1,up2], axis = 3)
+    conv2 = Conv2D(128, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(merge2)
+    conv2 = Dropout(0.2)(conv2)
+    conv2 = Conv2D(128, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv2)
+
+    # Residual connection
+    up_res_2 = UpSampling2D(size=(2,2))(up2)
+
+
+    up3 = Conv2DTranspose(64, 2, strides=(2, 2), activation=leaky, padding='same', kernel_initializer='he_normal')(conv2)
+    merge3 = concatenate([up_res_2,up3], axis = 3)
+    conv3= Conv2D(64, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(merge3)
+    conv3= Dropout(0.2)(conv3)
+    conv3= Conv2D(64, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv3)
+
+    # Residual connection
+    up_res_3 = UpSampling2D(size=(2,2))(up3)
+
+    up4 = Conv2DTranspose(32, 2, strides=(2, 2), activation=leaky, padding='same', kernel_initializer='he_normal')(conv3)
+    merge4 = concatenate([up_res_3,up4], axis = 3)
+    conv4 = Conv2D(32, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(merge4)
+    conv4 = Dropout(0.2)(conv4)
+    conv4 = Conv2D(32, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv4)
+    conv4 = Dropout(0.2)(conv4)
+    conv4 = Conv2D(2, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv4)
+
+    output = Conv2D(1, (1, 1), activation='tanh', padding='same', name="out_dec")(conv4)
+    model = Model(inputs=[input_noise, input_label], outputs=[output])
+    return model
+
   def create_generator(self):
 
     leaky = tf.keras.layers.LeakyReLU(self.alpha)
 
-    # TODO: Try with generator equal to unet decoder
     input_noise = Input(shape=self.latent_size)
 
     input_label = Input(shape=(1,))
@@ -176,12 +241,13 @@ class unetCGAN():
     return model
 
   class _unetCGANModel(keras.Model):
-    def __init__(self, discriminator, generator, latent_size, num_classes):
+    def __init__(self, discriminator, generator, latent_size, num_classes, r1_gamma):
         super(unetCGAN._unetCGANModel, self).__init__()
         self.discriminator = discriminator
         self.generator = generator
         self.latent_size = latent_size
         self.num_classes = num_classes
+        self.r1_gamma=r1_gamma
 
         self.loss_tracker_generator = keras.metrics.Mean(name="gen_loss")
         self.loss_tracker_discriminator = keras.metrics.Mean(name="disc_loss")
@@ -197,18 +263,38 @@ class unetCGAN():
     # Define and element-wise binary cross entropy loss
     def element_wise_cross_entropy_from_logits(self, labels, logits):
         # Compute the loss element-wise
-        losses = tf.nn.sigmoid_cross_entropy_with_logits(labels = labels, logits = logits)
+        losses = tf.nn.sigmoid_cross_entropy_with_logits(labels=labels, logits=logits)
         # Compute average to reduce everything to a specific number
         loss = tf.reduce_mean(losses)
         return loss
 
+    def r1_regularization(self, d_logits, true_data):
+      """
+      Penalizes the gradients of the discriminator on the true data distribution.
+      This tecnique is described in: https://arxiv.org/pdf/1801.04406v4.pdf
+      This method is adapted from the more general gradient penalization regularization
+      fro GANS introduced in this repo: https://github.com/rothk/Stabilizing_GANs
+      """
+      d = tf.nn.sigmoid(d_logits)
+
+      grad_d_logits = tf.gradients(d_logits, true_data)[0]
+
+      grad_d_logits_norm = tf.norm(tf.reshape(grad_d_logits, [batch_size, -1]), axis=1, keepdims=True)
+
+      disc_regularizer = tf.reduce_mean(grad_d_logits_norm)
+      return disc_regularizer
+
     def generator_loss(self, fake_output):
         return self.element_wise_cross_entropy_from_logits(tf.ones_like(fake_output), fake_output)
 
-    def discriminator_loss(self, real_output, fake_output):
+    def discriminator_loss(self, real_output, fake_output, data, enc=False):
         real_loss = self.element_wise_cross_entropy_from_logits(tf.ones_like(real_output), real_output)
         fake_loss = self.element_wise_cross_entropy_from_logits(tf.zeros_like(fake_output), fake_output)
-        total_loss = real_loss + fake_loss
+        if enc:
+          r1_penalty = self.r1_gamma/2 * self.r1_regularization(real_output, data)
+          total_loss = real_loss + fake_loss + r1_penalty
+        else:
+          total_loss = real_loss + fake_loss
         return total_loss
 
     def train_step(self, data):
@@ -220,15 +306,18 @@ class unetCGAN():
       with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
         generated_images = self.generator((noise, fake_labels), training=True)
         
-        real_output_enc = self.discriminator((images, labels), training=True)[0]
-        fake_output_enc = self.discriminator((generated_images, fake_labels), training=True)[0]
+        real_output = self.discriminator((images, labels), training=True)
+        fake_output = self.discriminator((generated_images, fake_labels), training=True)
 
-        real_output_dec = self.discriminator((images, labels), training=True)[1]
-        fake_output_dec = self.discriminator((generated_images, fake_labels), training=True)[1]
+        real_output_enc = real_output[0]
+        fake_output_enc = fake_output[0]
+
+        real_output_dec = real_output[1]
+        fake_output_dec = fake_output[1]
         
         gen_loss = self.generator_loss(fake_output_enc) + self.generator_loss(fake_output_dec)
         
-        disc_loss = self.discriminator_loss(real_output_enc, fake_output_enc) + self.discriminator_loss(real_output_dec, fake_output_dec)
+        disc_loss = self.discriminator_loss(real_output_enc, fake_output_enc, images) + self.discriminator_loss(real_output_dec, fake_output_dec, images)
       
       gradients_of_generator = gen_tape.gradient(gen_loss, self.generator.trainable_variables)
       gradients_of_discriminator = disc_tape.gradient(disc_loss, self.discriminator.trainable_variables)
@@ -254,19 +343,23 @@ class unetCGAN():
           return [self.loss_tracker_generator, self.loss_tracker_discriminator]
 
   def _build_model(self):
-    self.generator = self.create_generator()
+    if self.use_residual:
+      self.generator = self.create_residual_generator()
+    else:
+      self.generator = self.create_generator()
+
     self.discriminator = self.create_unet_discriminator()
 
-    model = self._unetCGANModel(generator=self.generator, discriminator=self.discriminator, latent_size=self.latent_size, num_classes=self.num_classes)
+    model = self._unetCGANModel(generator=self.generator, discriminator=self.discriminator, latent_size=self.latent_size, num_classes=self.num_classes, r1_gamma=self.r1_gamma)
 
-    self.generator_optimizer = tf.keras.optimizers.Adam(1e-4, beta_1=0.5, clipvalue=5)
-    self.discriminator_optimizer = tf.keras.optimizers.Adam(1e-4, beta_1=0.5)
+    self.generator_optimizer = tf.keras.optimizers.Adam(self.generator_lr, beta_1=0.5, clipvalue=5)
+    self.discriminator_optimizer = tf.keras.optimizers.Adam(self.discriminator_lr, beta_1=0.5)
 
     model.compile(generator_optimizer=self.generator_optimizer, discriminator_optimizer=self.discriminator_optimizer)
 
     return model
 
-  def train_model(self, train_ds, training_size, benchmark_noise, benchmark_labels):
+  def train_model(self, train_ds, benchmark_noise, benchmark_labels):
     # set checkpoint directory
     checkpoint_prefix = os.path.join(self.checkpoint_dir, "ckpt")
     checkpoint = tf.train.Checkpoint(generator_optimizer=self.model.generator_optimizer,
@@ -280,8 +373,7 @@ class unetCGAN():
 
     print("Starting training of the Unet GAN model.")
 
-    batchesPerEpoch = int(training_size / self.batch_size)
-    print("Batches per epoch ", batchesPerEpoch)
+    print("Batches per epoch ", len(train_ds))
 
     for epoch in range(self.n_epochs+1):
       # Keep track of the losses at each step
@@ -290,7 +382,7 @@ class unetCGAN():
 
       print("Starting epoch ", epoch)
 
-      for step in range(batchesPerEpoch+1):
+      for step in range(len(train_ds)):
         images, labels = next(train_ds)
         gen_loss_step, disc_loss_step = self.model.train_on_batch(images, labels)
 
@@ -307,23 +399,26 @@ class unetCGAN():
         generator_images = self.model.generator((benchmark_noise, benchmark_labels), training=False)
                   
         print("Generated images: ")
-        self.plot_fake_figures(generator_images, 4, epoch, self.out_images_path, "generated")
+        self.plot_fake_figures(generator_images, benchmark_labels, 4, epoch, self.out_images_path, "generated")
 
         print("Decoded maps: ")
         decoded_images = self.model.discriminator((generator_images, benchmark_labels), training=False)[1]
-        self.plot_fake_figures(decoded_images, 4, epoch, self.out_images_path, "decoded")
+        self.plot_fake_figures(decoded_images, None, 4, epoch, self.out_images_path, "decoded")
 
-        checkpoint.save(file_prefix = checkpoint_prefix)
+        checkpoint.save(file_prefix=checkpoint_prefix)
 
   @staticmethod 
-  def plot_fake_figures(x, n, epoch, img_dir,image_type):
-      fig = plt.figure(figsize=(6,6))
+  def plot_fake_figures(x, y, n, epoch, img_dir,image_type):
+      fig = plt.figure(figsize=(12,12))
+      labels = ["covid", "normal", "viral_pneumonia"]
       for i in range(n*n):
           plt.subplot(n,n,i+1)
           plt.xticks([])
           plt.yticks([])
           plt.grid(False)
           img=x[i,:,:,:]
+          if y is not None:
+            plt.title(f"Generated image of label:\n {labels[y[i]]}")
           # rescale for visualization purposes
           img = tf.keras.preprocessing.image.array_to_img(img)
           plt.imshow(img, cmap="gray")
