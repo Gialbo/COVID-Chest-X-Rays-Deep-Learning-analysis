@@ -330,17 +330,17 @@ class unetCGAN():
       self.loss_tracker_discriminator.update_state(disc_loss)
       return {'gen_loss': self.loss_tracker_generator.result(), 'disc_loss': self.loss_tracker_discriminator.result()}
         
-      def test_step(self, data):
-        pass
+    def test_step(self, data):
+      pass
 
-      @property
-      def metrics(self):
-          # We list our `Metric` objects here so that `reset_states()` can be
-          # called automatically at the start of each epoch
-          # or at the start of `evaluate()`.
-          # If you don't implement this property, you have to call
-          # `reset_states()` yourself at the time of your choosing.
-          return [self.loss_tracker_generator, self.loss_tracker_discriminator]
+    @property
+    def metrics(self):
+        # We list our `Metric` objects here so that `reset_states()` can be
+        # called automatically at the start of each epoch
+        # or at the start of `evaluate()`.
+        # If you don't implement this property, you have to call
+        # `reset_states()` yourself at the time of your choosing.
+        return [self.loss_tracker_generator, self.loss_tracker_discriminator]
 
   def _build_model(self):
     if self.use_residual:
@@ -358,6 +358,16 @@ class unetCGAN():
     model.compile(generator_optimizer=self.generator_optimizer, discriminator_optimizer=self.discriminator_optimizer)
 
     return model
+
+  def generate_latent_points(self):
+	  # generate points in the latent space
+    x_input = np.random.randn(self.latent_size * self.batch_size)
+    # reshape into a batch of inputs for the network
+    x_input = x_input.reshape(self.batch_size, self.latent_size )
+    # generate labels
+    labels = np.random.randint(0, self.n_classes, batch_size)
+    return [x_input, labels]
+
 
   def train_model(self, train_ds, benchmark_noise, benchmark_labels):
     # set checkpoint directory
