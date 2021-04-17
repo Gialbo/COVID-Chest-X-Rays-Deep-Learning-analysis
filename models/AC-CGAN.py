@@ -46,7 +46,7 @@ class cGAN():
 				self.out_images_path = out_images_path
 				self.checkpoint_dir = checkpoint_dir
 				self.use_residual = use_residual
-
+				
 
 				self.model = self._build_model()
 
@@ -76,9 +76,11 @@ class cGAN():
 				x = Flatten()(x)
 				x = Dense(128, activation=leaky)(x)
 				x = Dropout(self.drop_rate)(x)
-				outputs = Dense(1, activation="sigmoid")(x)
+				
+				output_disc = Dense(1, activation="sigmoid")(x)
+				output_class = Dense(self.num_classes, activation="sigmoid")(x)
 
-				model = Model(inputs=[in_image, in_label], outputs=outputs)
+				model = Model(inputs=[in_image, in_label], outputs=[output_disc, output_class])
 				return model
 
 		def create_generator(self):
@@ -89,9 +91,9 @@ class cGAN():
 				leaky = tf.keras.layers.LeakyReLU(self.alpha)
 
 
-				dim1 = width // 16
+				dim1 = width // 16     
 				dim2 = height // 16
-
+				
 				in_label = Input(shape=(1,))
 				# embedding for categorical input
 				li = Embedding(self.n_classes, 10)(in_label)
@@ -102,9 +104,9 @@ class cGAN():
 				li = Reshape((dim1, dim2, 1))(li)
 
 				in_lat = Input(shape=(self.latent_size,))
-				x = Dense( dim1 * dim2 * 12, activation="relu")(in_lat)
+				x = Dense( dim1 * dim2 * 12, activation="relu")(in_lat) 
 				x = BatchNormalization()(x)
-
+				
 				x = Reshape((dim1, dim2, 12))(x)
 
 				merge = Concatenate()([x, li])
@@ -137,7 +139,7 @@ class cGAN():
 
 				# Embedding for categorical input
 				li = Embedding(self.n_classes, 50)(input_label)
-
+				
 				# Match initial image size
 				n_nodes = 8 * 8
 				li = Dense(n_nodes)(li)
@@ -201,31 +203,41 @@ class cGAN():
 
 						self.loss_tracker_generator = keras.metrics.Mean(name="gen_loss")
 						self.loss_tracker_discriminator = keras.metrics.Mean(name="disc_loss")
-
+					
 				def call(self, x):
 					return x
 
 				def compile(self, discriminator_optimizer, generator_optimizer):
-						super(cGAN._cGANModel, self).compile()
-						self.generator_optimizer = generator_optimizer
-						self.discriminator_optimizer = discriminator_optimizer
+					super(cGAN._cGANModel, self).compile()
+					self.generator_optimizer = generator_optimizer
+					self.discriminator_optimizer = discriminator_optimizer
 
 				# Define and element-wise binary cross entropy loss
 				def element_wise_cross_entropy_from_logits(self, labels, logits):
-						# Compute the loss element-wise
-						losses = tf.nn.sigmoid_cross_entropy_with_logits(labels = labels, logits = logits)
-						# Compute average to reduce everything to a specific number
-						loss = tf.reduce_mean(losses)
-						return loss
+					# Compute the loss element-wise
+					losses = tf.nn.sigmoid_cross_entropy_with_logits(labels = labels, logits = logits)
+					# Compute average to reduce everything to a specific number
+					loss = tf.reduce_mean(losses)
+					return loss
+
+				# Define a categorical cross entropy
+				def categorical_cross_entropy_from_logits(self, labels, logits):
+					# Compute the softmax loss
+					return tf.nn.softmax_cross_entropy_with_logits(labels, logits)
 
 				def generator_loss(self, fake_output):
-						return self.element_wise_cross_entropy_from_logits(tf.ones_like(fake_output), fake_output)
+					return self.element_wise_cross_entropy_from_logits(tf.ones_like(fake_output), fake_output)
 
 				def discriminator_loss(self, real_output, fake_output):
-						real_loss = self.element_wise_cross_entropy_from_logits(tf.ones_like(real_output), real_output)
-						fake_loss = self.element_wise_cross_entropy_from_logits(tf.zeros_like(fake_output), fake_output)
-						total_loss = real_loss + fake_loss
-						return total_loss
+					real_loss = self.element_wise_cross_entropy_from_logits(tf.ones_like(real_output), real_output)
+					fake_loss = self.element_wise_cross_entropy_from_logits(tf.zeros_like(fake_output), fake_output)
+					total_loss = real_loss + fake_loss
+					return total_loss
+
+				def classification_loss(self, real_output, real_labels, fake_output, fake_labels):
+					real_loss = self.categorical_cross_entropy_from_logits(real_output, real_labels)
+					fake_loss = self.categorical_cross_entropy_from_logits(fake_output, fake_labels)
+					return real_loss + fake_loss
 
 				def train_step(self, data):
 						images, labels = data
@@ -235,19 +247,24 @@ class cGAN():
 
 						with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
 
-								generated_images = self.generator((noise, fake_labels), training=True)
+							generated_images = self.generator((noise, fake_labels), training=True)
+							
+							real_output = self.discriminator((images, labels), training=True)
+							fake_output = self.discriminator((generated_images, fake_labels), training=True)
 
-								real_output = self.discriminator((images, labels), training=True)
-								fake_output = self.discriminator((generated_images, fake_labels), training=True)
+							real_output_disc = real_output[0]
+							fake_output_disc = fake_output[0]
 
-
-								gen_loss = self.generator_loss(fake_output)
-
-								disc_loss = self.discriminator_loss(real_output, fake_output)
-
+							real_output_class = real_output[1]
+							fake_output_class = fake_output[1]
+							
+							gen_loss = self.classification_loss(real_output_class, labels, fake_output_class, fake_labels) - self.generator_loss(fake_output_disc)
+							
+							disc_loss = self.classification_loss(real_output_class, labels, fake_output_class, fake_labels) + self.discriminator_loss(real_output_disc, fake_output_disc, images)
+							
 						gradients_of_generator = gen_tape.gradient(gen_loss, self.generator.trainable_variables)
 						gradients_of_discriminator = disc_tape.gradient(disc_loss, self.discriminator.trainable_variables)
-
+							
 						self.generator_optimizer.apply_gradients(zip(gradients_of_generator, self.generator.trainable_variables))
 						self.discriminator_optimizer.apply_gradients(zip(gradients_of_discriminator, self.discriminator.trainable_variables))
 
@@ -255,7 +272,7 @@ class cGAN():
 						self.loss_tracker_generator.update_state(gen_loss)
 						self.loss_tracker_discriminator.update_state(disc_loss)
 						return {'gen_loss': self.loss_tracker_generator.result(), 'disc_loss': self.loss_tracker_discriminator.result()}
-
+							
 				def test_step(self, data):
 						pass
 
@@ -294,7 +311,7 @@ class cGAN():
 				labels = np.random.randint(0, self.n_classes, self.batch_size)
 				return [x_input, labels]
 
-
+		
 
 		def train_model(self, train_ds, benchmark_noise, benchmark_labels):
 				# set checkpoint directory
@@ -331,35 +348,38 @@ class cGAN():
 										print(f"\t\tGenerator Loss: {gen_loss_step}")
 										print(f"\t\tDiscriminator Loss: {disc_loss_step}")
 
-
+										
 						if epoch % self.logging_step == 0:
 								generator_images = self.model.generator((benchmark_noise, benchmark_labels), training=False)
-
+												
 								print("Generated images: ")
-								self.plot_fake_figures(generator_images, benchmark_labels, 4, epoch, self.out_images_path)
+								self.plot_fake_figures(generator_images, benchmark_labels, 4, epoch, self.out_images_path, "generated")
+
+								print("Decoded maps: ")
+								decoded_images = self.model.discriminator((generator_images, benchmark_labels), training=False)[1]
+								self.plot_fake_figures(decoded_images, None, 4, epoch, self.out_images_path, "decoded")
 
 								checkpoint.save(file_prefix=checkpoint_prefix)
 
 		def plot_losses(self, data, xaxis, yaxis, ylim=0):
-		    pd.DataFrame(data).plot(figsize=(10,8))
-				plt.grid(True)
-				plt.xlabel(xaxis)
-				plt.ylabel(yaxis)
-				if ylim!=0:
-						plt.ylim(0, ylim)
-				plt.show()
+			pd.DataFrame(data).plot(figsize=(10,8))
+			plt.grid(True)
+			plt.xlabel(xaxis)
+			plt.ylabel(yaxis)
+			if ylim!=0:
+				plt.ylim(0, ylim)
+			plt.show()
 
 		@staticmethod
 		def plot_fake_figures(x, labels, n, epoch, dir='./'):
 
 				labels_dict = {
-						0: "covid-19",
-						1: "normal",
-						2: "viral-pneumonia"
+					0: "covid-19",
+					1: "normal",
+					2: "viral-pneumonia"
 				}
 
 				fig = plt.figure(figsize=(6,6))
-
 				for i in range(n*n):
 						plt.subplot(n,n,i+1)
 						plt.xticks([])
@@ -370,6 +390,8 @@ class cGAN():
 						img = ((img*127.5) + 127.5).astype("uint8")
 						plt.xlabel(labels_dict[labels[i]])
 						plt.imshow(img.reshape(128, 128), cmap='gray')
-						plt.savefig('{}/image_at_epoch_{:04d}.png'.format(dir, epoch))
-
+				plt.savefig('{}/image_at_epoch_{:04d}.png'.format(dir, epoch))
+		
 				plt.show()
+
+		
