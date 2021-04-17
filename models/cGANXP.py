@@ -21,7 +21,7 @@ class cGAN():
                   batch_size=512,
                   input_shape=(128, 128, 1),
                   latent_size=100,
-                  num_classes = 3,
+                  n_classes = 3,
                   alpha=0.2,
                   drop_rate=0.5,
                   discriminator_lr=6e-5,
@@ -36,7 +36,7 @@ class cGAN():
         self.batch_size = batch_size
         self.input_shape = input_shape
         self.latent_size = latent_size
-        self.num_classes = num_classes
+        self.n_classes = n_classes
         self.alpha = alpha
         self.drop_rate = drop_rate
         self.discriminator_lr = discriminator_lr
@@ -136,7 +136,7 @@ class cGAN():
         input_label = Input(shape=(1,))
 
         # Embedding for categorical input
-        li = Embedding(self.num_classes, 50)(input_label)
+        li = Embedding(self.n_classes, 50)(input_label)
         
         # Match initial image size
         n_nodes = 8 * 8
@@ -274,7 +274,7 @@ class cGAN():
 
         self.discriminator = self.create_discriminator()
 
-        model = self._cGANModel(generator=self.generator, discriminator=self.discriminator, latent_size=self.latent_size, num_classes=self.num_classes, r1_gamma=self.r1_gamma)
+        model = self._cGANModel(generator=self.generator, discriminator=self.discriminator, latent_size=self.latent_size, num_classes=self.n_classes, r1_gamma=self.r1_gamma)
 
         self.generator_optimizer = tf.keras.optimizers.Adam(self.generator_lr, beta_1=0.5, clipvalue=5)
         self.discriminator_optimizer = tf.keras.optimizers.Adam(self.discriminator_lr, beta_1=0.5)
@@ -289,7 +289,7 @@ class cGAN():
         # reshape into a batch of inputs for the network
         x_input = x_input.reshape(self.batch_size, self.latent_size )
         # generate labels
-        labels = np.random.randint(0, self.num_classes, self.batch_size)
+        labels = np.random.randint(0, self.n_classes, self.batch_size)
         return [x_input, labels]
 
     
