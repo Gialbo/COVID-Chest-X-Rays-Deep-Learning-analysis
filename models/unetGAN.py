@@ -212,17 +212,17 @@ class unetGAN():
       self.loss_tracker_discriminator.update_state(disc_loss)
       return {'gen_loss': self.loss_tracker_generator.result(), 'disc_loss': self.loss_tracker_discriminator.result()}
         
-      def test_step(self, data):
+    def test_step(self, data):
         pass
 
-      @property
-      def metrics(self):
-          # We list our `Metric` objects here so that `reset_states()` can be
-          # called automatically at the start of each epoch
-          # or at the start of `evaluate()`.
-          # If you don't implement this property, you have to call
-          # `reset_states()` yourself at the time of your choosing.
-          return [self.loss_tracker_generator, self.loss_tracker_discriminator]
+    @property
+    def metrics(self):
+        # We list our `Metric` objects here so that `reset_states()` can be
+        # called automatically at the start of each epoch
+        # or at the start of `evaluate()`.
+        # If you don't implement this property, you have to call
+        # `reset_states()` yourself at the time of your choosing.
+        return [self.loss_tracker_generator, self.loss_tracker_discriminator]
 
   def _build_model(self):
     self.generator = self.create_generator()
