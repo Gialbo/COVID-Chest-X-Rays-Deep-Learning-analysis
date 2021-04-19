@@ -341,7 +341,7 @@ class cGAN():
 								checkpoint.save(file_prefix=checkpoint_prefix)
 
 		def plot_losses(self, data, xaxis, yaxis, ylim=0):
-		    pd.DataFrame(data).plot(figsize=(10,8))
+				pd.DataFrame(data).plot(figsize=(10,8))
 				plt.grid(True)
 				plt.xlabel(xaxis)
 				plt.ylabel(yaxis)
@@ -366,8 +366,8 @@ class cGAN():
 						plt.yticks([])
 						img=x[i,:,:,:]
 						# rescale for visualization purposes
-						#img = np.repeat(img, 3, axis=-1)
-						img = ((img*127.5) + 127.5).astype("uint8")
+						img = tf.keras.preprocessing.image.array_to_img(img)
+						plt.imshow(img, cmap="gray")
 						plt.xlabel(labels_dict[labels[i]])
 						plt.imshow(img.reshape(128, 128), cmap='gray')
 						plt.savefig('{}/image_at_epoch_{:04d}.png'.format(dir, epoch))

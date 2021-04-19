@@ -279,7 +279,7 @@ class unetCGAN():
 
       grad_d_logits = tf.gradients(d_logits, true_data)[0]
 
-      grad_d_logits_norm = tf.norm(tf.reshape(grad_d_logits, [batch_size, -1]), axis=1, keepdims=True)
+      grad_d_logits_norm = tf.norm(tf.reshape(grad_d_logits, [self.batch_size, -1]), axis=1, keepdims=True)
 
       disc_regularizer = tf.reduce_mean(grad_d_logits_norm)
       return disc_regularizer
