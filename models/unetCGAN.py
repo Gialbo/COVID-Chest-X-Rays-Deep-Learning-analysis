@@ -123,7 +123,7 @@ class unetCGAN():
     conv9 = Dropout(0.2)(conv9)
     conv9 = Conv2D(2, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv9)
 
-    out_dec = Conv2D(1, (1, 1), activation='sigmoid', padding='same', name="out_dec")(conv9)
+    out_dec = Conv2D(1, (1, 1), activation='linear', padding='same', name="out_dec")(conv9)
 
     model = Model(inputs=[input_image, input_label], outputs=[out_enc, out_dec])  
 
