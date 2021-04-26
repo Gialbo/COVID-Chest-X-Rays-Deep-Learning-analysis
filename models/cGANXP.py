@@ -26,7 +26,7 @@ class cGANXP():
                       drop_rate=0.5,
                       discriminator_lr=8e-5,
                       generator_lr=1e-4,
-                      logging_step=10,
+                      logging_step=15,
                       r1_gamma=20,
                       out_images_path="outImages",
                       checkpoint_dir="checkpoints",
@@ -267,6 +267,7 @@ class cGANXP():
                         return self.element_wise_cross_entropy_from_logits(tf.ones_like(fake_output), fake_output)
  
                 def discriminator_loss(self, real_output, fake_output, images):
+                        # label smoothing added to real_loss
                         real_loss = self.element_wise_cross_entropy_from_logits(tf.ones_like(real_output), real_output)
                         fake_loss = self.element_wise_cross_entropy_from_logits(tf.zeros_like(fake_output), fake_output)
                         r1_penalization = self.r1_gamma/2 * self.r1_regularization(real_output, images)
@@ -361,11 +362,11 @@ class cGANXP():
                                                                                 model=self.model)
  
                 # creating dictionaries for history and accuracy for the plots
-                history = {}
-                history['G_loss'] = []
-                history['D_loss'] = []
-                history['D_acc_real'] = []
-                history['D_acc_fake'] = []
+                self.history = {}
+                self.history['G_loss'] = []
+                self.history['D_loss'] = []
+                self.history['D_acc_real'] = []
+                self.history['D_acc_fake'] = []
 
                 print("Starting training of the cGAN model.")
 
@@ -373,10 +374,6 @@ class cGANXP():
 
                 for epoch in range(self.n_epochs+1):
                         # Keep track of the losses at each step
-                        epoch_gen_loss = []
-                        epoch_disc_loss = []
-                        epoch_disc_acc_real = []
-                        epoch_disc_acc_fake = []
 
                         print(f"Starting epoch {epoch} of {self.n_epochs}")
 
@@ -384,10 +381,10 @@ class cGANXP():
                                 images, labels = next(train_ds)
                                 g_loss, d_loss, d_acc_real, d_acc_fake = self.model.train_on_batch(images, labels)
 
-                                epoch_gen_loss.append(g_loss)
-                                epoch_disc_loss.append(d_loss)
-                                epoch_disc_acc_real.append(d_acc_real)
-                                epoch_disc_acc_fake.append(d_acc_fake)
+                                self.history['G_loss'].append(g_loss)
+                                self.history['D_loss'].append(d_loss)
+                                self.history['D_acc_real'].append(d_acc_real)
+                                self.history['D_acc_fake'].append(d_acc_fake)
 
                                 if step % self.logging_step == 0:
                                         print(f"\tLosses at step {step}:")
