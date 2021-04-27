@@ -17,7 +17,7 @@ from keras.optimizers import *
 class cGANXP():
  
         def __init__(self,
-                      n_epochs=750,
+                      n_epochs=700,
                       batch_size=128,
                       input_shape=(128, 128, 1),
                       latent_size=100,
@@ -26,7 +26,7 @@ class cGANXP():
                       drop_rate=0.5,
                       discriminator_lr=8e-5,
                       generator_lr=1e-4,
-                      logging_step=15,
+                      logging_step=10,
                       r1_gamma=20,
                       out_images_path="outImages",
                       checkpoint_dir="checkpoints",
@@ -365,8 +365,9 @@ class cGANXP():
                 self.history = {}
                 self.history['G_loss'] = []
                 self.history['D_loss'] = []
-                self.history['D_acc_real'] = []
-                self.history['D_acc_fake'] = []
+                self.accuracy = {}
+                self.accuracy['D_acc_real'] = []
+                self.accuracy['D_acc_fake'] = []
 
                 print("Starting training of the cGAN model.")
 
@@ -383,8 +384,8 @@ class cGANXP():
 
                                 self.history['G_loss'].append(g_loss)
                                 self.history['D_loss'].append(d_loss)
-                                self.history['D_acc_real'].append(d_acc_real)
-                                self.history['D_acc_fake'].append(d_acc_fake)
+                                self.accuracy['D_acc_real'].append(d_acc_real)
+                                self.accuracy['D_acc_fake'].append(d_acc_fake)
 
                                 if step % self.logging_step == 0:
                                         print(f"\tLosses at step {step}:")
@@ -400,7 +401,7 @@ class cGANXP():
                                 print("Generated images: ")
                                 self.plot_fake_figures(generator_images, benchmark_labels, 4, epoch,  self.out_images_path)
  
-                        if (epoch % 50) == 0:
+                        if (epoch % 100) == 0:
                                 checkpoint.save(file_prefix = checkpoint_prefix)
  
         def plot_losses(self, data, xaxis, yaxis, ylim=0):
