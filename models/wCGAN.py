@@ -224,9 +224,6 @@ class wCGAN():
                         norm = tf.sqrt(tf.reduce_sum(tf.square(grads), axis=[1, 2, 3]))
                         gp = tf.reduce_mean((norm - 1.0) ** 2)
                         return gp
-
-                def wasserstein_loss(self, outputs, labels):
-                        return tf.reduce_mean(outputs * labels)
  
                 def generator_loss(self, fake_img):
                         return -tf.reduce_mean(fake_img)
