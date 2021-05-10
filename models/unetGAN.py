@@ -8,13 +8,13 @@ from keras.optimizers import *
 
 class unetGAN():
   def __init__(self,
-                  n_epochs=1500,
+                  n_epochs=300,
                   batch_size=256,
                   input_shape=(128, 128, 1),
                   latent_size=100,
                   alpha=0.2,
                   drop_rate=0.4,
-                  discriminator_lr=5e-5,
+                  discriminator_lr=1e-4,
                   generator_lr=1e-4,
                   logging_step=10,
                   out_images_path="outImages",
@@ -30,7 +30,7 @@ class unetGAN():
         self.generator_lr = generator_lr
         self.logging_step = logging_step
         self.out_images_path = out_images_path
-        self.checkpoint_dir = "checkpoints"
+        self.checkpoint_dir = checkpoint_dir
 
         self.model = self._build_model()
 
@@ -38,9 +38,9 @@ class unetGAN():
 
     leaky = tf.keras.layers.LeakyReLU(self.alpha)
 
-    inputs = Input(self.input_shape)
+    input_image = Input(self.input_shape)
 
-    conv1 = Conv2D(32, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(inputs)
+    conv1 = Conv2D(32, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(input_image)
     conv1 = Dropout(0.2)(conv1)
 
     conv1 = Conv2D(32, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv1)
@@ -72,30 +72,29 @@ class unetGAN():
 
     gap1 = GlobalAveragePooling2D()(drop5)
 
-    # TODO: Evaluate if correct to shrink to 1 output
-    # fc1 = Dense(128)(gap1)
-    # out_enc = Dense(1, name="out_enc")(fc1)
-    out_enc = gap1
+    # # TODO: Evaluate if correct to shrink to 1 output
+    fc1 = Dense(128)(gap1)
+    out_enc = Dense(1, name="out_enc")(fc1)
 
-    up6 = Conv2D(256, 2, activation=leaky, padding='same', kernel_initializer='he_normal')(UpSampling2D(size=(2,2))(drop5))
+    up6 = Conv2DTranspose(256, 2, strides=(2, 2), activation=leaky, padding='same', kernel_initializer='he_normal')(drop5)
     merge6 = concatenate([conv4,up6], axis = 3)
     conv6 = Conv2D(256, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(merge6)
     conv6 = Dropout(0.2)(conv6)
     conv6 = Conv2D(512, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv6)
 
-    up7 = Conv2D(128, 2, activation=leaky, padding='same', kernel_initializer='he_normal')(UpSampling2D(size=(2,2))(conv6))
+    up7 = Conv2DTranspose(128, 2, strides=(2, 2), activation=leaky, padding='same', kernel_initializer='he_normal')(conv6)
     merge7 = concatenate([conv3,up7], axis = 3)
     conv7 = Conv2D(128, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(merge7)
     conv7 = Dropout(0.2)(conv7)
     conv7 = Conv2D(128, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv7)
 
-    up8 = Conv2D(64, 2, activation=leaky, padding='same', kernel_initializer='he_normal')(UpSampling2D(size=(2,2))(conv7))
+    up8 = Conv2DTranspose(64, 2, strides=(2, 2), activation=leaky, padding='same', kernel_initializer='he_normal')(conv7)
     merge8 = concatenate([conv2,up8], axis = 3)
     conv8 = Conv2D(64, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(merge8)
     conv8 = Dropout(0.2)(conv8)
     conv8 = Conv2D(64, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv8)
 
-    up9 = Conv2D(32, 2, activation=leaky, padding='same', kernel_initializer='he_normal')(UpSampling2D(size=(2,2))(conv8))
+    up9 = Conv2DTranspose(32, 2, strides=(2, 2), activation=leaky, padding='same', kernel_initializer='he_normal')(conv8)
     merge9 = concatenate([conv1,up9], axis = 3)
     conv9 = Conv2D(32, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(merge9)
     conv9 = Dropout(0.2)(conv9)
@@ -105,7 +104,7 @@ class unetGAN():
 
     out_dec = Conv2D(1, (1, 1), activation='sigmoid', padding='same', name="out_dec")(conv9)
 
-    model = Model(inputs, outputs=[out_enc, out_dec])  
+    model = Model(inputs=input_image, outputs=[out_enc, out_dec])  
 
     return model 
 
@@ -113,37 +112,50 @@ class unetGAN():
 
     leaky = tf.keras.layers.LeakyReLU(self.alpha)
 
-    # TODO: Try with generator equal to unet decoder
-    inputs = Input(self.latent_size)
+    input_noise = Input(shape=self.latent_size)
 
-    dense1 = Dense(8*8*256, use_bias=False, input_shape=(self.latent_size,))(inputs)
+    dense1 = Dense(8*8*256, use_bias=False, input_shape=(self.latent_size,))(input_noise)
     dense1 = BatchNormalization()(dense1)
     dense1 = leaky(dense1)
     dense1 = Reshape((8, 8, 256))(dense1)
 
-    conv1 = Conv2DTranspose(128, (5, 5), strides=(1, 1), padding='same', use_bias=False)(dense1)
-    conv1 = BatchNormalization()(conv1)
-    conv1 = leaky(conv1)
-          
-    conv2 = Conv2DTranspose(64, (5, 5), strides=(2, 2), padding='same', use_bias=False)(conv1)
-    conv2 = BatchNormalization()(conv2)
-    conv2 = leaky(conv2)
+    up1 = Conv2DTranspose(256, 2, strides=(2, 2), activation=leaky, padding='same', kernel_initializer='he_normal')(dense1)
+    conv1 = Conv2D(256, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(up1)
+    conv1 = Dropout(0.2)(conv1)
+    conv1 = Conv2D(512, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv1)
 
-    conv3 = Conv2DTranspose(32, (5, 5), strides=(2, 2), padding='same', use_bias=False)(conv2)
-    conv3 = BatchNormalization()(conv3)
-    conv3 = leaky(conv3)
+    # Residual connection
+    up_res_1 = UpSampling2D(size=(2,2))(up1)
 
-    conv4 = Conv2DTranspose(16, (5, 5), strides=(2, 2), padding='same', use_bias=False)(conv3)
-    conv4 = BatchNormalization()(conv4)
-    conv4 = leaky(conv4)
+    up2 = Conv2DTranspose(128, 2, strides=(2, 2), activation=leaky, padding='same', kernel_initializer='he_normal')(conv1)
+    merge2 = concatenate([up_res_1,up2], axis = 3)
+    conv2 = Conv2D(128, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(merge2)
+    conv2 = Dropout(0.2)(conv2)
+    conv2 = Conv2D(128, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv2)
 
-    conv5 = Conv2DTranspose(8, (5, 5), strides=(2, 2), padding='same', use_bias=False)(conv4)
-    conv5 = BatchNormalization()(conv5)
-    conv5 = leaky(conv5)
+    # Residual connection
+    up_res_2 = UpSampling2D(size=(2,2))(up2)
 
-    output = Conv2DTranspose(1, (5, 5), strides=(2, 2), padding='same', use_bias=False, activation='tanh')(conv4)
 
-    model = Model(inputs, output)
+    up3 = Conv2DTranspose(64, 2, strides=(2, 2), activation=leaky, padding='same', kernel_initializer='he_normal')(conv2)
+    merge3 = concatenate([up_res_2,up3], axis = 3)
+    conv3= Conv2D(64, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(merge3)
+    conv3= Dropout(0.2)(conv3)
+    conv3= Conv2D(64, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv3)
+
+    # Residual connection
+    up_res_3 = UpSampling2D(size=(2,2))(up3)
+
+    up4 = Conv2DTranspose(32, 2, strides=(2, 2), activation=leaky, padding='same', kernel_initializer='he_normal')(conv3)
+    merge4 = concatenate([up_res_3,up4], axis = 3)
+    conv4 = Conv2D(32, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(merge4)
+    conv4 = Dropout(0.2)(conv4)
+    conv4 = Conv2D(32, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv4)
+    conv4 = Dropout(0.2)(conv4)
+    conv4 = Conv2D(2, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv4)
+
+    output = Conv2D(1, (1, 1), activation='tanh', padding='same')(conv4)
+    model = Model(inputs=input_noise, outputs=output)
     return model
 
   class _unetGANModel(keras.Model):
@@ -212,17 +224,17 @@ class unetGAN():
       self.loss_tracker_discriminator.update_state(disc_loss)
       return {'gen_loss': self.loss_tracker_generator.result(), 'disc_loss': self.loss_tracker_discriminator.result()}
         
-    def test_step(self, data):
+      def test_step(self, data):
         pass
 
-    @property
-    def metrics(self):
-        # We list our `Metric` objects here so that `reset_states()` can be
-        # called automatically at the start of each epoch
-        # or at the start of `evaluate()`.
-        # If you don't implement this property, you have to call
-        # `reset_states()` yourself at the time of your choosing.
-        return [self.loss_tracker_generator, self.loss_tracker_discriminator]
+      @property
+      def metrics(self):
+          # We list our `Metric` objects here so that `reset_states()` can be
+          # called automatically at the start of each epoch
+          # or at the start of `evaluate()`.
+          # If you don't implement this property, you have to call
+          # `reset_states()` yourself at the time of your choosing.
+          return [self.loss_tracker_generator, self.loss_tracker_discriminator]
 
   def _build_model(self):
     self.generator = self.create_generator()
@@ -241,8 +253,8 @@ class unetGAN():
     # set checkpoint directory
     checkpoint_prefix = os.path.join(self.checkpoint_dir, "ckpt")
     checkpoint = tf.train.Checkpoint(generator_optimizer=self.model.generator_optimizer,
-                                    discriminator_optimizer=self.model.discriminator_optimizer,
-                                    model=self.model)
+                                     discriminator_optimizer=self.model.discriminator_optimizer,
+                                     model=self.model)
 
     # creating dictionaries for history and accuracy for the plots
     loss_history = {}
@@ -251,8 +263,7 @@ class unetGAN():
 
     print("Starting training of the Unet GAN model.")
 
-    batchesPerEpoch = int(training_size / self.batch_size)
-    print("Batches per epoch ", batchesPerEpoch)
+    print("Batches per epoch ", len(train_ds))
 
     for epoch in range(self.n_epochs+1):
       # Keep track of the losses at each step
@@ -261,8 +272,7 @@ class unetGAN():
 
       print("Starting epoch ", epoch)
 
-      for step in range(batchesPerEpoch+1):
-        batch, _ = next(train_ds)
+      for step, batch in enumerate(train_ds):
         gen_loss_step, disc_loss_step = self.model.train_on_batch(batch, batch)
 
         epoch_gen_loss.append(gen_loss_step)
@@ -284,7 +294,8 @@ class unetGAN():
         decoded_images = self.model.discriminator(generator_images, training=False)[1]
         self.plot_fake_figures(decoded_images, 4, epoch, self.out_images_path, "decoded")
 
-        checkpoint.save(file_prefix = checkpoint_prefix)
+      if epoch % (self.logging_step*5) == 0:
+        checkpoint.save(file_prefix=checkpoint_prefix)
 
   @staticmethod 
   def plot_fake_figures(x, n, epoch, img_dir,image_type):
