@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 import tensorflow as tf
 from keras.layers import *
 from keras.models import *
@@ -257,9 +258,9 @@ class unetGAN():
                                      model=self.model)
 
     # creating dictionaries for history and accuracy for the plots
-    loss_history = {}
-    loss_history['G_loss'] = []
-    loss_history['D_loss'] = []
+    history = {}
+    history['G_loss'] = []
+    history['D_loss'] = []
 
     print("Starting training of the Unet GAN model.")
 
@@ -296,6 +297,11 @@ class unetGAN():
 
       if epoch % (self.logging_step*5) == 0:
         checkpoint.save(file_prefix=checkpoint_prefix)
+      
+      history["G_loss"].append(np.array(epoch_gen_loss).mean())
+      history["D_loss"].append(np.array(epoch_disc_loss).mean())
+
+    return history
 
   @staticmethod 
   def plot_fake_figures(x, n, epoch, img_dir,image_type):

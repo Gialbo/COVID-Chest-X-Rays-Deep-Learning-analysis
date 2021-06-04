@@ -27,8 +27,8 @@ import json
 import warnings
 import numpy as np
 
-from keras import backend, layers, models, utils
-from keras import utils as keras_utils
+from tensorflow.keras import backend, layers, models, utils
+from tensorflow.keras import utils as keras_utils
 
 CLASS_INDEX = None
 CLASS_INDEX_PATH = ('https://storage.googleapis.com/download.tensorflow.org/'
