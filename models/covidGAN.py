@@ -191,6 +191,8 @@ class covidGAN():
 
             if (epoch % self.logging_step*5) == 0:
                 checkpoint.save(file_prefix = checkpoint_prefix)
+		
+	return history
 
     def plot_losses(self, data, xaxis, yaxis, ylim=0):
       pd.DataFrame(data).plot(figsize=(10,8))
