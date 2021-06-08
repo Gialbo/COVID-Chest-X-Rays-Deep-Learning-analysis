@@ -1,6 +1,6 @@
 """
 GAN model for COVID-19 class
-Bioinformatics @ Politecnico di Torino
+Bioinformatics, Politecnico di Torino
 Authors: Gilberto Manunza, Silvia Giammarinaro
 """
 
