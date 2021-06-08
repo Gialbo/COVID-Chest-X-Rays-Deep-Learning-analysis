@@ -24,8 +24,8 @@ class covidUnetGAN():
                   discriminator_lr=1e-4,
                   generator_lr=1e-4,
                   logging_step=10,
-                  out_images_path="outImages",
-                  checkpoint_dir="checkpoints"):
+                  out_images_path='/content/drive/MyDrive/BIOINF/checkpoints_GAN/covidUnetGAN/outImages',
+                  checkpoint_dir='/content/drive/MyDrive/BIOINF/checkpoints_GAN/covidUnetGAN'):
         
         self.n_epochs = n_epochs
         self.batch_size = batch_size
