@@ -107,16 +107,7 @@ class covidGAN():
 
         self.gan_optimizer = optimizers.Adam(lr=self.generator_lr, beta_1=0.6)#, beta_1=0.5)
         self.gan.compile(loss="binary_crossentropy", optimizer= self.gan_optimizer)
-        print("GAN model created")
-        #self.gan.summary()
-
-    def generate_latent_points(self):
-	# generate points in the latent space
-        x_input = np.random.randn(self.latent_size * self.batch_size)
-        # reshape into a batch of inputs for the network
-        x_input = x_input.reshape(self.batch_size, self.latent_size )
-        return x_input
-
+        print("covidGAN created")
     
 
     def train_model(self, train, training_size, benchmarkNoise, checkpoint_prefix):
