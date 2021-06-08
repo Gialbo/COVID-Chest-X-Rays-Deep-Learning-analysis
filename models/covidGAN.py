@@ -42,7 +42,7 @@ class covidGAN():
         self.generator_lr = generator_lr
 	self.logging_step = logging_step
 	self.out_images_path = out_images_path
-        self.checkpoint_dir = checkpoint_dir
+	self.checkpoint_dir = checkpoint_dir
         
 
         self._build_model()
