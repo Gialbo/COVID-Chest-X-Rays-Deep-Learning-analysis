@@ -252,6 +252,7 @@ class covidUnetGAN():
     self.discriminator_optimizer = tf.keras.optimizers.Adam(1e-4, beta_1=0.5)
 
     model.compile(generator_optimizer=self.generator_optimizer, discriminator_optimizer=self.discriminator_optimizer)
+    print("covidUnetGAN created")
 
     return model
 
