@@ -1,3 +1,9 @@
+"""
+GAN model for COVID-19 class
+Bioinformatics @ Politecnico di Torino
+Authors: Gilberto Manunza, Silvia Giammarinaro
+"""
+
 import tensorflow as tf
 import tensorflow.keras as keras
 import numpy as np
@@ -21,7 +27,10 @@ class covidGAN():
                   alpha=0.2,
                   drop_rate=0.4,
                   discriminator_lr=3e-5,
-                  generator_lr=2e-4): 
+                  generator_lr=2e-4, 
+		  logging_step=10,
+                  out_images_path='/content/drive/MyDrive/BIOINF/checkpoints_GAN/covidGAN/outImages',
+                  checkpoint_dir='/content/drive/MyDrive/BIOINF/checkpoints_GAN/covidGAN'):
 
         self.n_epochs = n_epochs
         self.batch_size = batch_size
@@ -31,6 +40,9 @@ class covidGAN():
         self.drop_rate = drop_rate
         self.discriminator_lr = discriminator_lr
         self.generator_lr = generator_lr
+	self.logging_step = logging_step
+	self.out_images_path = out_images_path
+        self.checkpoint_dir = checkpoint_dir
         
 
         self._build_model()
@@ -99,7 +111,7 @@ class covidGAN():
         #self.gan.summary()
 
     def generate_latent_points(self):
-	    # generate points in the latent space
+	# generate points in the latent space
         x_input = np.random.randn(self.latent_size * self.batch_size)
         # reshape into a batch of inputs for the network
         x_input = x_input.reshape(self.batch_size, self.latent_size )
@@ -168,8 +180,8 @@ class covidGAN():
             if (epoch % 10) == 0:
                 self.plot_fake_figures(images,4, epoch)
 
-            #if (epoch % 50) == 0:
-                #checkpoint.save(file_prefix = checkpoint_prefix)
+            if (epoch % 50) == 0:
+                checkpoint.save(file_prefix = checkpoint_prefix)
 
     def plot_losses(self, data, xaxis, yaxis, ylim=0):
       pd.DataFrame(data).plot(figsize=(10,8))
@@ -181,7 +193,7 @@ class covidGAN():
       plt.show()
         
     @staticmethod
-    def plot_fake_figures(x, n, epoch, dir='/content/drive/MyDrive/BIOINF/images_GAN/covid'):
+    def plot_fake_figures(x, n, epoch, dir='/content/drive/MyDrive/BIOINF/checkpoints_GAN/covidGAN/outImages'):
         fig = plt.figure(figsize=(6,6))
         for i in range(n*n):
             plt.subplot(n,n,i+1)
