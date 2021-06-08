@@ -152,8 +152,6 @@ class covidGAN():
                 # true images: label = 1
                 y = np.ones((trueImages.shape[0]))
                 discLoss, discAccTrue = self.discriminator.train_on_batch(trueImages, y)
-                self.history['D_loss_true'].append(discLoss)          
-                self.accuracy['Acc_true'].append(discAccTrue)
 
                 # GENERATOR GENERATING ON FAKE IMAGES
                 genImages=self.generator.predict(noise)
@@ -162,25 +160,36 @@ class covidGAN():
 
                 # DISCRIMINATOR TRAINING ON FAKE IMAGES
                 discLoss, discAccFalse = self.discriminator.train_on_batch(genImages, y)
-                self.history['D_loss_fake'].append(discLoss)          
-                self.accuracy['Acc_fake'].append(discAccFalse)
 
                 # GENERATOR TRAINING ON FAKE IMAGES (label 1 for fake images in this case)
                 noise = np.random.uniform(-1, 1, size=(self.batch_size,self.latent_size))
                 fake_labels = [1] * self.batch_size
                 fake_labels = np.reshape(fake_labels, (-1,))
                 ganLoss = self.gan.train_on_batch(noise, fake_labels)
-                self.history['G_loss'].append(ganLoss)
+		
+		if step % self.logging_step == 0:
+		  print(f"\tLosses at step {step}:")
+		  print(f"\t\tGenerator Loss: {ganLoss}")
+		  print(f"\t\tDiscriminator Loss: {discLoss}")
+		  print(f"\t\tAccuracy True: {discAccTrue}")
+		  print(f"\t\tAccuracy False: {discAccFalse}")
             
             # at the end of each epoch 
-            print("epoch " + str(epoch) + ": discriminator loss " + str(discLoss)+  " - generator loss " + str(ganLoss))
-            print("Accuracy true: " + str(discAccTrue) + " accuracy false: " + str(discAccFalse))
+            #print("epoch " + str(epoch) + ": discriminator loss " + str(discLoss)+  " - generator loss " + str(ganLoss))
+            #print("Accuracy true: " + str(discAccTrue) + " accuracy false: " + str(discAccFalse))
 
-            images = self.generator.predict(benchmarkNoise)
-            if (epoch % 10) == 0:
+	    
+            self.history['D_loss_true'].append(discLoss)          
+            self.accuracy['Acc_true'].append(discAccTrue)
+	    self.history['D_loss_fake'].append(discLoss)          
+            self.accuracy['Acc_fake'].append(discAccFalse)
+	    self.history['G_loss'].append(ganLoss)
+	
+            if (epoch % self.logging_step) == 0:
+	        images = self.generator.predict(benchmarkNoise)
                 self.plot_fake_figures(images,4, epoch)
 
-            if (epoch % 50) == 0:
+            if (epoch % self.logging_step*5) == 0:
                 checkpoint.save(file_prefix = checkpoint_prefix)
 
     def plot_losses(self, data, xaxis, yaxis, ylim=0):
