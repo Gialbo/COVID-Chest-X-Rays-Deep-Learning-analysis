@@ -44,8 +44,7 @@ class covidGAN():
 	self.out_images_path = out_images_path
 	self.checkpoint_dir = checkpoint_dir
         
-
-        self._build_model()
+	self._build_model()
 
     def create_discriminator(self):
 
