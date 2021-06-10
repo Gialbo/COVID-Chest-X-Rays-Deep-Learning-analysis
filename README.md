@@ -3,22 +3,26 @@ Comparison of different segmentation and synthetic data generation methods appli
 Final project code for the course "Bioinformatics", A.Y. 2020/2021. 
 # Table of Contents
 1. [Data](#data)
-2. [Models](#models)
-3. [Experiments](#experiments)
-4. [Results](#results)
-5. [References](#references)
+2. [Tools](#tools)
+3. [Models](#models)
+4. [Experiments](#experiments)
+5. [Results](#results)
+6. [References](#references)
 <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/samples.png"> 
 
 
 ##  [`Data`](./data)
-We used two different datasets: COVID-19 RaioGraphy Database and AI for COVID. Further information about the dataset are reported below.
+We used the COVID-19 RaioGraphy Database. Further information about the dataset are reported below.
 From these datasets we applied some preprocessing techniques in order to have the data ready for our experiments. 
 * [`train_test_split.py`](./data/train_test_split.py): create a new folder divided in two subfolders: train and test. These folders are needed to define the ImageDataGenerator for training.
 * [`resize_images.py`](./data/resize_images.py): resize all the images in the dataset to 224x224 pixels.
-* [`load_data.py`](./data/load_data.py): load data from path and return the datasets (train, validation, test)
-* [`images_to_gif.py`](./data/images_to_gif.py): create a gif with generated images from GAN 
 
-After these passages, we are ready to train our models. Our final datasets can be downloaded here: [`COVID-19 Radiography Database`](https://drive.google.com/drive/folders/1-7se3aMXMXtDF89ALV07pru3kELmWTTo?usp=sharing), [`AI for COVID`](https://drive.google.com/drive/u/0/folders/150mo0iE72Fs4j7dYyeNxGSJyAdDLbMpx)
+After these passages, we are ready to train our models. Our final dataset can be downloaded here: [`COVID-19 Radiography Database`](https://drive.google.com/drive/folders/1-7se3aMXMXtDF89ALV07pru3kELmWTTo?usp=sharing).
+
+##  [`Tools`](./tools)
+* [`images_to_gif.py`](./tools/images_to_gif.py): create a gif from the generated images by the model;
+* [`XRaysDataset.py`](./tools/XRaysDataset.py): load and preprocess data from given directory.
+
 
 #### [`COVID-19 Radiography Database`](https://www.kaggle.com/tawsifurrahman/covid19-radiography-database)
 The dataset contains X-rays images from different patients with different patologies: there are 1027 COVID-19 positive images, 1206 normal images, and 1210 viral pneumonia images.
@@ -27,8 +31,6 @@ The dataset contains X-rays images from different patients with different patolo
   <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/dataDistribution.png"> 
 </p>
 
-#### [`AI for COVID`](https://aiforcovid.radiomica.it/)
-The dataset is provided by CDI (Centro Diagnostico Italiano) and it contains X-rays from patients with COVID-19. We have a total of 696 images. 
 
 
 ## [`Models`](./models)
