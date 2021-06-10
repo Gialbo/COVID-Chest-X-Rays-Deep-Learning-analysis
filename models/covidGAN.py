@@ -110,10 +110,8 @@ class covidGAN():
         print("covidGAN created")
     
 
-    def train_model(self, train, training_size, benchmarkNoise):
+    def train_model(self, train, training_size, benchmarkNoise, checkpoint, checkpoint_prefix):
 		
-        checkpoint_prefix = os.path.join(self.checkpoint_dir, "ckpt")
-        checkpoint = tf.train.Checkpoint(gan_optimizer=model.gan_optimizer, gan=model.gan)
 
         # creating dictionaries for history and accuracy for the plots
         # self.history = {}
