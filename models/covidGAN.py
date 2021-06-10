@@ -174,7 +174,7 @@ class covidGAN():
                 epoch_disc_acc_true.append(discAccTrue)
                 epoch_disc_acc_false.append(discAccFalse)
 		
-                if b % self.logging_step == 0:
+                if step % self.logging_step == 0:
                     print(f"\tLosses at step {b}:")
                     print(f"\t\tGenerator Loss: {ganLoss}")
                     print(f"\t\tDiscriminator Loss: {discLoss}")
