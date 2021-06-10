@@ -20,8 +20,8 @@ From these datasets we applied some preprocessing techniques in order to have th
 After these passages, we are ready to train our models. Our final dataset can be downloaded here: [`COVID-19 Radiography Database`](https://drive.google.com/drive/folders/1-7se3aMXMXtDF89ALV07pru3kELmWTTo?usp=sharing).
 
 ##  [`Tools`](./tools)
-* [`images_to_gif.py`](./tools/images_to_gif.py): create a gif from the generated images by the model.
-* [`load_data.py`](./tools/load_data.py): load data from path and return the datasets (train, validation, test).
+* [`images_to_gif.py`](./tools/images_to_gif.py): create a gif from the generated images by the model;
+* [`XRaysDataset.py`](./tools/XRaysDataset.py): load and preprocess data from given directory.
 
 
 #### [`COVID-19 Radiography Database`](https://www.kaggle.com/tawsifurrahman/covid19-radiography-database)
