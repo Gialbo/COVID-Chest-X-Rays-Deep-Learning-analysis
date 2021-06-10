@@ -123,8 +123,8 @@ class covidGAN():
         self.accuracy['D accuracy True'] = []
         self.accuracy['D accuracy Fake'] = []
 
-        batchesPerEpoch = int(training_size / self.batch_size)
-        print("Batches per epoch ", batchesPerEpoch)
+        #batchesPerEpoch = int(training_size / self.batch_size)
+        print("Batches per epoch ", len(train))
             
 
         for epoch in range(self.n_epochs):
@@ -134,21 +134,18 @@ class covidGAN():
             epoch_disc_acc_true = []
             epoch_disc_acc_false = []
             
-            for b in (range(batchesPerEpoch)):
+            for step, batch in enumerate(train):
             
-                if b == batchesPerEpoch / 2:
-                    print("Half epoch done")
-
                 # GENERATE NOISE
                 noise =  benchmarkNoise
 
                 # now train the discriminator to differentiate between true and fake images
 
                 # DISCRIMINATOR TRAINING ON REAL IMAGES
-                if isinstance(train, tuple):
-                    trueImages, _ = train
+                if isinstance(batch, tuple):
+                    trueImages, _ = batch
                 else:
-                    trueImages = train
+                    trueImages = batch
 
                 #trueImages, _ = next(train)
                 
