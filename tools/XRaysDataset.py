@@ -31,7 +31,7 @@ class XRaysDataset():
     def process_path(self, file_path):
         # Load the raw data from the file as a string
         img = tf.io.read_file(file_path)
-        img = decode_img(img)
+        img = self.decode_img(img)
         return img
 
     def decode_img(self, image):
@@ -62,25 +62,25 @@ class XRaysDataset():
         training_size = len(os.listdir(self.train_dir+"/covid-19")) +len(os.listdir(self.train_dir+"/normal")) + len(os.listdir(self.train_dir+"/viral-pneumonia"))
         print("Training size ", training_size)
 
-        covid_file_paths = get_file_paths(self.train_dir+"/covid-19")
+        covid_file_paths = self.get_file_paths(self.train_dir+"/covid-19")
         train_ds_covid = tf.data.Dataset.from_tensor_slices((covid_file_paths))
-        train_ds_covid = train_ds_covid.map(process_path, num_parallel_calls=AUTOTUNE)
-        train_ds_covid = train_ds_covid.map(preprocessing_function)
-        train_ds_covid = configure_for_performance(train_ds_covid, buffer_size=1500, batch_size=self.batch_size)
+        train_ds_covid = train_ds_covid.map(self.process_path, num_parallel_calls=AUTOTUNE)
+        train_ds_covid = train_ds_covid.map(self.preprocessing_function)
+        train_ds_covid = self.configure_for_performance(train_ds_covid, buffer_size=1500, batch_size=self.batch_size)
         print(f"Number of batches for the covid dataset: {len(train_ds_covid)}")
 
-        normal_file_paths = get_file_paths(self.train_dir+"/normal")
+        normal_file_paths = self.get_file_paths(self.train_dir+"/normal")
         train_ds_normal = tf.data.Dataset.from_tensor_slices((covid_file_paths))
-        train_ds_normal = train_ds_normal.map(process_path, num_parallel_calls=AUTOTUNE)
-        train_ds_normal = train_ds_normal.map(preprocessing_function)
-        train_ds_normal = configure_for_performance(train_ds_normal, buffer_size=1500, batch_size=self.batch_size)
+        train_ds_normal = train_ds_normal.map(self.process_path, num_parallel_calls=AUTOTUNE)
+        train_ds_normal = train_ds_normal.map(self.preprocessing_function)
+        train_ds_normal = self.configure_for_performance(train_ds_normal, buffer_size=1500, batch_size=self.batch_size)
         print(f"Number of batches for the normal dataset: {len(train_ds_normal)}")
 
-        vp_file_paths = get_file_paths(self.train_dir+"/viral-pneumonia")
+        vp_file_paths = self.get_file_paths(self.train_dir+"/viral-pneumonia")
         train_ds_vp = tf.data.Dataset.from_tensor_slices((covid_file_paths))
-        train_ds_vp = train_ds_vp.map(process_path, num_parallel_calls=AUTOTUNE)
-        train_ds_vp = train_ds_vp.map(preprocessing_function)
-        train_ds_vp = configure_for_performance(train_ds_vp, buffer_size=1500, batch_size=self.batch_size)
+        train_ds_vp = train_ds_vp.map(self.process_path, num_parallel_calls=AUTOTUNE)
+        train_ds_vp = train_ds_vp.map(self.preprocessing_function)
+        train_ds_vp = self.configure_for_performance(train_ds_vp, buffer_size=1500, batch_size=self.batch_size)
         print(f"Number of batches for the viral pneumonia dataset: {len(train_ds_vp)}")
 
         train_datasets = [train_ds_covid, train_ds_normal, train_ds_vp]
