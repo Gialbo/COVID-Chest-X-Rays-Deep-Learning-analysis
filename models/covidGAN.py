@@ -97,14 +97,14 @@ class covidGAN():
     def _build_model(self):
         self.discriminator = self.create_discriminator()
         self.generator = self.create_generator()
-        disc_optimizer = optimizers.Adam(lr=self.discriminator_lr, beta_1=0.5,clipvalue=5)
+        disc_optimizer = optimizers.Adam(learning_rate=self.discriminator_lr, beta_1=0.5,clipvalue=5)
         self.discriminator.compile(disc_optimizer, "binary_crossentropy", metrics="accuracy")
         self.discriminator.trainable = False
         noise = Input((self.latent_size))
         disc_outputs = self.discriminator(self.generator(noise))
         self.gan = Model(inputs=noise, outputs=disc_outputs)
 
-        self.gan_optimizer = optimizers.Adam(lr=self.generator_lr, beta_1=0.6)#, beta_1=0.5)
+        self.gan_optimizer = optimizers.Adam(learning_rate=self.generator_lr, beta_1=0.6)#, beta_1=0.5)
         self.gan.compile(loss="binary_crossentropy", optimizer= self.gan_optimizer)
         print("covidGAN created")
     
