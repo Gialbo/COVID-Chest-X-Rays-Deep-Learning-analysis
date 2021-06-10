@@ -117,17 +117,17 @@ class covidGAN():
         self.history = {}
         self.history['G loss'] = []
         self.history['D loss'] = []
-        self.history['D loss True'] = []
+        self.history['D loss Real'] = []
         self.history['D loss Fake'] = []
         self.accuracy = {}
-        self.accuracy['D accuracy True'] = []
+        self.accuracy['D accuracy Real'] = []
         self.accuracy['D accuracy Fake'] = []
 
         #batchesPerEpoch = int(training_size / self.batch_size)
         print("Batches per epoch ", len(train))
             
 
-        for epoch in range(self.n_epochs):
+        for epoch in range(self.n_epochs+1):
             print("Starting epoch ", epoch)
             epoch_gen_loss = []
             epoch_disc_loss = []
@@ -196,9 +196,9 @@ class covidGAN():
 
             self.history['G loss'].append(np.array(ganLoss).mean())
             self.history['D loss'].append(np.array(discLoss).mean())
-            self.history['D loss True'].append(np.array(discLossTrue).mean())          
+            self.history['D loss Real'].append(np.array(discLossTrue).mean())          
             self.history['D loss Fake'].append(np.array(discLossFalse).mean())     
-            self.accuracy['D accuracy True'].append(np.array(discAccTrue).mean())     
+            self.accuracy['D accuracy Real'].append(np.array(discAccTrue).mean())     
             self.accuracy['D accuracy Fake'].append(np.array(discAccFalse).mean())
 		
 
