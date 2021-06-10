@@ -85,4 +85,4 @@ class XRaysDataset():
 
         train_datasets = [train_ds_covid, train_ds_normal, train_ds_vp]
 
-        return train_datasets
+        return train_datasets, training_size
