@@ -114,7 +114,7 @@ class covidGAN():
 		
 
         # creating dictionaries for history and accuracy for the plots
-        # self.history = {}
+        self.history = {}
         self.history['G loss'] = []
         self.history['D loss'] = []
         self.history['D loss True'] = []
