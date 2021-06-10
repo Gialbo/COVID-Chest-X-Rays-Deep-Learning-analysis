@@ -28,7 +28,7 @@ class covidGAN():
                   drop_rate=0.4,
                   discriminator_lr=3e-5,
                   generator_lr=2e-4, 
-		  logging_step=10,
+                  logging_step=10,
                   out_images_path='/content/drive/MyDrive/BIOINF/checkpoints_GAN/covidGAN/outImages',
                   checkpoint_dir='/content/drive/MyDrive/BIOINF/checkpoints_GAN/covidGAN'):
 
@@ -40,11 +40,11 @@ class covidGAN():
         self.drop_rate = drop_rate
         self.discriminator_lr = discriminator_lr
         self.generator_lr = generator_lr
-	self.logging_step = logging_step
-	self.out_images_path = out_images_path
-	self.checkpoint_dir = checkpoint_dir
+	    self.logging_step = logging_step
+	    self.out_images_path = out_images_path
+	    self.checkpoint_dir = checkpoint_dir
         
-	self._build_model()
+	    self._build_model()
 
     def create_discriminator(self):
 
@@ -111,18 +111,19 @@ class covidGAN():
 
     def train_model(self, train, training_size, benchmarkNoise):
 		
-	checkpoint_prefix = os.path.join(self.checkpoint_dir, "ckpt")
+	    checkpoint_prefix = os.path.join(self.checkpoint_dir, "ckpt")
     	checkpoint = tf.train.Checkpoint(gan_optimizer=model.gan_optimizer,
                                  gan=model.gan)
 
         # creating dictionaries for history and accuracy for the plots
         self.history = {}
-        self.history['G_loss'] = []
-        self.history['D_loss_true'] = []
-        self.history['D_loss_fake'] = []
+        self.history['G loss'] = []
+        self.history['D loss'] = []
+        self.history['D loss True'] = []
+        self.history['D loss Fake'] = []
         self.accuracy = {}
-        self.accuracy['Acc_true'] = []
-        self.accuracy['Acc_fake'] = []
+        self.accuracy['D accuracy True'] = []
+        self.accuracy['D accuracy Fake'] = []
 
         batchesPerEpoch = int(training_size / self.batch_size)
         print("Batches per epoch ", batchesPerEpoch)
@@ -130,6 +131,10 @@ class covidGAN():
 
         for epoch in range(self.n_epochs):
             print("Starting epoch ", epoch)
+            epoch_gen_loss = []
+            epoch_disc_loss = []
+            epoch_disc_acc_true = []
+            epoch_disc_acc_false = []
             
             for b in (range(batchesPerEpoch)):
             
@@ -137,7 +142,7 @@ class covidGAN():
                     print("Half epoch done")
 
                 # GENERATE NOISE
-                noise =  self.generate_latent_points()
+                noise =  benchmarkNoise
 
                 # now train the discriminator to differentiate between true and fake images
 
@@ -145,7 +150,7 @@ class covidGAN():
                 trueImages, _ = next(train)
                 # true images: label = 1
                 y = np.ones((trueImages.shape[0]))
-                discLoss, discAccTrue = self.discriminator.train_on_batch(trueImages, y)
+                discLossTrue, discAccTrue = self.discriminator.train_on_batch(trueImages, y)
 
                 # GENERATOR GENERATING ON FAKE IMAGES
                 genImages=self.generator.predict(noise)
@@ -153,48 +158,57 @@ class covidGAN():
                 y = np.zeros((self.batch_size))
 
                 # DISCRIMINATOR TRAINING ON FAKE IMAGES
-                discLoss, discAccFalse = self.discriminator.train_on_batch(genImages, y)
+                discLossFalse, discAccFalse = self.discriminator.train_on_batch(genImages, y)
 
                 # GENERATOR TRAINING ON FAKE IMAGES (label 1 for fake images in this case)
                 noise = np.random.uniform(-1, 1, size=(self.batch_size,self.latent_size))
                 fake_labels = [1] * self.batch_size
                 fake_labels = np.reshape(fake_labels, (-1,))
                 ganLoss = self.gan.train_on_batch(noise, fake_labels)
+
+                discLoss = discLossTrue + discLossFalse
+
+                epoch_gen_loss.append(ganLoss)
+                epoch_disc_loss.append(discLoss)
+                epoch_disc_acc_true.append(discAccTrue)
+                epoch_disc_acc_false.append(discAccFalse)
 		
-		if step % self.logging_step == 0:
-		  print(f"\tLosses at step {step}:")
-		  print(f"\t\tGenerator Loss: {ganLoss}")
-		  print(f"\t\tDiscriminator Loss: {discLoss}")
-		  print(f"\t\tAccuracy True: {discAccTrue}")
-		  print(f"\t\tAccuracy False: {discAccFalse}")
+                if b % self.logging_step == 0:
+                    print(f"\tLosses at step {b}:")
+                    print(f"\t\tGenerator Loss: {ganLoss}")
+                    print(f"\t\tDiscriminator Loss: {discLoss}")
+                    print(f"\t\tAccuracy Real: {discAccTrue}")
+                    print(f"\t\tAccuracy Fake: {discAccFalse}")
             
             # at the end of each epoch 
             #print("epoch " + str(epoch) + ": discriminator loss " + str(discLoss)+  " - generator loss " + str(ganLoss))
             #print("Accuracy true: " + str(discAccTrue) + " accuracy false: " + str(discAccFalse))
-
-	    
-            self.history['D_loss_true'].append(discLoss)          
-            self.accuracy['Acc_true'].append(discAccTrue)
-	    self.history['D_loss_fake'].append(discLoss)          
-            self.accuracy['Acc_fake'].append(discAccFalse)
-	    self.history['G_loss'].append(ganLoss)
+	        
 	
             if (epoch % self.logging_step) == 0:
-	        images = self.generator.predict(benchmarkNoise)
+	            images = self.generator.predict(benchmarkNoise)
                 self.plot_fake_figures(images,4, epoch)
 
             if (epoch % self.logging_step*5) == 0:
                 checkpoint.save(file_prefix = checkpoint_prefix)
+
+
+            self.history['G loss'].append(np.array(ganLoss).mean())
+            self.history['D loss'].append(np.array(discLoss).mean())
+            self.history['D loss True'].append(np.array(discLossTrue).mean())          
+	        self.history['D loss Fake'].append(np.array(discLossFalse).mean())     
+            self.accuracy['D accuracy True'].append(np.array(discAccTrue).mean())     
+            self.accuracy['D accuracy Fake'].append(np.array(discAccFalse).mean())
 		
 
     def plot_losses(self, data, xaxis, yaxis, ylim=0):
-      pd.DataFrame(data).plot(figsize=(10,8))
-      plt.grid(True)
-      plt.xlabel(xaxis)
-      plt.ylabel(yaxis)
-      if ylim!=0:
-        plt.ylim(0, ylim)
-      plt.show()
+        pd.DataFrame(data).plot(figsize=(10,8))
+        plt.grid(True)
+        plt.xlabel(xaxis)
+        plt.ylabel(yaxis)
+        if ylim!=0:
+            plt.ylim(0, ylim)
+        plt.show()
         
     @staticmethod
     def plot_fake_figures(x, n, epoch, dir='/content/drive/MyDrive/BIOINF/checkpoints_GAN/covidGAN/outImages'):
