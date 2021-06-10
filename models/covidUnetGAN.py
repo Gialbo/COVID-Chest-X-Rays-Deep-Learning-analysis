@@ -257,17 +257,19 @@ class covidUnetGAN():
         'disc_loss_true': self.loss_true_tracker_discriminator.result(), 'disc_loss_fake': self.loss_fake_tracker_discriminator.result(), \
         'disc_acc_true': self.accuracy_real_tracker_discriminator.result(), 'disc_acc_fake': self.accuracy_fake_tracker_discriminator.result() }
         
-      def test_step(self, data):
-        pass
+    def test_step(self, data):
+      pass
 
-      @property
-      def metrics(self):
-          # We list our `Metric` objects here so that `reset_states()` can be
-          # called automatically at the start of each epoch
-          # or at the start of `evaluate()`.
-          # If you don't implement this property, you have to call
-          # `reset_states()` yourself at the time of your choosing.
-          return [self.loss_tracker_generator, self.loss_tracker_discriminator]
+    @property
+    def metrics(self):
+        # We list our `Metric` objects here so that `reset_states()` can be
+        # called automatically at the start of each epoch
+        # or at the start of `evaluate()`.
+        # If you don't implement this property, you have to call
+        # `reset_states()` yourself at the time of your choosing.
+        return [self.loss_tracker_generator, self.loss_tracker_discriminator, \
+                self.loss_true_tracker_discriminator, self.loss_fake_tracker_discriminator, \
+                self.accuracy_real_tracker_discriminator, self.accuracy_fake_tracker_discriminator]
 
   def _build_model(self):
     self.generator = self.create_generator()
@@ -316,8 +318,7 @@ class covidUnetGAN():
       print("Starting epoch ", epoch)
 
       for step, batch in enumerate(train_ds):
-        gen_loss_step, disc_loss_step, disc_loss_true_step, disc_loss_fake_step, \
-           disc_acc_true_step, disc_acc_fake_step = self.model.train_on_batch(batch, batch)
+        gen_loss_step, disc_loss_step, disc_loss_true_step, disc_loss_fake_step, disc_acc_true_step, disc_acc_fake_step = self.model.train_on_batch(batch, batch)
 
         epoch_gen_loss.append(gen_loss_step)
         epoch_disc_loss.append(disc_loss_step)
