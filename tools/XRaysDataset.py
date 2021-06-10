@@ -5,7 +5,7 @@ Authors: Gilberto Manunza, Silvia Giammarinaro
 """
 
 
-import tf
+import tensorflow as tf
 import os
 
 class XRaysDataset():
