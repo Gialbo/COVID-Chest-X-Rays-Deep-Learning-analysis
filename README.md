@@ -37,20 +37,18 @@ The dataset contains X-rays images from different patients with different patolo
 * [`inceptionNet.py`](./models/inceptionNet.py): CNN model used for the classification task on *COVID-19 Radiography Database*. We first loaded the inceptionV3 model with imagenet weight and added more layers at the top. We do not freeze any layer, so during training the preloaded weights from Imagenet will be updated;
 * [`inceptionV3MCD.py`](./models/inceptionV3MCD.py): modified version of InceptionV3 implemented in Keras. To each block a dropout layer is added at the end of it. The rate of the dropout layer can be passed calling the function;
 * [`inceptionNetMCD.py`](./models/inceptionNetMCD.py): Monte Carlo Dropout inceptionNet. The main difference are the following: the inceptionNetV3MCD is used and dropout layers are added after every fully connected layer. 
-
 * [`covidGAN.py`](./models/covidGAN.py):  Generative Adversial Network to generate synthetic COVID-19 x-rays samples  from the *COVID-19 Radiography Database* database.
+* [`covidUnetCGAN`](./models/unetCGAN.py): Particular version of a classical Generative Adversarial Network in which the discriminator is substituted with a Unet net. The Uney will becomposed by an encoder and a decoder. If we shrink to $1$ the output of the encoder we obtain the oputput of a classical discriminator net. But additionally we re decode the image and we tell the network to maximize the pixel-wise cross entropy of the decoded output. This means that in output of the decode we will have a map in which each pixel tells us in a grayscale rapresentation how much confident the network is for that pixel of the image being true. A value for a pixel close the $1$ (white) means that for that pixel the networ is sure of the image being real and viceversa for a value closs to $0$ (black) the network is sure for the image of being fake.
 * [`cGAN.py`](./models/cGAN.py): starting from the covidGAN, we added to the model to ability to distinguish between the tree different classes. This architecture is called Conditional GAN.  
-* [`unetCGAN`](./models/unetCGAN.py): Particular version of a classical Generative Adversarial Network in which the discriminator is substituted with a Unet net. The Uney will becomposed by an encoder and a decoder. If we shrink to $1$ the output of the encoder we obtain the oputput of a classical discriminator net. But additionally we re decode the image and we tell the network to maximize the pixel-wise cross entropy of the decoded output. This means that in output of the decode we will have a map in which each pixel tells us in a grayscale rapresentation how much confident the network is for that pixel of the image being true. A value for a pixel close the $1$ (white) means that for that pixel the networ is sure of the image being real and viceversa for a value closs to $0$ (black) the network is sure for the image of being fake.
+
 
 
 
 ## [`Experiments`](./experiments)
 * [`inceptionNet.ipynb`](./experiments/inceptionNet.ipynb): notebook reporting the experiment using the inceptionNet model.
 * [`inceptionNetMCD.ipynb`](./experiments/inceptionNetMCD.ipynb): notebook reporting the experiment using the modified version of the inceptionNet model with Monte Carlo dropout.
-* [`covidGAN.ipynb`](./experiments/rawGAN.ipynb): notebook reporting the experiment using the covidGAN model.
-* [`cGAN.ipynb`](./experiments/cGAN.ipynb): notebook reporting the experiment using the cGAN model. 
-<!-- * [`rawGAN.ipynb`](./experiments/rawGAN.ipynb): notebook reporting the experiment using the rawGAN model. -->
-
+* [`covidGAN.ipynb`](./experiments/covidGAN.ipynb): notebook reporting the experiment using the covidGAN model.
+* [`covidUnetGAN.ipynb`](./experiments/covidUnetGAN.ipynb): notebook reporting the experiment using the covidUnetGAN model.
 
 ## [`Results`](./results)
 ### Classification Task: inceptionNet
