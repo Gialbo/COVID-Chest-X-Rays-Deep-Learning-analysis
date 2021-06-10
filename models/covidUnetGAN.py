@@ -213,15 +213,9 @@ class covidUnetGAN():
       noise = tf.random.normal([images.shape[0], self.latent_size])
       with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
         generated_images = self.generator(noise, training=True)
-
-        real_output_disc = []
-        fake_output_disc = []
         
         real_output_enc = self.discriminator(images, training=True)[0]
         fake_output_enc = self.discriminator(generated_images, training=True)[0]
-
-        real_output_disc.append(real_output_enc)
-        fake_output_disc.append(fake_output_enc)
 
         real_output_dec = self.discriminator(images, training=True)[1]
         fake_output_dec = self.discriminator(generated_images, training=True)[1]
@@ -251,11 +245,11 @@ class covidUnetGAN():
       self.loss_true_tracker_discriminator.update_state(disc_loss_true)
       self.loss_fake_tracker_discriminator.update_state(disc_loss_fake)
 
-      preds_real = tf.round(tf.sigmoid(real_output_disc))
+      preds_real = tf.round(tf.sigmoid(real_output_enc))
       accuracy_real = tf.math.reduce_mean(tf.cast(tf.math.equal(preds_real, tf.ones_like(preds_real)), tf.float32))
       self.accuracy_real_tracker_discriminator.update_state(accuracy_real)
 
-      preds_fake = tf.round(tf.sigmoid(fake_output_disc))
+      preds_fake = tf.round(tf.sigmoid(fake_output_enc))
       accuracy_fake = tf.math.reduce_mean(tf.cast(tf.math.equal(preds_fake, tf.zeros_like(preds_fake)), tf.float32))
       self.accuracy_fake_tracker_discriminator.update_state(accuracy_fake)
 
@@ -300,10 +294,10 @@ class covidUnetGAN():
     self.history = {}
     self.history['G loss'] = []
     self.history['D loss'] = []
-    self.history['D loss True'] = []
+    self.history['D loss Real'] = []
     self.history['D loss Fake'] = []
     self.accuracy = {}
-    self.accuracy['D accuracy True'] = []
+    self.accuracy['D accuracy Real'] = []
     self.accuracy['D accuracy Fake'] = []
 
     print("Starting training of the Unet GAN model.")
@@ -336,7 +330,7 @@ class covidUnetGAN():
           print(f"\tLosses at step {step}:")
           print(f"\t\tGenerator Loss: {gen_loss_step}")
           print(f"\t\tDiscriminator Loss: {disc_loss_step}")
-          print(f"\t\tAccuracy True: {disc_acc_true_step}")
+          print(f"\t\tAccuracy Real: {disc_acc_true_step}")
           print(f"\t\tAccuracy Fake: {disc_acc_fake_step}")
 
               
@@ -355,9 +349,9 @@ class covidUnetGAN():
       
       self.history['G loss'].append(np.array(epoch_gen_loss).mean())
       self.history['D loss'].append(np.array(epoch_disc_loss).mean())
-      self.history['D loss True'].append(np.array(epoch_disc_loss_true).mean())          
+      self.history['D loss Real'].append(np.array(epoch_disc_loss_true).mean())          
       self.history['D loss Fake'].append(np.array(epoch_disc_loss_fake).mean())     
-      self.accuracy['D accuracy True'].append(np.array(epoch_disc_acc_true).mean())     
+      self.accuracy['D accuracy Real'].append(np.array(epoch_disc_acc_true).mean())     
       self.accuracy['D accuracy Fake'].append(np.array(epoch_disc_acc_fake).mean())
 		
 
