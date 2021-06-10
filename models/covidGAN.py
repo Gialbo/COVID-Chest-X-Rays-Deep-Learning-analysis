@@ -145,7 +145,7 @@ class covidGAN():
                 # now train the discriminator to differentiate between true and fake images
 
                 # DISCRIMINATOR TRAINING ON REAL IMAGES
-                trueImages, _ = next(train)
+                trueImages, _ = train
                 # true images: label = 1
                 y = np.ones((trueImages.shape[0]))
                 discLossTrue, discAccTrue = self.discriminator.train_on_batch(trueImages, y)
