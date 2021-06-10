@@ -40,11 +40,11 @@ class covidGAN():
         self.drop_rate = drop_rate
         self.discriminator_lr = discriminator_lr
         self.generator_lr = generator_lr
-	    self.logging_step = logging_step
-	    self.out_images_path = out_images_path
-	    self.checkpoint_dir = checkpoint_dir
+        self.logging_step = logging_step
+        self.out_images_path = out_images_path
+        self.checkpoint_dir = checkpoint_dir
         
-	    self._build_model()
+        self._build_model()
 
     def create_discriminator(self):
 
@@ -111,12 +111,11 @@ class covidGAN():
 
     def train_model(self, train, training_size, benchmarkNoise):
 		
-	    checkpoint_prefix = os.path.join(self.checkpoint_dir, "ckpt")
-    	checkpoint = tf.train.Checkpoint(gan_optimizer=model.gan_optimizer,
-                                 gan=model.gan)
+        checkpoint_prefix = os.path.join(self.checkpoint_dir, "ckpt")
+        checkpoint = tf.train.Checkpoint(gan_optimizer=model.gan_optimizer, gan=model.gan)
 
         # creating dictionaries for history and accuracy for the plots
-        self.history = {}
+        # self.history = {}
         self.history['G loss'] = []
         self.history['D loss'] = []
         self.history['D loss True'] = []
@@ -186,7 +185,7 @@ class covidGAN():
 	        
 	
             if (epoch % self.logging_step) == 0:
-	            images = self.generator.predict(benchmarkNoise)
+                images = self.generator.predict(benchmarkNoise)
                 self.plot_fake_figures(images,4, epoch)
 
             if (epoch % self.logging_step*5) == 0:
@@ -196,7 +195,7 @@ class covidGAN():
             self.history['G loss'].append(np.array(ganLoss).mean())
             self.history['D loss'].append(np.array(discLoss).mean())
             self.history['D loss True'].append(np.array(discLossTrue).mean())          
-	        self.history['D loss Fake'].append(np.array(discLossFalse).mean())     
+            self.history['D loss Fake'].append(np.array(discLossFalse).mean())     
             self.accuracy['D accuracy True'].append(np.array(discAccTrue).mean())     
             self.accuracy['D accuracy Fake'].append(np.array(discAccFalse).mean())
 		
@@ -226,5 +225,3 @@ class covidGAN():
         plt.savefig('{}/image_at_epoch_{:04d}.png'.format(dir, epoch))
     
         plt.show()
-
-    
