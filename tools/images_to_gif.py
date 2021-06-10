@@ -1,3 +1,8 @@
+"""
+Create gif file from image directory
+Bioinformatics, Politecnico di Torino
+Authors: Gilberto Manunza, Silvia Giammarinaro
+"""
 
 import imageio
 import glob

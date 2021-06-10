@@ -4,6 +4,7 @@ Bioinformatics, Politecnico di Torino
 Authors: Gilberto Manunza, Silvia Giammarinaro
 """
 
+import os
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -173,6 +174,10 @@ class covidUnetGAN():
 
         self.loss_tracker_generator = keras.metrics.Mean(name="gen_loss")
         self.loss_tracker_discriminator = keras.metrics.Mean(name="disc_loss")
+        self.loss_true_tracker_discriminator = keras.metrics.Mean(name="disc_loss_real")
+        self.loss_fake_tracker_discriminator = keras.metrics.Mean(name="disc_loss_fake")
+        self.accuracy_real_tracker_discriminator = keras.metrics.Mean(name="disc_acc_real")
+        self.accuracy_fake_tracker_discriminator = keras.metrics.Mean(name="disc_acc_fake")
     
     def call(self, x):
       return x
@@ -197,7 +202,7 @@ class covidUnetGAN():
         real_loss = self.element_wise_cross_entropy_from_logits(tf.ones_like(real_output), real_output)
         fake_loss = self.element_wise_cross_entropy_from_logits(tf.zeros_like(fake_output), fake_output)
         total_loss = real_loss + fake_loss
-        return total_loss
+        return real_loss, fake_loss, total_loss
 
     def train_step(self, data):
       if isinstance(data, tuple):
@@ -208,27 +213,55 @@ class covidUnetGAN():
       noise = tf.random.normal([images.shape[0], self.latent_size])
       with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
         generated_images = self.generator(noise, training=True)
+
+        real_output_disc = []
+        fake_output_disc = []
         
         real_output_enc = self.discriminator(images, training=True)[0]
         fake_output_enc = self.discriminator(generated_images, training=True)[0]
+
+        real_output_disc.append(real_output_enc)
+        fake_output_disc.append(fake_output_enc)
 
         real_output_dec = self.discriminator(images, training=True)[1]
         fake_output_dec = self.discriminator(generated_images, training=True)[1]
         
         gen_loss = self.generator_loss(fake_output_enc) + self.generator_loss(fake_output_dec)
-        
-        disc_loss = self.discriminator_loss(real_output_enc, fake_output_enc) + self.discriminator_loss(real_output_dec, fake_output_dec)
-      
+
+        disc_loss_true_enc, _, disc_loss_enc = self.discriminator_loss(real_output_enc, fake_output_enc) 
+        disc_loss_true_dec, _, disc_loss_dec = self.discriminator_loss(real_output_dec, fake_output_dec) 
+        disc_loss_true = disc_loss_true_enc + disc_loss_true_dec
+
+        _, disc_loss_fake_enc, _ = self.discriminator_loss(real_output_enc, fake_output_enc) 
+        _, disc_loss_fake_dec, _ = self.discriminator_loss(real_output_dec, fake_output_dec) 
+        disc_loss_fake = disc_loss_fake_enc + disc_loss_fake_dec
+
+        disc_loss = disc_loss_enc + disc_loss_dec
+
       gradients_of_generator = gen_tape.gradient(gen_loss, self.generator.trainable_variables)
       gradients_of_discriminator = disc_tape.gradient(disc_loss, self.discriminator.trainable_variables)
       
       self.generator_optimizer.apply_gradients(zip(gradients_of_generator, self.generator.trainable_variables))
       self.discriminator_optimizer.apply_gradients(zip(gradients_of_discriminator, self.discriminator.trainable_variables))
 
+      
       # Compute metrics
       self.loss_tracker_generator.update_state(gen_loss)
       self.loss_tracker_discriminator.update_state(disc_loss)
-      return {'gen_loss': self.loss_tracker_generator.result(), 'disc_loss': self.loss_tracker_discriminator.result()}
+      self.loss_true_tracker_discriminator.update_state(disc_loss_true)
+      self.loss_fake_tracker_discriminator.update_state(disc_loss_fake)
+
+      preds_real = tf.round(tf.sigmoid(real_output_disc))
+      accuracy_real = tf.math.reduce_mean(tf.cast(tf.math.equal(preds_real, tf.ones_like(preds_real)), tf.float32))
+      self.accuracy_real_tracker_discriminator.update_state(accuracy_real)
+
+      preds_fake = tf.round(tf.sigmoid(fake_output_disc))
+      accuracy_fake = tf.math.reduce_mean(tf.cast(tf.math.equal(preds_fake, tf.zeros_like(preds_fake)), tf.float32))
+      self.accuracy_fake_tracker_discriminator.update_state(accuracy_fake)
+
+      return {'gen_loss': self.loss_tracker_generator.result(), 'disc_loss': self.loss_tracker_discriminator.result(), \
+        'disc_loss_true': self.loss_true_tracker_discriminator.result(), 'disc_loss_fake': self.loss_fake_tracker_discriminator.result(), \
+        'disc_acc_true': self.accuracy_real_tracker_discriminator.result(), 'disc_acc_fake': self.accuracy_fake_tracker_discriminator.result() }
         
       def test_step(self, data):
         pass
@@ -264,9 +297,14 @@ class covidUnetGAN():
                                      model=self.model)
 
     # creating dictionaries for history and accuracy for the plots
-    history = {}
-    history['G_loss'] = []
-    history['D_loss'] = []
+    self.history = {}
+    self.history['G loss'] = []
+    self.history['D loss'] = []
+    self.history['D loss True'] = []
+    self.history['D loss Fake'] = []
+    self.accuracy = {}
+    self.accuracy['D accuracy True'] = []
+    self.accuracy['D accuracy Fake'] = []
 
     print("Starting training of the Unet GAN model.")
 
@@ -276,19 +314,30 @@ class covidUnetGAN():
       # Keep track of the losses at each step
       epoch_gen_loss = []
       epoch_disc_loss = []
+      epoch_disc_loss_true = []
+      epoch_disc_loss_fake = []
+      epoch_disc_acc_true = []
+      epoch_disc_acc_fake = []
 
       print("Starting epoch ", epoch)
 
       for step, batch in enumerate(train_ds):
-        gen_loss_step, disc_loss_step = self.model.train_on_batch(batch, batch)
+        gen_loss_step, disc_loss_step, disc_loss_true_step, disc_loss_fake_step, \
+           disc_acc_true_step, disc_acc_fake_step = self.model.train_on_batch(batch, batch)
 
         epoch_gen_loss.append(gen_loss_step)
         epoch_disc_loss.append(disc_loss_step)
+        epoch_disc_loss_true.append(disc_loss_true_step)
+        epoch_disc_loss_fake.append(disc_loss_fake_step)
+        epoch_disc_acc_true.append(disc_acc_true_step)
+        epoch_disc_acc_fake.append(disc_acc_fake_step)
 
         if step % self.logging_step == 0:
           print(f"\tLosses at step {step}:")
           print(f"\t\tGenerator Loss: {gen_loss_step}")
           print(f"\t\tDiscriminator Loss: {disc_loss_step}")
+          print(f"\t\tAccuracy True: {disc_acc_true_step}")
+          print(f"\t\tAccuracy Fake: {disc_acc_fake_step}")
 
               
       if epoch % self.logging_step == 0:
@@ -304,10 +353,14 @@ class covidUnetGAN():
       if epoch % (self.logging_step*5) == 0:
         checkpoint.save(file_prefix=checkpoint_prefix)
       
-      history["G_loss"].append(np.array(epoch_gen_loss).mean())
-      history["D_loss"].append(np.array(epoch_disc_loss).mean())
+      self.history['G loss'].append(np.array(epoch_gen_loss).mean())
+      self.history['D loss'].append(np.array(epoch_disc_loss).mean())
+      self.history['D loss True'].append(np.array(epoch_disc_loss_true).mean())          
+      self.history['D loss Fake'].append(np.array(epoch_disc_loss_fake).mean())     
+      self.accuracy['D accuracy True'].append(np.array(epoch_disc_acc_true).mean())     
+      self.accuracy['D accuracy Fake'].append(np.array(epoch_disc_acc_fake).mean())
+		
 
-    return history
   
   def plot_losses(self, data, xaxis, yaxis, ylim=0):
       pd.DataFrame(data).plot(figsize=(10,8))
