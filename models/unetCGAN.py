@@ -445,7 +445,7 @@ class unetCGAN():
 
         print("Decoded maps: ")
         decoded_images = self.model.discriminator((generator_images, benchmark_labels), training=False)[1]
-        self.plot_fake_figures(decoded_images, None, 4, epoch, self.out_images_path, "decoded")
+        self.plot_fake_figures(decoded_images, benchmark_labels, 4, epoch, self.out_images_path, "decoded")
 
       if (epoch % (self.logging_step*5)) == 0:
         checkpoint.save(file_prefix = checkpoint_prefix)
