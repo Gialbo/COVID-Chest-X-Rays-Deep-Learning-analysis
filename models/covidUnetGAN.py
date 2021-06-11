@@ -222,14 +222,11 @@ class covidUnetGAN():
         
         gen_loss = self.generator_loss(fake_output_enc) + self.generator_loss(fake_output_dec)
 
-        disc_loss_true_enc, _, disc_loss_enc = self.discriminator_loss(real_output_enc, fake_output_enc) 
-        disc_loss_true_dec, _, disc_loss_dec = self.discriminator_loss(real_output_dec, fake_output_dec) 
+        disc_loss_true_enc, disc_loss_fake_enc, disc_loss_enc = self.discriminator_loss(real_output_enc, fake_output_enc) 
+        disc_loss_true_dec, disc_loss_fake_dec, disc_loss_dec = self.discriminator_loss(real_output_dec, fake_output_dec) 
+        
         disc_loss_true = disc_loss_true_enc + disc_loss_true_dec
-
-        _, disc_loss_fake_enc, _ = self.discriminator_loss(real_output_enc, fake_output_enc) 
-        _, disc_loss_fake_dec, _ = self.discriminator_loss(real_output_dec, fake_output_dec) 
         disc_loss_fake = disc_loss_fake_enc + disc_loss_fake_dec
-
         disc_loss = disc_loss_enc + disc_loss_dec
 
       gradients_of_generator = gen_tape.gradient(gen_loss, self.generator.trainable_variables)
