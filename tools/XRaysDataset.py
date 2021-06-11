@@ -69,7 +69,7 @@ class XRaysDataset():
             return file_paths
 
     def load(self, separate_classes=True, covid_class=False):
-        # train = False is used to compute FID
+        # separate_classes = False is used to load the entire training/test dataset
 
         AUTOTUNE = tf.data.experimental.AUTOTUNE
         
