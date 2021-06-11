@@ -340,8 +340,8 @@ class unetCGAN():
       # Compute metrics
       self.loss_tracker_generator.update_state(gen_loss)
       self.loss_tracker_discriminator.update_state(disc_loss)
-      self.loss_true_tracker_discriminator.update_state(disc_real_loss)
-      self.loss_fake_tracker_discriminator.update_state(disc_fake_loss)
+      self.loss_true_tracker_discriminator.update_state(disc_loss_true)
+      self.loss_fake_tracker_discriminator.update_state(disc_loss_fake)
 
       preds_real = tf.round(tf.sigmoid(real_output))
       accuracy_real = tf.math.reduce_mean(tf.cast(tf.math.equal(preds_real, tf.ones_like(preds_real)), tf.float32))
