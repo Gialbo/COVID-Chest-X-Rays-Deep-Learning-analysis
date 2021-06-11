@@ -8,7 +8,7 @@ Final project code for the course "Bioinformatics", A.Y. 2020/2021.
 4. [Experiments](#experiments)
 5. [Generation Results](#generation-results)
 6. [Classification Results](#classification-results)
-7. [Frechet Inception Distance Results](#fid-results)
+7. [Frechet Inception Distance Results](#frechet-inception-distance-results)
 8. [References](#references)
 <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/samples.png"> 
 
@@ -159,7 +159,7 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
 | Model                         |    FID        | 
 | --------------------------    | ------------- | 
 | covidGAN                      | 313.84 ± 2.48 |  
-| covidUnetGAN                  | XXX ± XXX     |  
+| covidUnetGAN                  | 188.48 ± 3.84 |  
 | cGAN                          | XXX    ± XXX  |  
 | unetCGAN                      | XXX    ± XXX  |  
 | ACCGAN                        | XXX    ± XXX  |  
