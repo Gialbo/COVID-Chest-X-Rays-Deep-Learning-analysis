@@ -58,7 +58,7 @@ The dataset contains X-rays images from different patients with different patolo
 
 
  
-## [`Generation Results`]
+## Generation Results
 
 ### Synthetic images generation: covidGAN
  <p align="center">
@@ -91,7 +91,7 @@ The dataset contains X-rays images from different patients with different patolo
 </p>
 
 
-## [`Classification Results`]
+## Classification Results
 
 ### Classification Task: inceptionNet
 <p align="center">
@@ -143,8 +143,8 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/correctPredictions.png">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/wrongPredictions.png">
  </p>
-
-## [`Frechet Inception Distance Results`]
+ 
+## Frechet Inception Distance Results
 
 ... description to do ...
 
