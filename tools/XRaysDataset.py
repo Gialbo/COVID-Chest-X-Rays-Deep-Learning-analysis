@@ -45,13 +45,22 @@ class XRaysDataset():
         ds = ds.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
         return ds
 
-    def get_file_paths(self, dir):
+    def get_file_paths(self, dir, label_mapping=None):
         file_paths = []
-        for subdir, dirs, files in os.walk(dir):
-            for file_name in files:
-                file_path = os.path.join(subdir, file_name)
-                file_paths.append(file_path)
-        return file_paths
+        if label_mapping:
+            labels = []
+            for subdir, dirs, files in os.walk(dir):
+                for file_name in files:
+                    file_path = os.path.join(subdir, file_name)
+                    file_paths.append(file_path)
+                    labels.append(label_mapping[subdir.split("/")[-1]])
+            return file_paths, labels
+        else:
+            for subdir, dirs, files in os.walk(dir):
+                for file_name in files:
+                    file_path = os.path.join(subdir, file_name)
+                    file_paths.append(file_path)
+            return file_paths
 
     def load(self, train=True):
         # train = False is used to compute FID
