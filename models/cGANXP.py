@@ -387,7 +387,7 @@ class cGANXP():
 
                 print(f"Starting epoch {epoch} of {self.n_epochs}")
 
-                for step in range(len(train_ds)):
+                for step, batch in enumerate(train_ds):
                     images, labels = next(train_ds)
                     gen_loss_step, disc_loss_step, disc_loss_true_step, disc_loss_fake_step, disc_acc_true_step, disc_acc_fake_step = self.model.train_on_batch(images, labels)
 
