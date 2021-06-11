@@ -324,13 +324,12 @@ class unetCGAN():
         
         gen_loss = self.generator_loss(fake_output_enc) + self.generator_loss(fake_output_dec)
         
-        disc_loss_true_enc, disc_loss_fake_enc, disc_loss_enc = self.discriminator_loss(real_output_enc, fake_output_enc) 
-        disc_loss_true_dec, disc_loss_fake_dec, disc_loss_dec = self.discriminator_loss(real_output_dec, fake_output_dec) 
+        disc_loss_true_enc, disc_loss_fake_enc, disc_loss_enc = self.discriminator_loss(real_output_enc, fake_output_enc, images) 
+        disc_loss_true_dec, disc_loss_fake_dec, disc_loss_dec = self.discriminator_loss(real_output_dec, fake_output_dec, images) 
         
         disc_loss_true = disc_loss_true_enc + disc_loss_true_dec
         disc_loss_fake = disc_loss_fake_enc + disc_loss_fake_dec
         disc_loss = disc_loss_enc + disc_loss_dec
-
 
       gradients_of_generator = gen_tape.gradient(gen_loss, self.generator.trainable_variables)
       gradients_of_discriminator = disc_tape.gradient(disc_loss, self.discriminator.trainable_variables)
