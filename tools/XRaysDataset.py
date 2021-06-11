@@ -26,11 +26,14 @@ class XRaysDataset():
         x = tf.cast(x, tf.float32)
         return (x - 127.5)/127.5
 
-    def process_path(self, file_path):
+    def process_path(self, file_path, label=None):
         # Load the raw data from the file as a string
         img = tf.io.read_file(file_path)
         img = self.decode_img(img)
-        return img
+        if label:
+            return img, label
+        else:
+            return img
 
     def decode_img(self, image):
         # Convert the compressed string to a 3D uint8 tensor
