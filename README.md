@@ -174,7 +174,7 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
 | --------------------------    | ------------- | 
 | covidGAN                      | 313.84 ± 2.48 |  
 | covidUnetGAN                  | 188.48 ± 3.84 |  
-| cGAN                          | XXX    ± XXX  |  
+| cGAN                          | 80.65  ± 1.27 |  
 | unetCGAN                      | XXX    ± XXX  |  
 | ACCGAN                        | XXX    ± XXX  |  
 | ACCGAN + unecertainty         | XXX    ± XXX  |  
