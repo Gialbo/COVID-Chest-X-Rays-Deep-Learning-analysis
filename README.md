@@ -6,8 +6,10 @@ Final project code for the course "Bioinformatics", A.Y. 2020/2021.
 2. [Tools](#tools)
 3. [Models](#models)
 4. [Experiments](#experiments)
-5. [Results](#results)
-6. [References](#references)
+5. [Generation Results](#generation-results)
+6. [Classification Results](#classification-results)
+7. [Frechet Inception Distance Results](#fid-results)
+8. [References](#references)
 <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/samples.png"> 
 
 
@@ -20,6 +22,7 @@ From these datasets we applied some preprocessing techniques in order to have th
 After these passages, we are ready to train our models. Our final dataset can be downloaded here: [`COVID-19 Radiography Database`](https://drive.google.com/drive/folders/1-7se3aMXMXtDF89ALV07pru3kELmWTTo?usp=sharing).
 
 ##  [`Tools`](./tools)
+* [`FID.py`](./tools/FID.py): class used to compute FID (Frechet Inception Distance)
 * [`images_to_gif.py`](./tools/images_to_gif.py): create a gif from the generated images by the model;
 * [`XRaysDataset.py`](./tools/XRaysDataset.py): load and preprocess data from given directory.
 
@@ -39,7 +42,8 @@ The dataset contains X-rays images from different patients with different patolo
 * [`inceptionNetMCD.py`](./models/inceptionNetMCD.py): Monte Carlo Dropout inceptionNet. The main difference are the following: the inceptionNetV3MCD is used and dropout layers are added after every fully connected layer. 
 * [`covidGAN.py`](./models/covidGAN.py):  Generative Adversial Network to generate synthetic COVID-19 x-rays samples  from the *COVID-19 Radiography Database* database.
 * [`covidUnetCGAN`](./models/unetCGAN.py): Particular version of a classical Generative Adversarial Network in which the discriminator is substituted with a Unet net. The Uney will becomposed by an encoder and a decoder. If we shrink to $1$ the output of the encoder we obtain the oputput of a classical discriminator net. But additionally we re decode the image and we tell the network to maximize the pixel-wise cross entropy of the decoded output. This means that in output of the decode we will have a map in which each pixel tells us in a grayscale rapresentation how much confident the network is for that pixel of the image being true. A value for a pixel close the $1$ (white) means that for that pixel the networ is sure of the image being real and viceversa for a value closs to $0$ (black) the network is sure for the image of being fake.
-* [`cGAN.py`](./models/cGAN.py): starting from the covidGAN, we added to the model to ability to distinguish between the tree different classes. This architecture is called Conditional GAN.  
+* [`cGAN.py`](./models/cGAN.py): starting from the covidGAN, we added to the model to ability to distinguish between the tree different classes. This architecture is called Conditional GAN. Futhermore, to make the training more stable, we added residual connections in the generator.
+* [`unetCGAN.py`](): to do...
 
 
 
@@ -49,8 +53,46 @@ The dataset contains X-rays images from different patients with different patolo
 * [`inceptionNetMCD.ipynb`](./experiments/inceptionNetMCD.ipynb): notebook reporting the experiment using the modified version of the inceptionNet model with Monte Carlo dropout.
 * [`covidGAN.ipynb`](./experiments/covidGAN.ipynb): notebook reporting the experiment using the covidGAN model.
 * [`covidUnetGAN.ipynb`](./experiments/covidUnetGAN.ipynb): notebook reporting the experiment using the covidUnetGAN model.
+* [`cGAN.ipynb`](./experiments/cGAN.ipynb): notebook reporting the experiment using the cGAN model.
+* [`unetcGAN.ipynb`](./experiments/cGAN.ipynb): notebook reporting the experiment using the unetcGAN model.
 
-## [`Results`](./results)
+
+ 
+## Generation Results
+
+### Synthetic images generation: covidGAN
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidGAN/imagesCompared.png">
+ </p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/results/covidGAN/covidGAN.gif" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidGAN/accuracy.png" width="400">
+</p>
+ 
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidGAN/loss.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidGAN/lossCloseUp.png" width="400">
+</p>
+
+### Synthetic images generation: cGAN
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/cGAN/imagesCompared.png">
+ </p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/results/cGAN/cGAN.gif" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/cGAN/accuracy.png" width="400">
+</p>
+ 
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/cGAN/loss.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/cGAN/lossCloseUp.png" width="400">
+</p>
+
+
+## Classification Results
+
 ### Classification Task: inceptionNet
 <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNet/loss.png" width="400">
@@ -102,37 +144,18 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/wrongPredictions.png">
  </p>
  
+## Frechet Inception Distance Results
 
-### Synthetic images generation: covidGAN
- <p align="center">
-  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidGAN/imagesCompared.png">
- </p>
+... description to do ...
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/results/covidGAN/covidGAN.gif" width="400">
-  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidGAN/accuracy.png" width="400">
-</p>
- 
-<p align="center">
-  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidGAN/loss.png" width="400">
-  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidGAN/lossCloseUp.png" width="400">
-</p>
-
-### Synthetic images generation: cGAN
- <p align="center">
-  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/cGAN/imagesCompared.png">
- </p>
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/results/cGAN/cGAN.gif" width="400">
-  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/cGAN/accuracy.png" width="400">
-</p>
- 
-<p align="center">
-  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/cGAN/loss.png" width="400">
-  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/cGAN/lossCloseUp.png" width="400">
-</p>
-
+| Model                         |    FID        | 
+| --------------------------    | ------------- | 
+| covidGAN                      | 313.84 ± 2.48 |  
+| covidUnetGAN                  | XXX ± XXX     |  
+| cGAN                          | XXX    ± XXX  |  
+| unetCGAN                      | XXX    ± XXX  |  
+| ACCGAN                        | XXX    ± XXX  |  
+| ACCGAN + unecertainty         | XXX    ± XXX  |  
 
 # References
 [Can AI help in screening Viral and COVID-19 pneumonia? ( Chowdhury et al., IEEE Access, Vol. 8, 2020, pp. 132665 - 132676.)](https://arxiv.org/ftp/arxiv/papers/2003/2003.13145.pdf)
