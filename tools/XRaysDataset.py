@@ -22,9 +22,12 @@ class XRaysDataset():
         self.dir = dir
     
 
-    def preprocessing_function(self, x):
+    def preprocessing_function(self, x, label=None):
         x = tf.cast(x, tf.float32)
-        return (x - 127.5)/127.5
+        if label is not None:
+            return (x - 127.5)/127.5, label
+        else:
+            return (x - 127.5)/127.5
 
     def process_path(self, file_path, label=None):
         # Load the raw data from the file as a string
