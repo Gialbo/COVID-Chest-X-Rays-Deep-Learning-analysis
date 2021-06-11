@@ -30,7 +30,7 @@ class XRaysDataset():
         # Load the raw data from the file as a string
         img = tf.io.read_file(file_path)
         img = self.decode_img(img)
-        if label:
+        if label is not None:
             return img, label
         else:
             return img
