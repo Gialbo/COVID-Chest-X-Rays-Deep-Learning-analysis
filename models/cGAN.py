@@ -15,7 +15,7 @@ from keras.models import *
 from keras.optimizers import *
  
  
-class cGANXP():
+class cGAN():
  
         def __init__(self,
                       n_epochs=500,
@@ -218,9 +218,9 @@ class cGANXP():
             model = Model(inputs=[input_noise, input_label], outputs=[output])
             return model
  
-        class _cGANXPModel(keras.Model):
+        class _cGANModel(keras.Model):
             def __init__(self, discriminator, generator, latent_size, num_classes, r1_gamma):
-                    super(cGANXP._cGANXPModel, self).__init__()
+                    super(cGAN._cGANModel, self).__init__()
                     self.discriminator = discriminator
                     self.generator = generator
                     self.latent_size = latent_size
@@ -239,7 +239,7 @@ class cGANXP():
                 return x
 
             def compile(self, discriminator_optimizer, generator_optimizer):
-                super(cGANXP._cGANXPModel, self).compile()
+                super(cGAN._cGANModel, self).compile()
                 self.generator_optimizer = generator_optimizer
                 self.discriminator_optimizer = discriminator_optimizer
 
@@ -344,7 +344,7 @@ class cGANXP():
 
             self.discriminator = self.create_discriminator()
 
-            model = self._cGANXPModel(generator=self.generator, discriminator=self.discriminator, latent_size=self.latent_size, num_classes=self.n_classes, r1_gamma=self.r1_gamma)
+            model = self._cGANModel(generator=self.generator, discriminator=self.discriminator, latent_size=self.latent_size, num_classes=self.n_classes, r1_gamma=self.r1_gamma)
 
             self.generator_optimizer = tf.keras.optimizers.Adam(self.generator_lr, beta_1=0.5, clipvalue=5)
             self.discriminator_optimizer = tf.keras.optimizers.Adam(self.discriminator_lr, beta_1=0.5)

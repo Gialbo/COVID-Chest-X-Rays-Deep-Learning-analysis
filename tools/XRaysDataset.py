@@ -68,7 +68,7 @@ class XRaysDataset():
                     file_paths.append(file_path)
             return file_paths
 
-    def load(self, train=True, covid_class=False):
+    def load(self, separate_classes=True, covid_class=False):
         # train = False is used to compute FID
 
         AUTOTUNE = tf.data.experimental.AUTOTUNE
@@ -87,7 +87,7 @@ class XRaysDataset():
         size = len(os.listdir(self.dir+"/covid-19")) +len(os.listdir(self.dir+"/normal")) + len(os.listdir(self.dir+"/viral-pneumonia"))
         print("Dataset size ", size)
 
-        if train:
+        if separate_classes:
             
             covid_file_paths = self.get_file_paths(self.dir+"/covid-19")
             train_ds_covid = tf.data.Dataset.from_tensor_slices((covid_file_paths))
@@ -116,10 +116,10 @@ class XRaysDataset():
 
             label_mapping = {"covid-19": 0, "normal": 1, "viral-pneumonia": 2}
             file_paths, labels = self.get_file_paths(self.dir, label_mapping)
-            test_ds = tf.data.Dataset.from_tensor_slices((file_paths, labels))
-            test_ds = test_ds.map(self.process_path)
-            test_ds = test_ds.map(self.preprocessing_function)
-            ds = self.configure_for_performance(test_ds, buffer_size=1500, batch_size=self.batch_size)
+            ds = tf.data.Dataset.from_tensor_slices((file_paths, labels))
+            ds = ds.map(self.process_path)
+            ds = ds.map(self.preprocessing_function)
+            ds = self.configure_for_performance(ds, buffer_size=1500, batch_size=self.batch_size)
             print(f"Number of batches for the dataset: {len(ds)}")
 
         return ds, size
