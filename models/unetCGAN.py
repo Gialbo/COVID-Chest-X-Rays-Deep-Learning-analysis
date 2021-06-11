@@ -343,11 +343,11 @@ class unetCGAN():
       self.loss_true_tracker_discriminator.update_state(disc_loss_true)
       self.loss_fake_tracker_discriminator.update_state(disc_loss_fake)
 
-      preds_real = tf.round(tf.sigmoid(real_output))
+      preds_real = tf.round(tf.sigmoid(real_output_enc))
       accuracy_real = tf.math.reduce_mean(tf.cast(tf.math.equal(preds_real, tf.ones_like(preds_real)), tf.float32))
       self.accuracy_real_tracker_discriminator.update_state(accuracy_real)
 
-      preds_fake = tf.round(tf.sigmoid(fake_output))
+      preds_fake = tf.round(tf.sigmoid(fake_output_enc))
       accuracy_fake = tf.math.reduce_mean(tf.cast(tf.math.equal(preds_fake, tf.zeros_like(preds_fake)), tf.float32))
       self.accuracy_fake_tracker_discriminator.update_state(accuracy_fake)
 
