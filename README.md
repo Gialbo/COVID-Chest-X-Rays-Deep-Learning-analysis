@@ -77,6 +77,10 @@ The dataset contains X-rays images from different patients with different patolo
 
 ### covidUnetGAN
 
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidUnetGAN/imagesCompared.png">
+ </p>
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/results/covidUnetGAN/covidUnetGAN_gen.gif" width="400">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidUnetGAN/covidUnetGAN_dec.gif" width="400">
