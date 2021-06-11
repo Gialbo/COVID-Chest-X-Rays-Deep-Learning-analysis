@@ -15,7 +15,7 @@ import tensorflow as tf
 class FID():
 
     def __init__(self,
-                batch_size=383,
+                batch_size,
                 n_trials=5):
 
         self.batch_size = batch_size
@@ -53,11 +53,15 @@ class FID():
 
         FID_array = np.zeros(self.n_trials)
         real_scaled_images = self.scale_images(real_images, (299,299,3))
+
         for i in range(self.n_trials):
             benchmarkNoise = tf.random.normal([self.batch_size, generative_model.latent_size])
             benchmarkLabels = np.random.randint(0, n_classes, self.batch_size)
 
-            fake_images = generative_model.generator.predict([benchmarkNoise, benchmarkLabels])
+            if n_classes == 3:
+                fake_images = generative_model.generator.predict([benchmarkNoise, benchmarkLabels])
+            else:
+                fake_images = generative_model.generator.predict([benchmarkNoise])
             
             fake_images_rgb = tf.image.grayscale_to_rgb(tf.convert_to_tensor(fake_images), name=None)
             fake_scaled_images = self.scale_images(fake_images_rgb, (299,299,3))

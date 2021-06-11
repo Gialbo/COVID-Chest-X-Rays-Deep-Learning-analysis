@@ -68,10 +68,21 @@ class XRaysDataset():
                     file_paths.append(file_path)
             return file_paths
 
-    def load(self, train=True):
+    def load(self, train=True, covid_class=False):
         # train = False is used to compute FID
 
         AUTOTUNE = tf.data.experimental.AUTOTUNE
+        
+        if covid_class:
+
+            covid_file_paths = self.get_file_paths(self.dir+"/covid-19")
+            train_ds_covid = tf.data.Dataset.from_tensor_slices((covid_file_paths))
+            train_ds_covid = train_ds_covid.map(self.process_path, num_parallel_calls=AUTOTUNE)
+            train_ds_covid = train_ds_covid.map(self.preprocessing_function)
+            train_ds_covid = self.configure_for_performance(train_ds_covid, buffer_size=1500, batch_size=self.batch_size)
+            print(f"Number of batches for the covid dataset: {len(train_ds_covid)}")
+            size_covid = len(os.listdir(self.dir+"/covid-19"))
+            return train_ds_covid, size_covid
 
         size = len(os.listdir(self.dir+"/covid-19")) +len(os.listdir(self.dir+"/normal")) + len(os.listdir(self.dir+"/viral-pneumonia"))
         print("Dataset size ", size)
