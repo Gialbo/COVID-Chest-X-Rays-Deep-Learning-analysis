@@ -60,7 +60,7 @@ The dataset contains X-rays images from different patients with different patolo
  
 ## Generation Results
 
-### Synthetic images generation: covidGAN
+### covidGAN
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidGAN/imagesCompared.png">
  </p>
@@ -75,7 +75,7 @@ The dataset contains X-rays images from different patients with different patolo
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidGAN/lossCloseUp.png" width="400">
 </p>
 
-### Synthetic images generation: covidUnetGAN
+### covidUnetGAN
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/results/covidUnetGAN/covidUnetGAN_gen.gif" width="400">
@@ -86,6 +86,13 @@ The dataset contains X-rays images from different patients with different patolo
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidUnetGAN/accuracy.png" width="400">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/covidUnetGAN/loss.png" width="400">
 </p>
+
+
+### cGAN
+
+### unetCGAN
+
+### ACCGAN
 
 
 ## Classification Results
