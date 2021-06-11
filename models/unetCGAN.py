@@ -470,7 +470,7 @@ class unetCGAN():
  
 
   @staticmethod 
-  def plot_fake_figures(x, labels, n, epoch, dir='./'):
+  def plot_fake_figures(x, labels, n, epoch, dir, image_type):
  
     labels_dict = {
             0: "covid-19",
@@ -490,6 +490,6 @@ class unetCGAN():
         plt.imshow(img, cmap="gray")
         plt.xlabel(labels_dict[labels[i]])
         plt.imshow(img, cmap='gray')
-        plt.savefig('{}/image_at_epoch_{:04d}.png'.format(dir, epoch))
+        plt.savefig('{}/{}_at_epoch_{:04d}.png'.format(dir, image_type, epoch))
 
     plt.show()
