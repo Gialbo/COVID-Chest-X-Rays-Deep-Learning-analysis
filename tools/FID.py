@@ -53,7 +53,7 @@ class FID():
 
         FID_array = np.zeros(self.n_trials)
         real_scaled_images = self.scale_images(real_images, (299,299,3))
-        for i in self.n_trials:
+        for i in range(self.n_trials):
             benchmarkNoise = tf.random.normal([self.batch_size, generative_model.latent_size])
             benchmarkLabels = np.random.randint(0, n_classes, self.batch_size)
 
@@ -64,6 +64,8 @@ class FID():
 
             fid = self.calculate_fid(evaluation_model, real_scaled_images, fake_scaled_images)
             FID_array[i] = fid
+            print("Trial ", i)
+            print("FID: ", fid)
 
         mean_FID = np.mean(FID_array)
         std_FID = np.std(FID_array)
