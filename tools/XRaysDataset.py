@@ -108,7 +108,7 @@ class XRaysDataset():
             test_ds = tf.data.Dataset.from_tensor_slices((file_paths, labels))
             test_ds = test_ds.map(self.process_path)
             test_ds = test_ds.map(self.preprocessing_function)
-            ds = configure_for_performance(test_ds, buffer_size=1500, batch_size=self.batch_size)
+            ds = self.configure_for_performance(test_ds, buffer_size=1500, batch_size=self.batch_size)
             print(f"Number of batches for the dataset: {len(ds)}")
 
         return ds, size
