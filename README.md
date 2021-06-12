@@ -110,6 +110,21 @@ The dataset contains X-rays images from different patients with different patolo
 
 ### unetCGAN
 
+<!--
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/unetCGAN/imagesCompared.png">
+ </p> -->
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/results/unetCGAN/unetCGAN_gen.gif" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/unetCGAN/unetCGAN_dec.gif" width="400">
+</p>
+ 
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/unetCGAN/accuracy.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/unetCGAN/loss.png" width="400">
+</p>
+
 ### ACCGAN
 
 
@@ -175,8 +190,8 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
 | covidGAN                      | 313.84 ± 2.48 |  
 | covidUnetGAN                  | 188.48 ± 3.84 |  
 | cGAN                          | 80.65  ± 1.27 |  
-| unetCGAN                      | XXX    ± XXX  |  
-| ACCGAN                        | XXX    ± XXX  |  
+| unetCGAN                      | 89.76  ± 2.03 |  
+| ACCGAN                        | XXX    ±  XXX |  
 | ACCGAN + unecertainty         | XXX    ± XXX  |  
 
 # References
