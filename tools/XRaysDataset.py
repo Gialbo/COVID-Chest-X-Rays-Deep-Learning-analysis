@@ -92,7 +92,7 @@ class XRaysDataset():
 
         if train_val_split:
             
-            file_paths, labels = get_file_paths(self.dir, label_mapping)
+            file_paths, labels = self.get_file_paths(self.dir, label_mapping)
             train_val_ds = tf.data.Dataset.from_tensor_slices((file_paths, labels))
             train_val_ds = train_val_ds.map(self.process_path)
             train_val_ds = train_val_ds.map(self.preprocessing_function)
