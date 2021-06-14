@@ -51,6 +51,22 @@ class XRaysDataset():
         ds = ds.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
         return ds
 
+    def configure_for_performance_train_val(self, ds, buffer_size, batch_size):
+        VAL_SPLIT=0.2
+        ds = ds.shuffle(buffer_size=buffer_size)
+        val_ds = ds.take(int(len(ds)*VAL_SPLIT))
+        train_ds = ds.skip(int(len(ds)*VAL_SPLIT))
+
+        val_ds = val_ds.cache()
+        val_ds = val_ds.batch(batch_size)
+        val_ds = val_ds.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
+
+        train_ds = train_ds.cache()
+        train_ds = train_ds.batch(batch_size)
+        train_ds = train_ds.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
+        return train_ds, val_ds
+
+
     def get_file_paths(self, dir, label_mapping=None):
         file_paths = []
         if label_mapping:
@@ -68,10 +84,22 @@ class XRaysDataset():
                     file_paths.append(file_path)
             return file_paths
 
-    def load(self, separate_classes=True, covid_class=False):
+    def load(self, separate_classes=True, train_val_split=False, covid_class=False):
         # separate_classes = False is used to load the entire training/test dataset
 
         AUTOTUNE = tf.data.experimental.AUTOTUNE
+        label_mapping = {"covid-19": 0, "normal": 1, "viral-pneumonia": 2}
+
+        if train_val_split:
+            
+            file_paths, labels = get_file_paths(self.dir, label_mapping)
+            train_val_ds = tf.data.Dataset.from_tensor_slices((file_paths, labels))
+            train_val_ds = train_val_ds.map(self.process_path)
+            train_val_ds = train_val_ds.map(self.preprocessing_function)
+            train_ds, val_ds = self.configure_for_performance_train_val(train_val_ds, buffer_size=3443, batch_size=self.batch_size)
+            print(f"Number of batches for the train dataset: {len(train_ds)}")
+            print(f"Number of batches for the validation dataset: {len(val_ds)}")
+            return train_ds, val_ds
         
         if covid_class:
 
@@ -113,8 +141,6 @@ class XRaysDataset():
             ds = [train_ds_covid, train_ds_normal, train_ds_vp]
 
         else:
-
-            label_mapping = {"covid-19": 0, "normal": 1, "viral-pneumonia": 2}
             file_paths, labels = self.get_file_paths(self.dir, label_mapping)
             ds = tf.data.Dataset.from_tensor_slices((file_paths, labels))
             ds = ds.map(self.process_path)
