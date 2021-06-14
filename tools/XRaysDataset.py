@@ -98,7 +98,7 @@ class XRaysDataset():
             
             file_paths, labels = self.get_file_paths(self.dir, label_mapping)
             train_val_ds = tf.data.Dataset.from_tensor_slices((file_paths, labels))
-            train_val_ds = train_val_ds.map(self.process_path(self.isInceptionNet))
+            train_val_ds = train_val_ds.map(self.process_path)
             train_val_ds = train_val_ds.map(self.preprocessing_function)
             train_ds, val_ds = self.configure_for_performance_train_val(train_val_ds, buffer_size=3443, batch_size=self.batch_size)
             print(f"Number of batches for the train dataset: {len(train_ds)}")
