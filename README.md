@@ -1,5 +1,5 @@
 # COVID 19 Chest X-Rays Deep Learning analysis
-Comparison of different segmentation and synthetic data generation methods applied to chest X Rays from COVID-19 patients. We plan to compare different methods such as UNET, autoencoders, GAN, colorization techniques. \
+Comparison of different GAN-based synthetic data generation methods applied to chest X-Rays from COVID-19 patients.
 Final project code for the course "Bioinformatics", A.Y. 2020/2021. 
 # Table of Contents
 1. [Data](#data)
@@ -11,12 +11,13 @@ Final project code for the course "Bioinformatics", A.Y. 2020/2021.
 7. [Frechet Inception Distance Results](#frechet-inception-distance-results)
 8. [References](#references)
 <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/samples.png"> 
+<center><em>Real images coming from the dataset</em></center>
 
 
 ##  [`Data`](./data)
-We used the COVID-19 RaioGraphy Database. Further information about the dataset are reported below.
-From these datasets we applied some preprocessing techniques in order to have the data ready for our experiments. 
-* [`train_test_split.py`](./data/train_test_split.py): create a new folder divided in two subfolders: train and test. These folders are needed to define the ImageDataGenerator for training.
+We used the COVID-19 RadioGraphy Database. Further information about the dataset are reported below.
+Starting From the dataset we applied some preprocessing techniques in order to have the data ready for our experiments. 
+* [`train_test_split.py`](./data/train_test_split.py): create a new folder divided in two subfolders: train and test.
 * [`resize_images.py`](./data/resize_images.py): resize all the images in the dataset to 224x224 pixels.
 
 After these passages, we are ready to train our models. Our final dataset can be downloaded here: [`COVID-19 Radiography Database`](https://drive.google.com/drive/folders/1-7se3aMXMXtDF89ALV07pru3kELmWTTo?usp=sharing).
@@ -24,7 +25,7 @@ After these passages, we are ready to train our models. Our final dataset can be
 ##  [`Tools`](./tools)
 * [`FID.py`](./tools/FID.py): class used to compute FID (Frechet Inception Distance)
 * [`images_to_gif.py`](./tools/images_to_gif.py): create a gif from the generated images by the model;
-* [`XRaysDataset.py`](./tools/XRaysDataset.py): load and preprocess data from given directory.
+* [`XRaysDataset.py`](./tools/XRaysDataset.py): load and preprocess data from given directory. This tools permits to set the final image size needed to pass the images to the model and sets up the prefetching of thedataset for increased performances.
 
 
 #### [`COVID-19 Radiography Database`](https://www.kaggle.com/tawsifurrahman/covid19-radiography-database)
