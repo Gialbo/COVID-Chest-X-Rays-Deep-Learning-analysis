@@ -29,18 +29,20 @@ class XRaysDataset():
         else:
             return (x - 127.5)/127.5
 
-    def process_path(self, file_path, label=None):
+    def process_path(self, file_path, isInceptionNet=False, label=None):
         # Load the raw data from the file as a string
         img = tf.io.read_file(file_path)
-        img = self.decode_img(img)
+        img = self.decode_img(img, isInceptionNet)
         if label is not None:
             return img, label
         else:
             return img
 
-    def decode_img(self, image):
+    def decode_img(self, image, isInceptionNet):
         # Convert the compressed string to a 3D uint8 tensor
         image = tf.image.decode_jpeg(image, channels=1)
+        if isInceptionNet:
+            image = tf.image.grayscale_to_rgb(image, name=None)
         image = tf.image.resize(image, [self.img_height, self.img_width])
         return image
 
@@ -84,7 +86,7 @@ class XRaysDataset():
                     file_paths.append(file_path)
             return file_paths
 
-    def load(self, separate_classes=True, train_val_split=False, covid_class=False):
+    def load(self, separate_classes=True, train_val_split=False, isInceptionNet=False, covid_class=False):
         # separate_classes = False is used to load the entire training/test dataset
 
         AUTOTUNE = tf.data.experimental.AUTOTUNE
@@ -94,7 +96,7 @@ class XRaysDataset():
             
             file_paths, labels = self.get_file_paths(self.dir, label_mapping)
             train_val_ds = tf.data.Dataset.from_tensor_slices((file_paths, labels))
-            train_val_ds = train_val_ds.map(self.process_path)
+            train_val_ds = train_val_ds.map(self.process_path(isInceptionNet))
             train_val_ds = train_val_ds.map(self.preprocessing_function)
             train_ds, val_ds = self.configure_for_performance_train_val(train_val_ds, buffer_size=3443, batch_size=self.batch_size)
             print(f"Number of batches for the train dataset: {len(train_ds)}")
