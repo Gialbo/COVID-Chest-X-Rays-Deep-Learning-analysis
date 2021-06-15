@@ -132,14 +132,14 @@ class XRaysDataset():
             print(f"Number of batches for the covid dataset: {len(train_ds_covid)}")
 
             normal_file_paths = self.get_file_paths(self.dir+"/normal")
-            train_ds_normal = tf.data.Dataset.from_tensor_slices((covid_file_paths))
+            train_ds_normal = tf.data.Dataset.from_tensor_slices((normal_file_paths))
             train_ds_normal = train_ds_normal.map(self.process_path, num_parallel_calls=AUTOTUNE)
             train_ds_normal = train_ds_normal.map(self.preprocessing_function)
             train_ds_normal = self.configure_for_performance(train_ds_normal, buffer_size=1500, batch_size=self.batch_size)
             print(f"Number of batches for the normal dataset: {len(train_ds_normal)}")
 
             vp_file_paths = self.get_file_paths(self.dir+"/viral-pneumonia")
-            train_ds_vp = tf.data.Dataset.from_tensor_slices((covid_file_paths))
+            train_ds_vp = tf.data.Dataset.from_tensor_slices((vp_file_paths))
             train_ds_vp = train_ds_vp.map(self.process_path, num_parallel_calls=AUTOTUNE)
             train_ds_vp = train_ds_vp.map(self.preprocessing_function)
             train_ds_vp = self.configure_for_performance(train_ds_vp, buffer_size=1500, batch_size=self.batch_size)
