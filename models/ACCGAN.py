@@ -1,5 +1,7 @@
 """
-AC-CGAN
+Auxiliary Classifier Conditional GAN
+Bioinformatics, Politecnico di Torino
+Authors: Gilberto Manunza, Silvia Giammarinaro
 """
 
 import os
@@ -17,7 +19,7 @@ from keras.optimizers import *
 class ACCGAN():
 
         def __init__(self,
-                     n_epochs=750,
+                     n_epochs=250,
                      batch_size=512,
                      input_shape=(128, 128, 1),
                      latent_size=100,
@@ -27,7 +29,6 @@ class ACCGAN():
                      discriminator_lr=1e-4,
                      generator_lr=1e-4,
                      logging_step=10,
-                     r1_gamma=10,
                      out_images_path="outImages",
                      checkpoint_dir="checkpoints",
                      use_residual=False):
@@ -42,7 +43,6 @@ class ACCGAN():
                 self.discriminator_lr = discriminator_lr
                 self.generator_lr = generator_lr
                 self.logging_step = logging_step
-                self.r1_gamma = r1_gamma
                 self.out_images_path = out_images_path
                 self.checkpoint_dir = checkpoint_dir
                 self.use_residual = use_residual
@@ -51,8 +51,6 @@ class ACCGAN():
                 self.model = self._build_model()
 
         def create_discriminator(self):
-                leaky = tf.keras.layers.LeakyReLU(self.alpha)
-
                 inputs = Input(shape=self.input_shape)
                 leaky = tf.keras.layers.LeakyReLU(self.alpha)
 
@@ -159,13 +157,12 @@ class ACCGAN():
                 return model
 
         class _ACCGANModel(keras.Model):
-                def __init__(self, discriminator, generator, latent_size, num_classes, r1_gamma):
+                def __init__(self, discriminator, generator, latent_size, num_classes):
                         super(ACCGAN._ACCGANModel, self).__init__()
                         self.discriminator = discriminator
                         self.generator = generator
                         self.latent_size = latent_size
                         self.num_classes = num_classes
-                        self.r1_gamma=r1_gamma
 
                         self.loss_tracker_generator = keras.metrics.Mean(name="gen_loss")
                         self.loss_tracker_discriminator = keras.metrics.Mean(name="disc_loss")
@@ -200,7 +197,9 @@ class ACCGAN():
                     return total_loss
 
                 def classification_loss(self, labels, logits):
-                    return tf.nn.sparse_softmax_cross_entropy_with_logits(labels = tf.cast(labels, tf.int32), logits = logits)
+                    ce_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels = tf.cast(labels, tf.int32), logits = logits)
+                    
+                    return ce_loss
 
                 def train_step(self, data):
                         images, labels = data
@@ -243,18 +242,9 @@ class ACCGAN():
                         accuracy_fake = tf.math.reduce_mean(tf.cast(tf.math.equal(preds_fake, tf.zeros_like(preds_fake)), tf.float32))
                         self.accuracy_fake_tracker_discriminator.update_state(accuracy_fake)
 
-                        
-                        preds_real_class = tf.math.argmax(real_output_class, axis=1)
-                        accuracy_real = tf.math.reduce_mean(tf.cast(tf.math.equal(preds_real, labels), tf.float32))
-                        self.accuracy_real_classification_tracker_discriminator.update_state(accuracy_real)
-
-                        preds_fake_class = tf.math.argmax(real_output_class, axis=1)
-                        accuracy_fake = tf.math.reduce_mean(tf.cast(tf.math.equal(preds_fake, fake_labels), tf.float32))
-                        self.accuracy_fake_classification_tracker_discriminator.update_state(accuracy_fake)
 
                         return {'gen_loss': self.loss_tracker_generator.result(), 'disc_loss': self.loss_tracker_discriminator.result(),
-                                'disc_acc_real': self.accuracy_real_tracker_discriminator.result(), 'disc_acc_fake': self.accuracy_fake_tracker_discriminator.result(),
-                                'disc_acc_class_real': self.accuracy_real_classification_tracker_discriminator.result(), 'disc_acc_class_fake': self.accuracy_fake_classification_tracker_discriminator.result()}
+                                'disc_acc_real': self.accuracy_real_tracker_discriminator.result(), 'disc_acc_fake': self.accuracy_fake_tracker_discriminator.result()}
                             
                 def test_step(self, data):
                         pass
@@ -275,7 +265,7 @@ class ACCGAN():
 
                 self.discriminator = self.create_discriminator()
 
-                model = self._ACCGANModel(generator=self.generator, discriminator=self.discriminator, latent_size=self.latent_size, num_classes=self.n_classes, r1_gamma=self.r1_gamma)
+                model = self._ACCGANModel(generator=self.generator, discriminator=self.discriminator, latent_size=self.latent_size, num_classes=self.n_classes)
 
                 self.generator_optimizer = tf.keras.optimizers.Adam(self.generator_lr, beta_1=0.5, clipvalue=5)
                 self.discriminator_optimizer = tf.keras.optimizers.Adam(self.discriminator_lr, beta_1=0.5)
@@ -322,8 +312,8 @@ class ACCGAN():
 
                         print(f"Starting epoch {epoch} of {self.n_epochs}")
 
-                        for step in range(len(train_ds)):
-                                images, labels = next(train_ds)
+                        for step, batch in enumerate(train_ds):
+                                images, labels = batch
                                 g_loss, d_loss, d_acc_real, d_acc_fake, d_acc_class_real, d_acc_class_fake = self.model.train_on_batch(images, labels)
 
                                 epoch_gen_loss.append(g_loss)
@@ -344,8 +334,16 @@ class ACCGAN():
         
                             print("Generated images: ")
                             self.plot_fake_figures(generator_images, benchmark_labels, 4, epoch, self.out_images_path)
-        
+
+                        if epoch % (self.logging_step*5) == 0:
                             checkpoint.save(file_prefix=checkpoint_prefix)
+
+                        history["G_loss"].append(np.array(epoch_gen_loss).mean())
+                        history["D_loss"].append(np.array(epoch_disc_loss).mean())
+                        history["D_acc_real"].append(np.array(epoch_disc_acc_real).mean())
+                        history["D_acc_fake"].append(np.array(epoch_disc_acc_fake).mean())
+
+                return history
  
         def plot_losses(self, data, xaxis, yaxis, ylim=0):
                 pd.DataFrame(data).plot(figsize=(10,8))

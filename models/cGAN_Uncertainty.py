@@ -1,5 +1,7 @@
 """
-Experimental version of the cGAN model.
+Conditional GAN model with Uncertainty
+Bioinformatics, Politecnico di Torino
+Authors: Gilberto Manunza, Silvia Giammarinaro
 """
  
 import os
