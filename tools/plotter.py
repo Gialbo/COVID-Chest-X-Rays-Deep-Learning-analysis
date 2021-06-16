@@ -5,6 +5,7 @@ Authors: Gilberto Manunza, Silvia Giammarinaro
 """
 
 import matplotlib.pyplot as plt
+import json
 
 def plot_losses(history):
   train_loss = history['3'].history["loss"]
@@ -115,3 +116,7 @@ def plot_classification_report(history):
   plot_accuracies(history)
   plot_recalls(history)
   plot_precisions(history)
+
+def save_history(history, checkpoint_dir):
+  with open(f"{checkpoint_dir}.json", 'w') as fs:
+    json.dump(history, fs)
