@@ -36,3 +36,36 @@ def compute_uncertainties_softmax(net, X):
     # we want to compute the standard deviation for each row -> axis=1
     std_predictions = np.std(predictions, axis=1)
     return std_predictions
+
+def plot_results(detResults, MCDresults, y_true, y_pred_det, y_pred_MCD):
+    with plt.style.context('fivethirtyeight'):
+        # all predictions
+        fig, ax = plt.subplots(1, 2, figsize=(20,6))
+        ax[0].set_title("Softmax uncertainties: inceptionNet (deterministic)")
+        ax[0].set_xlabel("Standard deviation values")
+        ax[0].set_yscale('log')
+        sns.histplot(ax=ax[0], data=softmax_uncertainty_det, bins=25)
+        ax[1].set_title("Predictions uncertainties: inceptionNetMCD")
+        ax[1].set_xlabel("Uncertainty of the predicted class")
+        ax[1].set_yscale('log')
+        sns.histplot(ax=ax[1], data=predicted_class_variances_mcd, bins=25)
+
+        # right predictions
+        fig, ax = plt.subplots(1, 2, figsize=(20,6))
+        ax[0].set_title("Softmax uncertainties for right predictions: inceptionNet (deterministic)")
+        ax[0].set_xlabel("Standard deviaton values")
+        ax[0].set_yscale('log')
+        sns.histplot(ax=ax[0], data=softmax_uncertainty_det[y_true == y_pred_det], bins=25, color="green")
+        ax[1].set_title("Predictions uncertainties for right predictions: inceptionNetMCD")
+        ax[1].set_xlabel("Probability values")
+        ax[1].set_yscale('log')
+        sns.histplot(ax=ax[1], data=predicted_class_variances_mcd[y_true == y_pred_MCD], bins=25, color="green")
+
+        # wrong predictions
+        fig, ax = plt.subplots(1, 2, figsize=(20,6))
+        ax[0].set_title("Softmax uncertainties for wrong predictions: inceptionNet (deterministic)")
+        ax[0].set_xlabel("Standard deviaton values")
+        sns.histplot(ax=ax[0], data=softmax_uncertainty_det[y_true != y_pred_det], bins=25, color="red")
+        ax[1].set_title("Predictions uncertainties for wrong predictions: inceptionNetMCD")
+        ax[1].set_xlabel("Probability values")
+        sns.histplot(ax=ax[1], data=predicted_class_variances_mcd[y_true != y_pred_MCD], bins=25, color="red")
