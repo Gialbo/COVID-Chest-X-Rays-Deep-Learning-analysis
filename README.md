@@ -148,11 +148,26 @@ The dataset contains X-rays images from different patients with different patolo
 
 In the table below are reported the results on the classification task. The recall and precision values are reported for the classes in the following order: covid-19, normal and viral pneumonia.
 
-
+<!--
 | Model                         |    Accuracy   | Loss    | Recall                 | Precision             |
 | --------------------------    | ------------- | --------| -----------------------| ----------------------|
 | inceptionNet (deterministic)  |     0.9347    |  0.3558 | 0.9739; 0.9776; 0.8582 | 1; 0.8618; 0.9664     |
-| inceptionNetMCD               |     0.9191    |  0.2434 | 1; 0.8358; 0.9254      | 0.9055; 0.9655; 0.8921|
+| inceptionNetMCD               |     0.9191    |  0.2434 | 1; 0.8358; 0.9254      | 0.9055; 0.9655; 0.8921| -->
+
+| Model                        | Accuracy      | Loss          |
+|------------------------------|---------------|---------------|
+| inceptionNet (deterministic) | 0.944 ± 0.026 | 0.420 ± 0.274 |
+| inceptionNetMCD              | xxxxx ± xxxxx | xxxxx ± xxxxx |
+
+| Model                         | Recall, Covid-19  | Recall, Normal | Recall, Viral Pneumonia |
+|-------------------------------|-------------------|----------------|-------------------------|
+| inceptionNet  (deterministic) | 0.939 ± 0.066     | 0.966 ± 0.025  | 0.928 ± 0.046           |
+| inceptionNetMCD               | xxxxx ± xxxxx     | xxxxx ± xxxxx  | xxxxx ± xxxxx           |
+
+| Model                         | Precision, Covid-19  | Precision, Normal | Precision, Viral Pneumonia |
+|-------------------------------|----------------------|-------------------|----------------------------|
+| inceptionNet  (deterministic) | 1.0 ± 0.0            | 0.917 ± 0.060     | 0.936 ± 0.020              |
+| inceptionNetMCD               | xxx ± xxx            | xxxxx ± xxxxx     | xxxxx ± xxxxx              |
 
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNet/confMatrix.png" width="400">
