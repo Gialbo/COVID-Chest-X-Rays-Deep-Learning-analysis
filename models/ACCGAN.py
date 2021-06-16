@@ -330,8 +330,8 @@ class ACCGAN():
 
                                 epoch_gen_loss.append(g_loss)
                                 epoch_disc_loss.append(d_loss)
-                                epoch_disc_acc_real.append(d_loss_real)
-                                epoch_disc_acc_fake.append(d_loss_fake)
+                                epoch_disc_loss_real.append(d_loss_real)
+                                epoch_disc_loss_fake.append(d_loss_fake)
                                 epoch_disc_acc_real.append(d_acc_real)
                                 epoch_disc_acc_fake.append(d_acc_fake)
 
@@ -352,8 +352,10 @@ class ACCGAN():
 
                         self.history["G loss"].append(np.array(epoch_gen_loss).mean())
                         self.history["D loss"].append(np.array(epoch_disc_loss).mean())
-                        self.history["D loss real"].append(np.array(epoch_disc_acc_real).mean())
-                        self.history["D loss fake"].append(np.array(epoch_disc_acc_fake).mean())
+                        self.history["G loss Real"].append(np.array(epoch_disc_loss_real).mean())
+                        self.history["D loss Fake"].append(np.array(epoch_disc_loss_fake).mean())
+                        self.accuracy["D acc Real"].append(np.array(epoch_disc_acc_real).mean())
+                        self.accuracy["D acc Fake"].append(np.array(epoch_disc_acc_fake).mean())
  
         def plot_stats(self, data, xaxis, yaxis, ylim=0):
                 pd.DataFrame(data).plot(figsize=(10,8))
