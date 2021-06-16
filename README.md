@@ -130,7 +130,7 @@ The dataset contains X-rays images from different patients with different patolo
 
 ## Classification Results
 
-### Classification Task: inceptionNet
+### Classification Task: deterministic inceptionNet
 <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNet/loss.png" width="400">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNet/accuracy.png" width="400">
@@ -143,6 +143,21 @@ The dataset contains X-rays images from different patients with different patolo
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNet/recall.png">
  </p>
+ 
+
+### Classification Task: Monte Carlo Dropout inceptionNet
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/loss.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accuracy.png" width="400">
+ </p>
+ 
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/precision.png">
+ </p>
+ 
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/recall.png">
+ </p>
 
 ### Classification Task: deterministic inceptionNet vs Monte Carlo Dropout inceptionNet
 
@@ -154,29 +169,29 @@ In the table below are reported the results on the classification task. The reca
 | inceptionNet (deterministic)  |     0.9347    |  0.3558 | 0.9739; 0.9776; 0.8582 | 1; 0.8618; 0.9664     |
 | inceptionNetMCD               |     0.9191    |  0.2434 | 1; 0.8358; 0.9254      | 0.9055; 0.9655; 0.8921| -->
 
- <p align="center">
 
   | Model                        | Accuracy      | Loss          |
   |------------------------------|---------------|---------------|
   | inceptionNet (deterministic) | 0.944 ± 0.026 | 0.420 ± 0.274 |
-  | inceptionNetMCD              | xxxxx ± xxxxx | xxxxx ± xxxxx |
+  | inceptionNetMCD              | 0.907 ± 0.007 | 0.326 ± 0.032 |
 
   | Model                         | Recall, Covid-19  | Recall, Normal | Recall, Viral Pneumonia |
   |-------------------------------|-------------------|----------------|-------------------------|
   | inceptionNet  (deterministic) | 0.939 ± 0.066     | 0.966 ± 0.025  | 0.928 ± 0.046           |
-  | inceptionNetMCD               | xxxxx ± xxxxx     | xxxxx ± xxxxx  | xxxxx ± xxxxx           |
+  | inceptionNetMCD               | 0.974 ± 0.007     | 0.894 ± 0.009  | 0.861 ± 0.010           |
 
   | Model                         | Precision, Covid-19  | Precision, Normal | Precision, Viral Pneumonia |
   |-------------------------------|----------------------|-------------------|----------------------------|
-  | inceptionNet  (deterministic) | 1.0 ± 0.0            | 0.917 ± 0.060     | 0.936 ± 0.020              |
-  | inceptionNetMCD               | xxx ± xxx            | xxxxx ± xxxxx     | xxxxx ± xxxxx              |
+  | inceptionNet  (deterministic) | 1.000 ± 0.000        | 0.917 ± 0.060     | 0.936 ± 0.020              |
+  | inceptionNetMCD               | 0.933 ± 0.009        | 0.922 ± 0.011     | 0.878 ± 0.010              |
 
-</p>
 
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNet/confMatrix.png" width="400">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/confMatrix.png" width="400">
  </p>
+
+### Visualize the uncertainty: deterministic inceptionNet vs Monte Carlo Dropout inceptionNet
 
 
 To compare the uncertainty of both networks, the following strategies are used:
