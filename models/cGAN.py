@@ -28,7 +28,6 @@ class cGAN():
                       discriminator_lr=8e-5,
                       generator_lr=1e-4,
                       logging_step=10,
-                      r1_gamma=20,
                       out_images_path='/content/drive/MyDrive/BIOINF/checkpoints_GAN/cGAN/outImages',
                       checkpoint_dir='/content/drive/MyDrive/BIOINF/checkpoints_GAN/cGAN',
                       use_residual=False):
@@ -43,7 +42,6 @@ class cGAN():
             self.discriminator_lr = discriminator_lr
             self.generator_lr = generator_lr
             self.logging_step = logging_step
-            self.r1_gamma = r1_gamma
             self.out_images_path = out_images_path
             self.checkpoint_dir = checkpoint_dir
             self.use_residual = use_residual
@@ -219,13 +217,12 @@ class cGAN():
             return model
  
         class _cGANModel(keras.Model):
-            def __init__(self, discriminator, generator, latent_size, num_classes, r1_gamma):
+            def __init__(self, discriminator, generator, latent_size, num_classes):
                     super(cGAN._cGANModel, self).__init__()
                     self.discriminator = discriminator
                     self.generator = generator
                     self.latent_size = latent_size
                     self.num_classes = num_classes
-                    self.r1_gamma=r1_gamma
 
                     self.loss_tracker_generator = keras.metrics.Mean(name="gen_loss")
                     self.loss_tracker_discriminator = keras.metrics.Mean(name="disc_loss")
@@ -243,22 +240,6 @@ class cGAN():
                 self.generator_optimizer = generator_optimizer
                 self.discriminator_optimizer = discriminator_optimizer
 
-            def r1_regularization(self, d_logits, true_data):
-                """
-                Penalizes the gradients of the discriminator on the true data distribution.
-                This tecnique is described in: https://arxiv.org/pdf/1801.04406v4.pdf
-                This method is adapted from the more general gradient penalization regularization
-                fro GANS introduced in this repo: https://github.com/rothk/Stabilizing_GANs
-                """
-                d = tf.nn.sigmoid(d_logits) ###
-
-                grad_d_logits = tf.gradients(d, true_data)[0] ### prima era d_logits
-
-                grad_d_logits_norm = tf.norm(tf.reshape(grad_d_logits, [true_data.shape[0], -1]), axis=1, keepdims=True)
-
-                disc_regularizer = tf.reduce_mean(grad_d_logits_norm)
-                return disc_regularizer
-
             # Define and element-wise binary cross entropy loss
             def element_wise_cross_entropy_from_logits(self, labels, logits):
                 # Compute the loss element-wise
@@ -274,9 +255,8 @@ class cGAN():
                 # label smoothing added to real_loss
                 real_loss = self.element_wise_cross_entropy_from_logits(tf.ones_like(real_output), real_output)
                 fake_loss = self.element_wise_cross_entropy_from_logits(tf.zeros_like(fake_output), fake_output)
-                r1_penalization = self.r1_gamma/2 * self.r1_regularization(real_output, images)
 
-                total_loss = real_loss + fake_loss #+ r1_penalization
+                total_loss = real_loss + fake_loss
                 return real_loss, fake_loss, total_loss
         
 
@@ -344,7 +324,7 @@ class cGAN():
 
             self.discriminator = self.create_discriminator()
 
-            model = self._cGANModel(generator=self.generator, discriminator=self.discriminator, latent_size=self.latent_size, num_classes=self.n_classes, r1_gamma=self.r1_gamma)
+            model = self._cGANModel(generator=self.generator, discriminator=self.discriminator, latent_size=self.latent_size, num_classes=self.n_classes)
 
             self.generator_optimizer = tf.keras.optimizers.Adam(self.generator_lr, beta_1=0.5, clipvalue=5)
             self.discriminator_optimizer = tf.keras.optimizers.Adam(self.discriminator_lr, beta_1=0.5)
