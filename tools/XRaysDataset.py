@@ -105,6 +105,8 @@ class XRaysDataset():
             ds = ds.map(self.preprocessing_function)
             ds = self.configure_for_performance(ds, buffer_size=1500, batch_size=self.batch_size, shuffle=shuffle)
             print(f"Number of batches for the dataset: {len(ds)}")
+            size = len(os.listdir(self.dir))
+            return ds, size
 
 
         if train_val_split:
