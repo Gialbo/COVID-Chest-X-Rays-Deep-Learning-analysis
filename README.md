@@ -183,7 +183,7 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
  
 ## Frechet Inception Distance Results
 
-... description to do ...
+... TODO: description ...
 
 | Model                         |    FID        | 
 | --------------------------    | ------------- | 
@@ -197,12 +197,23 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
 # References
 [Can AI help in screening Viral and COVID-19 pneumonia? ( Chowdhury et al., IEEE Access, Vol. 8, 2020, pp. 132665 - 132676.)](https://arxiv.org/ftp/arxiv/papers/2003/2003.13145.pdf)
 
-[AIforCOVID: predicting the clinical outcomes in patients with COVID-19 applying AI to chest-X-rays. An Italian multicenter study.](http://arxiv.org/abs/2012.06531)
+[Generative Adversial Network (Goodfellow et al., 2014)](https://arxiv.org/pdf/1406.2661.pdf)
 
-[Uncertainty quantification using Bayesian neural networks in classification: Application to biomedical image segmentation (Kwon et al., 2019)](https://openreview.net/pdf?id=Sk_P2Q9sG)
 
-[Evaluation of Deep Convolutional Generative Adversarial Networks for data augmentation of chest X-ray images (Venu et al., Future Internet, MDPI AG, 2020)](https://arxiv.org/pdf/2009.01181.pdf)
+[A U-Net Based Discriminator for Generative Adversarial Networks (Schonfeld et al., CVPR 2020)](https://openaccess.thecvf.com/content_CVPR_2020/papers/Schonfeld_A_U-Net_Based_Discriminator_for_Generative_Adversarial_Networks_CVPR_2020_paper.pdf)
 
 [Conditional Generative Adversarial Nets (Mirza et al., 2014)](https://arxiv.org/pdf/1411.1784.pdf)
 
-[A U-Net Based Discriminator for Generative Adversarial Networks (Schonfeld et al., CVPR 2020)](https://openaccess.thecvf.com/content_CVPR_2020/papers/Schonfeld_A_U-Net_Based_Discriminator_for_Generative_Adversarial_Networks_CVPR_2020_paper.pdf)
+<!-- ... insert paper accgan ... -->
+
+
+[Evaluation of Deep Convolutional Generative Adversarial Networks for data augmentation of chest X-ray images (Venu et al., Future Internet, MDPI AG, 2020)](https://arxiv.org/pdf/2009.01181.pdf)
+
+[Uncertainty quantification using Bayesian neural networks in classification: Application to biomedical image segmentation (Kwon et al., 2019)](https://openreview.net/pdf?id=Sk_P2Q9sG)
+
+<!-- [AIforCOVID: predicting the clinical outcomes in patients with COVID-19 applying AI to chest-X-rays. An Italian multicenter study.](http://arxiv.org/abs/2012.06531) -->
+
+
+
+
+
