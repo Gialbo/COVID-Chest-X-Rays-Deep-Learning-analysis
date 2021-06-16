@@ -6,6 +6,7 @@ Authors: Gilberto Manunza, Silvia Giammarinaro
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 def compute_uncertainties(net, X, MC=100):
     # MC times predictions for a single image
