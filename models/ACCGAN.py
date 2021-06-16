@@ -222,19 +222,23 @@ class ACCGAN():
                             
                             gen_loss = self.classification_loss(fake_labels, fake_output_class)  + self.generator_loss(fake_output_disc)
                             
-                            disc_real_loss, disc_fake_loss, disc_loss = self.classification_loss(labels, real_output_class) + self.classification_loss(fake_labels, fake_output_class) + self.discriminator_loss(real_output_disc, fake_output_disc)
+                            disc_real_loss, disc_fake_loss, disc_loss = self.discriminator_loss(real_output_disc, fake_output_disc)
+                            class_real_loss = self.classification_loss(labels, real_output_class)
+                            class_fake_loss = self.classification_loss(fake_labels, fake_output_class) 
+
+                            total_disc_loss = class_real_loss + class_fake_loss + disc_loss
                             
                         gradients_of_generator = gen_tape.gradient(gen_loss, self.generator.trainable_variables)
-                        gradients_of_discriminator = disc_tape.gradient(disc_loss, self.discriminator.trainable_variables)
+                        gradients_of_discriminator = disc_tape.gradient(total_disc_loss, self.discriminator.trainable_variables)
                             
                         self.generator_optimizer.apply_gradients(zip(gradients_of_generator, self.generator.trainable_variables))
                         self.discriminator_optimizer.apply_gradients(zip(gradients_of_discriminator, self.discriminator.trainable_variables))
 
                         # Compute metrics
                         self.loss_tracker_generator.update_state(gen_loss)
-                        self.loss_tracker_discriminator.update_state(disc_loss)
-                        self.loss_true_tracker_discriminator.update_state(disc_real_loss)
-                        self.loss_fake_tracker_discriminator.update_state(disc_fake_loss)
+                        self.loss_tracker_discriminator.update_state(total_disc_loss)
+                        self.loss_true_tracker_discriminator.update_state(disc_real_loss+class_real_loss)
+                        self.loss_fake_tracker_discriminator.update_state(disc_fake_loss+class_fake_loss)
 
                         preds_real = tf.round(tf.sigmoid(real_output_disc))
                         accuracy_real = tf.math.reduce_mean(tf.cast(tf.math.equal(preds_real, tf.ones_like(preds_real)), tf.float32))
