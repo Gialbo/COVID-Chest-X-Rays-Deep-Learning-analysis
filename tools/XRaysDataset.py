@@ -98,7 +98,7 @@ class XRaysDataset():
         AUTOTUNE = tf.data.experimental.AUTOTUNE
         label_mapping = {"covid-19": 0, "normal": 1, "viral-pneumonia": 2}
 
-        if shuffle:
+        if not shuffle:
             file_paths, labels = self.get_file_paths(self.dir, label_mapping)
             ds = tf.data.Dataset.from_tensor_slices((file_paths, labels))
             ds = ds.map(self.process_path)
