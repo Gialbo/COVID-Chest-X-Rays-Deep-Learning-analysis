@@ -223,8 +223,7 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
 
 [Conditional Generative Adversarial Nets (Mirza et al., 2014)](https://arxiv.org/pdf/1411.1784.pdf)
 
-<!-- ... insert paper accgan ... -->
-
+[Conditional Image Synthesis with Auxiliary Classifier GANs (Odena et al., 2017)](https://arxiv.org/pdf/1610.09585.pdf)
 
 [Evaluation of Deep Convolutional Generative Adversarial Networks for data augmentation of chest X-ray images (Venu et al., Future Internet, MDPI AG, 2020)](https://arxiv.org/pdf/2009.01181.pdf)
 
