@@ -1,5 +1,5 @@
 """
-Condition GAN model
+Conditional GAN model
 Bioinformatics, Politecnico di Torino
 Authors: Gilberto Manunza, Silvia Giammarinaro
 """

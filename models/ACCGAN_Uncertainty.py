@@ -1,9 +1,8 @@
 """
-Auxiliary Classifier Conditional GAN
+Auxiliary Classifier Conditional GAN with Uncertainty
 Bioinformatics, Politecnico di Torino
 Authors: Gilberto Manunza, Silvia Giammarinaro
 """
-
 import os
 
 import keras
@@ -16,7 +15,7 @@ from keras.models import *
 from keras.optimizers import *
 
 
-class ACCGAN():
+class ACCGANUnc():
 
         def __init__(self,
                      n_epochs=250,
@@ -25,10 +24,14 @@ class ACCGAN():
                      latent_size=100,
                      n_classes = 3,
                      alpha=0.2,
-                     drop_rate=0.5,
+                     rate=0.2,
+                     sample=True,
+                     mcd = 1,
                      discriminator_lr=1e-4,
                      generator_lr=1e-4,
                      logging_step=10,
+                     unc_weight=10,
+                     unc_type="max",
                      out_images_path="outImages",
                      checkpoint_dir="checkpoints",
                      use_residual=False):
@@ -39,10 +42,14 @@ class ACCGAN():
                 self.latent_size = latent_size
                 self.n_classes = n_classes
                 self.alpha = alpha
-                self.drop_rate = drop_rate
+                self.rate = rate
+                self.sample = sample
+                self.mcd = mcd
                 self.discriminator_lr = discriminator_lr
                 self.generator_lr = generator_lr
                 self.logging_step = logging_step
+                self.unc_weight = unc_weight
+                self.unc_type = unc_type
                 self.out_images_path = out_images_path
                 self.checkpoint_dir = checkpoint_dir
                 self.use_residual = use_residual
@@ -55,38 +62,44 @@ class ACCGAN():
                 leaky = tf.keras.layers.LeakyReLU(self.alpha)
 
                 conv1 = Conv2D(32, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(inputs)
-                conv1 = Dropout(0.2)(conv1)
+                conv1 = Dropout(self.rate)(conv1, training=self.sample)
+                
 
                 conv1 = Conv2D(32, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv1)
+                conv1 = Dropout(self.rate)(conv1, training=self.sample)
                 pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
 
                 conv2 = Conv2D(64, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(pool1)
-                conv2 = Dropout(0.2)(conv2)
+                conv2 = Dropout(self.rate)(conv2, training=self.sample)
 
                 conv2 = Conv2D(64, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv2)
+                conv2 = Dropout(self.rate)(conv2, training=self.sample)
                 pool2 = MaxPooling2D(pool_size=(2, 2))(conv2)
 
                 conv3 = Conv2D(128, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(pool2)
-                conv3 = Dropout(0.2)(conv3)
+                conv3 = Dropout(self.rate)(conv3, training=self.sample)
 
                 conv3 = Conv2D(128, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv3)
+                conv3 = Dropout(self.rate)(conv3, training=self.sample)
                 pool3 = MaxPooling2D(pool_size=(2, 2))(conv3)
 
                 conv4 = Conv2D(256, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(pool3)
-                conv4 = Dropout(0.2)(conv4)
+                conv4 = Dropout(self.rate)(conv4, training=self.sample)
 
                 conv4 = Conv2D(256, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv4)
+                conv4 = Dropout(self.rate)(conv4, training=self.sample)
                 pool4 = MaxPooling2D(pool_size=(2, 2))(conv4)
 
                 conv5 = Conv2D(512, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(pool4)
-                conv5 = Dropout(0.2)(conv5)
+                conv5 = Dropout(self.rate)(conv5, training=self.sample)
 
                 conv5 = Conv2D(512, 3, activation=leaky, padding='same', kernel_initializer='he_normal')(conv5)
-                drop5 = Dropout(0.5)(conv5)
+                drop5 = Dropout(self.rate)(conv5, training=self.sample)
 
                 gap1 = GlobalAveragePooling2D()(drop5)
                 fc1 = Dense(128)(gap1)
-                        
+                fc1 = Dropout(self.rate)(fc1, training=self.sample)      
+
                 output_disc = Dense(1, activation="linear")(fc1)
                 output_class = Dense(self.n_classes, activation="linear")(fc1)
 
@@ -156,13 +169,22 @@ class ACCGAN():
                 model = Model(inputs=[input_noise, input_label], outputs=[output])
                 return model
 
-        class _ACCGANModel(keras.Model):
-                def __init__(self, discriminator, generator, latent_size, num_classes):
-                        super(ACCGAN._ACCGANModel, self).__init__()
+        class _ACCGANUncModel(keras.Model):
+                def __init__(self, discriminator, generator, latent_size, num_classes, unc_weight, mcd, unc_type):
+                        super(ACCGANUnc._ACCGANUncModel, self).__init__()
                         self.discriminator = discriminator
                         self.generator = generator
                         self.latent_size = latent_size
                         self.num_classes = num_classes
+                        self.unc_weight = unc_weight
+                        self.mcd=mcd
+
+                        # In the case in which we are minimizing the uncertainty, this will flip the sign of
+                        # the uncertainty term in the loss
+                        if unc_type == "max":
+                            self.unc_mul = 1
+                        else:
+                            self.unc_mul = -1
 
                         self.loss_tracker_generator = keras.metrics.Mean(name="gen_loss")
                         self.loss_tracker_discriminator = keras.metrics.Mean(name="disc_loss")
@@ -170,12 +192,13 @@ class ACCGAN():
                         self.accuracy_fake_tracker_discriminator = keras.metrics.Mean(name="disc_acc_fake")
                         self.accuracy_real_classification_tracker_discriminator = keras.metrics.Mean(name="disc_acc_class_real")
                         self.accuracy_fake_classification_tracker_discriminator = keras.metrics.Mean(name="disc_acc_class_fake")
+                        self.mean_uncertainty_tracker = keras.metrics.Mean(name="mean_uncertainty")
 
                 def call(self, x):
                     return x
 
                 def compile(self, discriminator_optimizer, generator_optimizer):
-                    super(ACCGAN._ACCGANModel, self).compile()
+                    super(ACCGANUnc._ACCGANUncModel, self).compile()
                     self.generator_optimizer = generator_optimizer
                     self.discriminator_optimizer = discriminator_optimizer
 
@@ -200,6 +223,13 @@ class ACCGAN():
                     ce_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels = tf.cast(labels, tf.int32), logits = logits)
                     
                     return ce_loss
+                
+                def compute_uncertainty(self, output_probs):
+                        aleatoric = tf.reduce_mean(output_probs*(1-output_probs), axis=0)
+                        epistemic = tf.reduce_mean(output_probs**2, axis=0) - tf.reduce_mean(output_probs, axis=0)**2
+                        uncertainty = aleatoric + epistemic
+
+                        return uncertainty
 
                 def train_step(self, data):
                         images, labels = data
@@ -211,18 +241,48 @@ class ACCGAN():
 
                             generated_images = self.generator((noise, fake_labels), training=True)
                             
-                            real_output = self.discriminator(images, training=True)
-                            fake_output = self.discriminator(generated_images, training=True)
+                            real_output_disc = []
+                            real_output_class = []
+                            fake_output_disc = []
+                            fake_output_class = []
+                            for _ in range(self.mcd):
+                              real_output = self.discriminator(images, training=True)
+                              real_output_disc.append(real_output[0])
+                              real_output_class.append(real_output[1])
 
-                            real_output_disc = real_output[0]
-                            fake_output_disc = fake_output[0]
+                              fake_output = self.discriminator(generated_images, training=True)
+                              fake_output_disc.append(fake_output[0])
+                              fake_output_class.append(fake_output[1])
 
-                            real_output_class = real_output[1]
-                            fake_output_class = fake_output[1]
+                            real_output_disc = tf.stack(real_output_disc)
+                            fake_output_disc = tf.stack(fake_output_disc)
+
+                            real_output_class = tf.stack(real_output_class)
+                            fake_output_class = tf.stack(fake_output_class)
+
+
+                            real_output_disc_probs = tf.nn.sigmoid(real_output_disc)
+                            fake_output_disc_probs = tf.nn.sigmoid(fake_output_disc)
+
+                            uncertainty_real_disc = self.compute_uncertainty(real_output_disc_probs)
+                            uncertainty_fake_disc = self.compute_uncertainty(fake_output_disc_probs)
+
+                            total_uncertainty_disc = uncertainty_real_disc + uncertainty_fake_disc
+
+                            real_means_disc = tf.reduce_mean(real_output_disc, axis=0)
+                            fake_means_disc = tf.reduce_mean(fake_output_disc, axis=0)
+
+                            real_means_class = tf.reduce_mean(real_output_class, axis=0)
+                            fake_means_class = tf.reduce_mean(fake_output_class, axis=0)
+
+                            gen_loss = self.classification_loss(fake_labels, fake_means_class) + \
+                                       self.generator_loss(fake_means_disc) - \
+                                       (self.unc_mul * self.unc_weight * tf.reduce_mean(uncertainty_fake_disc))
                             
-                            gen_loss = self.classification_loss(fake_labels, fake_output_class)  + self.generator_loss(fake_output_disc)
-                            
-                            disc_loss = self.classification_loss(labels, real_output_class) + self.classification_loss(fake_labels, fake_output_class) + self.discriminator_loss(real_output_disc, fake_output_disc)
+                            disc_loss = self.classification_loss(labels, real_means_class) + \
+                                        self.classification_loss(fake_labels, fake_means_class) + \
+                                        self.discriminator_loss(real_means_disc, fake_means_disc) + \
+                                        (self.unc_mul * self.unc_weight * tf.reduce_mean(total_uncertainty_disc))
                             
                         gradients_of_generator = gen_tape.gradient(gen_loss, self.generator.trainable_variables)
                         gradients_of_discriminator = disc_tape.gradient(disc_loss, self.discriminator.trainable_variables)
@@ -242,9 +302,11 @@ class ACCGAN():
                         accuracy_fake = tf.math.reduce_mean(tf.cast(tf.math.equal(preds_fake, tf.zeros_like(preds_fake)), tf.float32))
                         self.accuracy_fake_tracker_discriminator.update_state(accuracy_fake)
 
+                        self.mean_uncertainty_tracker.update_state(tf.reduce_mean(total_uncertainty_disc))
 
                         return {'gen_loss': self.loss_tracker_generator.result(), 'disc_loss': self.loss_tracker_discriminator.result(),
-                                'disc_acc_real': self.accuracy_real_tracker_discriminator.result(), 'disc_acc_fake': self.accuracy_fake_tracker_discriminator.result()}
+                                'disc_acc_real': self.accuracy_real_tracker_discriminator.result(), 'disc_acc_fake': self.accuracy_fake_tracker_discriminator.result(),
+                                'mean_uncertainty': self.mean_uncertainty_tracker.result()}
                             
                 def test_step(self, data):
                         pass
@@ -258,14 +320,16 @@ class ACCGAN():
                         # `reset_states()` yourself at the time of your choosing.
                         return [self.loss_tracker_generator, self.loss_tracker_discriminator, 
                                 self.accuracy_real_tracker_discriminator, self.accuracy_fake_tracker_discriminator,
-                                self.accuracy_real_classification_tracker_discriminator, self.accuracy_fake_classification_tracker_discriminator]
+                                self.mean_uncertainty_tracker]
 
         def _build_model(self):
                 self.generator = self.create_generator()
 
                 self.discriminator = self.create_discriminator()
 
-                model = self._ACCGANModel(generator=self.generator, discriminator=self.discriminator, latent_size=self.latent_size, num_classes=self.n_classes)
+                model = self._ACCGANUncModel(generator=self.generator, discriminator=self.discriminator,
+                                          latent_size=self.latent_size, num_classes=self.n_classes,
+                                          unc_weight=self.unc_weight, mcd=self.mcd, unc_type=self.unc_type)
 
                 self.generator_optimizer = tf.keras.optimizers.Adam(self.generator_lr, beta_1=0.5, clipvalue=5)
                 self.discriminator_optimizer = tf.keras.optimizers.Adam(self.discriminator_lr, beta_1=0.5)
@@ -314,7 +378,7 @@ class ACCGAN():
 
                         for step, batch in enumerate(train_ds):
                                 images, labels = batch
-                                g_loss, d_loss, d_acc_real, d_acc_fake, d_acc_class_real, d_acc_class_fake = self.model.train_on_batch(images, labels)
+                                g_loss, d_loss, d_acc_real, d_acc_fake, mean_unc = self.model.train_on_batch(images, labels)
 
                                 epoch_gen_loss.append(g_loss)
                                 epoch_disc_loss.append(d_loss)
@@ -327,8 +391,9 @@ class ACCGAN():
                                         print(f"\t\tDiscriminator Loss: {d_loss}")
                                         print(f"\t\tDisc. Acc Real: {d_acc_real}")
                                         print(f"\t\tDisc. Acc Fake: {d_acc_fake}")
-                                        print(f"\t\tDisc. Acc Class Real: {d_acc_class_real}")
-                                        print(f"\t\tDisc. Acc Class Fake: {d_acc_class_fake}")
+                                        print(f"\t\tMean Uncertainty: {mean_unc}")
+                                        # print(f"\t\tDisc. Acc Class Real: {d_acc_class_real}")
+                                        # print(f"\t\tDisc. Acc Class Fake: {d_acc_class_fake}")
                         if epoch % self.logging_step == 0:
                             generator_images = self.model.generator((benchmark_noise, benchmark_labels), training=False)
         

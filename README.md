@@ -148,11 +148,30 @@ The dataset contains X-rays images from different patients with different patolo
 
 In the table below are reported the results on the classification task. The recall and precision values are reported for the classes in the following order: covid-19, normal and viral pneumonia.
 
-
+<!--
 | Model                         |    Accuracy   | Loss    | Recall                 | Precision             |
 | --------------------------    | ------------- | --------| -----------------------| ----------------------|
 | inceptionNet (deterministic)  |     0.9347    |  0.3558 | 0.9739; 0.9776; 0.8582 | 1; 0.8618; 0.9664     |
-| inceptionNetMCD               |     0.9191    |  0.2434 | 1; 0.8358; 0.9254      | 0.9055; 0.9655; 0.8921|
+| inceptionNetMCD               |     0.9191    |  0.2434 | 1; 0.8358; 0.9254      | 0.9055; 0.9655; 0.8921| -->
+
+ <p align="center">
+
+  | Model                        | Accuracy      | Loss          |
+  |------------------------------|---------------|---------------|
+  | inceptionNet (deterministic) | 0.944 ± 0.026 | 0.420 ± 0.274 |
+  | inceptionNetMCD              | xxxxx ± xxxxx | xxxxx ± xxxxx |
+
+  | Model                         | Recall, Covid-19  | Recall, Normal | Recall, Viral Pneumonia |
+  |-------------------------------|-------------------|----------------|-------------------------|
+  | inceptionNet  (deterministic) | 0.939 ± 0.066     | 0.966 ± 0.025  | 0.928 ± 0.046           |
+  | inceptionNetMCD               | xxxxx ± xxxxx     | xxxxx ± xxxxx  | xxxxx ± xxxxx           |
+
+  | Model                         | Precision, Covid-19  | Precision, Normal | Precision, Viral Pneumonia |
+  |-------------------------------|----------------------|-------------------|----------------------------|
+  | inceptionNet  (deterministic) | 1.0 ± 0.0            | 0.917 ± 0.060     | 0.936 ± 0.020              |
+  | inceptionNetMCD               | xxx ± xxx            | xxxxx ± xxxxx     | xxxxx ± xxxxx              |
+
+</p>
 
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNet/confMatrix.png" width="400">
@@ -183,7 +202,7 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
  
 ## Frechet Inception Distance Results
 
-... description to do ...
+... TODO: description ...
 
 | Model                         |    FID        | 
 | --------------------------    | ------------- | 
@@ -197,12 +216,22 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
 # References
 [Can AI help in screening Viral and COVID-19 pneumonia? ( Chowdhury et al., IEEE Access, Vol. 8, 2020, pp. 132665 - 132676.)](https://arxiv.org/ftp/arxiv/papers/2003/2003.13145.pdf)
 
-[AIforCOVID: predicting the clinical outcomes in patients with COVID-19 applying AI to chest-X-rays. An Italian multicenter study.](http://arxiv.org/abs/2012.06531)
+[Generative Adversial Network (Goodfellow et al., 2014)](https://arxiv.org/pdf/1406.2661.pdf)
 
-[Uncertainty quantification using Bayesian neural networks in classification: Application to biomedical image segmentation (Kwon et al., 2019)](https://openreview.net/pdf?id=Sk_P2Q9sG)
 
-[Evaluation of Deep Convolutional Generative Adversarial Networks for data augmentation of chest X-ray images (Venu et al., Future Internet, MDPI AG, 2020)](https://arxiv.org/pdf/2009.01181.pdf)
+[A U-Net Based Discriminator for Generative Adversarial Networks (Schonfeld et al., CVPR 2020)](https://openaccess.thecvf.com/content_CVPR_2020/papers/Schonfeld_A_U-Net_Based_Discriminator_for_Generative_Adversarial_Networks_CVPR_2020_paper.pdf)
 
 [Conditional Generative Adversarial Nets (Mirza et al., 2014)](https://arxiv.org/pdf/1411.1784.pdf)
 
-[A U-Net Based Discriminator for Generative Adversarial Networks (Schonfeld et al., CVPR 2020)](https://openaccess.thecvf.com/content_CVPR_2020/papers/Schonfeld_A_U-Net_Based_Discriminator_for_Generative_Adversarial_Networks_CVPR_2020_paper.pdf)
+[Conditional Image Synthesis with Auxiliary Classifier GANs (Odena et al., 2017)](https://arxiv.org/pdf/1610.09585.pdf)
+
+[Evaluation of Deep Convolutional Generative Adversarial Networks for data augmentation of chest X-ray images (Venu et al., Future Internet, MDPI AG, 2020)](https://arxiv.org/pdf/2009.01181.pdf)
+
+[Uncertainty quantification using Bayesian neural networks in classification: Application to biomedical image segmentation (Kwon et al., 2019)](https://openreview.net/pdf?id=Sk_P2Q9sG)
+
+<!-- [AIforCOVID: predicting the clinical outcomes in patients with COVID-19 applying AI to chest-X-rays. An Italian multicenter study.](http://arxiv.org/abs/2012.06531) -->
+
+
+
+
+
