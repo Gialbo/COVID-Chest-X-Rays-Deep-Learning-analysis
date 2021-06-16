@@ -41,7 +41,7 @@ def compute_uncertainties_softmax(net, X):
 def plot_results(detResults, MCDresults, y_true, y_pred_det, y_pred_MCD):
     with plt.style.context('fivethirtyeight'):
         # all predictions
-        fig, ax = plt.subplots(1, 2, figsize=(20,6))
+        fig, ax = plt.subplots(1, 2, figsize=(24,8))
         ax[0].set_title("Softmax uncertainties: inceptionNet (deterministic)")
         ax[0].set_xlabel("Standard deviation values")
         ax[0].set_yscale('log')
@@ -52,7 +52,7 @@ def plot_results(detResults, MCDresults, y_true, y_pred_det, y_pred_MCD):
         sns.histplot(ax=ax[1], data=MCDresults, bins=25)
 
         # right predictions
-        fig, ax = plt.subplots(1, 2, figsize=(20,6))
+        fig, ax = plt.subplots(1, 2, figsize=(24,8))
         ax[0].set_title("Softmax uncertainties for right predictions: inceptionNet (deterministic)")
         ax[0].set_xlabel("Standard deviaton values")
         ax[0].set_yscale('log')
@@ -63,7 +63,7 @@ def plot_results(detResults, MCDresults, y_true, y_pred_det, y_pred_MCD):
         sns.histplot(ax=ax[1], data=MCDresults[y_true == y_pred_MCD], bins=25, color="green")
 
         # wrong predictions
-        fig, ax = plt.subplots(1, 2, figsize=(20,6))
+        fig, ax = plt.subplots(1, 2, figsize=(24,8))
         ax[0].set_title("Softmax uncertainties for wrong predictions: inceptionNet (deterministic)")
         ax[0].set_xlabel("Standard deviaton values")
         sns.histplot(ax=ax[0], data=detResults[y_true != y_pred_det], bins=25, color="red")
