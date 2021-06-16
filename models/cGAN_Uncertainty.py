@@ -29,7 +29,6 @@ class cGANUnc():
                       discriminator_lr=8e-5,
                       generator_lr=1e-4,
                       logging_step=10,
-                      r1_gamma=20,
                       unc_weight=1,
                       sample=True,
                       mcd=1,
@@ -48,7 +47,6 @@ class cGANUnc():
                 self.discriminator_lr = discriminator_lr
                 self.generator_lr = generator_lr
                 self.logging_step = logging_step
-                self.r1_gamma = r1_gamma
                 self.unc_weight = unc_weight
                 self.sample = sample
                 self.mcd = mcd
@@ -232,13 +230,12 @@ class cGANUnc():
                 return model
  
         class _cGANUncModel(keras.Model):
-                def __init__(self, discriminator, generator, latent_size, num_classes, r1_gamma, unc_weight, mcd, unc_type):
+                def __init__(self, discriminator, generator, latent_size, num_classes, unc_weight, mcd, unc_type):
                         super(cGANUnc._cGANUncModel, self).__init__()
                         self.discriminator = discriminator
                         self.generator = generator
                         self.latent_size = latent_size
                         self.num_classes = num_classes
-                        self.r1_gamma = r1_gamma
                         self.unc_weight = unc_weight
                         self.mcd = mcd
                         
@@ -251,6 +248,8 @@ class cGANUnc():
 
                         self.loss_tracker_generator = keras.metrics.Mean(name="gen_loss")
                         self.loss_tracker_discriminator = keras.metrics.Mean(name="disc_loss")
+                        self.loss_true_tracker_discriminator = keras.metrics.Mean(name="disc_loss_real")
+                        self.loss_fake_tracker_discriminator = keras.metrics.Mean(name="disc_loss_fake")
                         self.accuracy_real_tracker_discriminator = keras.metrics.Mean(name="disc_acc_real")
                         self.accuracy_fake_tracker_discriminator = keras.metrics.Mean(name="disc_acc_fake")
  
@@ -261,22 +260,6 @@ class cGANUnc():
                         super(cGANUnc._cGANUncModel, self).compile()
                         self.generator_optimizer = generator_optimizer
                         self.discriminator_optimizer = discriminator_optimizer
-
-                def r1_regularization(self, d_logits, true_data):
-                        """
-                        Penalizes the gradients of the discriminator on the true data distribution.
-                        This tecnique is described in: https://arxiv.org/pdf/1801.04406v4.pdf
-                        This method is adapted from the more general gradient penalization regularization
-                        fro GANS introduced in this repo: https://github.com/rothk/Stabilizing_GANs
-                        """
-                        d = tf.nn.sigmoid(d_logits) ###
-
-                        grad_d_logits = tf.gradients(d, true_data)[0] ### prima era d_logits
-
-                        grad_d_logits_norm = tf.norm(tf.reshape(grad_d_logits, [true_data.shape[0], -1]), axis=1, keepdims=True)
-
-                        disc_regularizer = tf.reduce_mean(grad_d_logits_norm)
-                        return disc_regularizer
  
                 # Define and element-wise binary cross entropy loss
                 def element_wise_cross_entropy_from_logits(self, labels, logits):
@@ -293,10 +276,9 @@ class cGANUnc():
                         # label smoothing added to real_loss
                         real_loss = self.element_wise_cross_entropy_from_logits(tf.ones_like(real_output), real_output)
                         fake_loss = self.element_wise_cross_entropy_from_logits(tf.zeros_like(fake_output), fake_output)
-                        r1_penalization = self.r1_gamma/2 * self.r1_regularization(real_output, images)
 
-                        total_loss = real_loss + fake_loss #+ r1_penalization
-                        return total_loss
+                        total_loss = real_loss + fake_loss
+                        return real_loss, fake_loss, total_loss
                 
                 def compute_uncertainty(self, output_probs):
                         aleatoric = tf.reduce_mean(output_probs*(1-output_probs), axis=0)
@@ -335,7 +317,7 @@ class cGANUnc():
                                 gen_loss = self.generator_loss(fake_output) - \
                                           (self.unc_mul * self.unc_weight * tf.reduce_mean(uncertainty_fake))
  
-                                disc_loss = self.discriminator_loss(real_output, fake_output, images) + \
+                                disc_real_loss, disc_fake_loss, disc_loss = self.discriminator_loss(real_output, fake_output, images) + \
                                            (self.unc_mul * self.unc_weight * tf.reduce_mean(total_uncertainty))
  
                         gradients_of_generator = gen_tape.gradient(gen_loss, self.generator.trainable_variables)
@@ -347,6 +329,8 @@ class cGANUnc():
                         # Compute metrics
                         self.loss_tracker_generator.update_state(gen_loss)
                         self.loss_tracker_discriminator.update_state(disc_loss)
+                        self.loss_true_tracker_discriminator.update_state(disc_real_loss)
+                        self.loss_fake_tracker_discriminator.update_state(disc_fake_loss)
                         
                         preds_real = tf.round(tf.sigmoid(real_output))
                         accuracy_real = tf.math.reduce_mean(tf.cast(tf.math.equal(preds_real, tf.ones_like(preds_real)), tf.float32))
@@ -356,7 +340,8 @@ class cGANUnc():
                         accuracy_fake = tf.math.reduce_mean(tf.cast(tf.math.equal(preds_fake, tf.zeros_like(preds_fake)), tf.float32))
                         self.accuracy_fake_tracker_discriminator.update_state(accuracy_fake)
 
-                        return {'gen_loss': self.loss_tracker_generator.result(), 'disc_loss': self.loss_tracker_discriminator.result(), \
+                        return {'gen_loss': self.loss_tracker_generator.result(), 'disc_loss': self.loss_tracker_discriminator.result(),
+                                'disc_loss_real': self.loss_true_tracker_discriminator.result(), 'disc_loss_fake': self.loss_fake_tracker_discriminator.result(), \
                                 'disc_acc_real': self.accuracy_real_tracker_discriminator.result(), 'disc_acc_fake': self.accuracy_fake_tracker_discriminator.result()}
  
                 def test_step(self, data):
@@ -369,7 +354,9 @@ class cGANUnc():
                         # or at the start of `evaluate()`.
                         # If you don't implement this property, you have to call
                         # `reset_states()` yourself at the time of your choosing.
-                        return [self.loss_tracker_generator, self.loss_tracker_discriminator, self.accuracy_real_tracker_discriminator, self.accuracy_fake_tracker_discriminator]
+                        return [self.loss_tracker_generator, self.loss_tracker_discriminator, \
+                                self.loss_true_tracker_discriminator, self.loss_fake_tracker_discriminator, \
+                                self.accuracy_real_tracker_discriminator, self.accuracy_fake_tracker_discriminator]
  
         def _build_model(self):
                 if self.use_residual:
@@ -380,7 +367,7 @@ class cGANUnc():
                 self.discriminator = self.create_discriminator()
  
                 model = self._cGANUncModel(generator=self.generator, discriminator=self.discriminator, latent_size=self.latent_size, num_classes=self.n_classes,
-                                          r1_gamma=self.r1_gamma, unc_weight=self.unc_weight, mcd=self.mcd, unc_type=self.unc_type)
+                                          unc_weight=self.unc_weight, mcd=self.mcd, unc_type=self.unc_type)
  
                 self.generator_optimizer = tf.keras.optimizers.Adam(self.generator_lr, beta_1=0.5, clipvalue=5)
                 self.discriminator_optimizer = tf.keras.optimizers.Adam(self.discriminator_lr, beta_1=0.5)
@@ -401,56 +388,73 @@ class cGANUnc():
  
  
         def train_model(self, train_ds, benchmark_noise, benchmark_labels):
-                # set checkpoint directory
-                checkpoint_prefix = os.path.join(self.checkpoint_dir, "ckpt")
-                checkpoint = tf.train.Checkpoint(generator_optimizer=self.model.generator_optimizer,
-                                                                                discriminator_optimizer=self.model.discriminator_optimizer,
-                                                                                model=self.model)
+            # set checkpoint directory
+            checkpoint_prefix = os.path.join(self.checkpoint_dir, "ckpt")
+            checkpoint = tf.train.Checkpoint(generator_optimizer=self.model.generator_optimizer,
+                                                discriminator_optimizer=self.model.discriminator_optimizer,
+                                                model=self.model)
+
+            # creating dictionaries for history and accuracy for the plots
+            self.history = {}
+            self.history['G loss'] = []
+            self.history['D loss'] = []
+            self.history['D loss Real'] = []
+            self.history['D loss Fake'] = []
+            self.accuracy = {}
+            self.accuracy['D accuracy Real'] = []
+            self.accuracy['D accuracy Fake'] = []
+
+            print("Starting training of the cGAN model.")
+
+            print("Batches per epoch ", len(train_ds))
+
+            for epoch in range(self.n_epochs+1):
+                # Keep track of the losses at each step
+                epoch_gen_loss = []
+                epoch_disc_loss = []
+                epoch_disc_loss_true = []
+                epoch_disc_loss_fake = []
+                epoch_disc_acc_true = []
+                epoch_disc_acc_fake = []
+
+                print(f"Starting epoch {epoch} of {self.n_epochs}")
+
+                for step, batch in enumerate(train_ds):
+                    images, labels = batch
+                    gen_loss_step, disc_loss_step, disc_loss_true_step, disc_loss_fake_step, disc_acc_true_step, disc_acc_fake_step = self.model.train_on_batch(images, labels)
+
+                    epoch_gen_loss.append(gen_loss_step)
+                    epoch_disc_loss.append(disc_loss_step)
+                    epoch_disc_loss_true.append(disc_loss_true_step)
+                    epoch_disc_loss_fake.append(disc_loss_fake_step)
+                    epoch_disc_acc_true.append(disc_acc_true_step)
+                    epoch_disc_acc_fake.append(disc_acc_fake_step)
+
+                    if step % self.logging_step == 0:
+                        print(f"\tLosses at step {step}:")
+                        print(f"\t\tGenerator Loss: {gen_loss_step}")
+                        print(f"\t\tDiscriminator Loss: {disc_loss_step}")
+                        print(f"\t\tAccuracy Real: {disc_acc_true_step}")
+                        print(f"\t\tAccuracy Fake: {disc_acc_fake_step}")
+
+
+                if epoch % self.logging_step == 0:
+                    generator_images = self.model.generator((benchmark_noise, benchmark_labels), training=False)
+
+                    print("Generated images: ")
+                    self.plot_fake_figures(generator_images, benchmark_labels, 4, epoch,  self.out_images_path)
+
+                if (epoch % (self.logging_step*5)) == 0:
+                    checkpoint.save(file_prefix = checkpoint_prefix)
+
+                self.history['G loss'].append(np.array(epoch_gen_loss).mean())
+                self.history['D loss'].append(np.array(epoch_disc_loss).mean())
+                self.history['D loss Real'].append(np.array(epoch_disc_loss_true).mean())          
+                self.history['D loss Fake'].append(np.array(epoch_disc_loss_fake).mean())     
+                self.accuracy['D accuracy Real'].append(np.array(epoch_disc_acc_true).mean())     
+                self.accuracy['D accuracy Fake'].append(np.array(epoch_disc_acc_fake).mean())
  
-                # creating dictionaries for history and accuracy for the plots
-                self.history = {}
-                self.history['G_loss'] = []
-                self.history['D_loss'] = []
-                self.accuracy = {}
-                self.accuracy['D_acc_real'] = []
-                self.accuracy['D_acc_fake'] = []
-
-                print("Starting training of the cGAN model.")
-
-                print("Batches per epoch ", len(train_ds))
-
-                for epoch in range(self.n_epochs+1):
-                        # Keep track of the losses at each step
-
-                        print(f"Starting epoch {epoch} of {self.n_epochs}")
-
-                        for step in range(len(train_ds)):
-                                images, labels = next(train_ds)
-                                g_loss, d_loss, d_acc_real, d_acc_fake = self.model.train_on_batch(images, labels)
-
-                                self.history['G_loss'].append(g_loss)
-                                self.history['D_loss'].append(d_loss)
-                                self.accuracy['D_acc_real'].append(d_acc_real)
-                                self.accuracy['D_acc_fake'].append(d_acc_fake)
-
-                                if step % self.logging_step == 0:
-                                        print(f"\tLosses at step {step}:")
-                                        print(f"\t\tGenerator Loss: {g_loss}")
-                                        print(f"\t\tDiscriminator Loss: {d_loss}")
-                                        print(f"\t\tDisc. Acc Real: {d_acc_real}")
-                                        print(f"\t\tDisc. Acc Fake: {d_acc_fake}")
- 
- 
-                        if epoch % self.logging_step == 0:
-                                generator_images = self.model.generator((benchmark_noise, benchmark_labels), training=False)
- 
-                                print("Generated images: ")
-                                self.plot_fake_figures(generator_images, benchmark_labels, 4, epoch,  self.out_images_path)
- 
-                        if (epoch % 100) == 0:
-                                checkpoint.save(file_prefix = checkpoint_prefix)
- 
-        def plot_losses(self, data, xaxis, yaxis, ylim=0):
+        def plot_stats(self, data, xaxis, yaxis, ylim=0):
                 pd.DataFrame(data).plot(figsize=(10,8))
                 plt.grid(True)
                 plt.xlabel(xaxis)

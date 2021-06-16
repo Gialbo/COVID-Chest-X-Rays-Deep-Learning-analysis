@@ -259,9 +259,9 @@ class ACCGAN():
                         # or at the start of `evaluate()`.
                         # If you don't implement this property, you have to call
                         # `reset_states()` yourself at the time of your choosing.
-                        return [self.loss_tracker_generator, self.loss_tracker_discriminator, 
-                                self.accuracy_real_tracker_discriminator, self.accuracy_fake_tracker_discriminator,
-                                self.accuracy_real_classification_tracker_discriminator, self.accuracy_fake_classification_tracker_discriminator]
+                        return [self.loss_tracker_generator, self.loss_tracker_discriminator, \
+                                self.loss_true_tracker_discriminator, self.loss_fake_tracker_discriminator, \
+                                self.accuracy_real_tracker_discriminator, self.accuracy_fake_tracker_discriminator]
 
         def _build_model(self):
                 self.generator = self.create_generator()
