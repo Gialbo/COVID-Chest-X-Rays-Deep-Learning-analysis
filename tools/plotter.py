@@ -5,6 +5,7 @@ Authors: Gilberto Manunza, Silvia Giammarinaro
 """
 
 import matplotlib.pyplot as plt
+import json
 
 def plot_losses(history, isMCD=False):
   if isMCD:
@@ -139,3 +140,7 @@ def plot_classification_report(history, isMCD=False):
   plot_accuracies(history, isMCD)
   plot_recalls(history, isMCD)
   plot_precisions(history, isMCD)
+
+def save_history(history, checkpoint_dir):
+  with open(f"{checkpoint_dir}.json", 'w') as fs:
+    json.dump(history, fs)

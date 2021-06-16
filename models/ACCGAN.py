@@ -166,10 +166,10 @@ class ACCGAN():
 
                         self.loss_tracker_generator = keras.metrics.Mean(name="gen_loss")
                         self.loss_tracker_discriminator = keras.metrics.Mean(name="disc_loss")
+                        self.loss_true_tracker_discriminator = keras.metrics.Mean(name="disc_loss_real")
+                        self.loss_fake_tracker_discriminator = keras.metrics.Mean(name="disc_loss_fake")
                         self.accuracy_real_tracker_discriminator = keras.metrics.Mean(name="disc_acc_real")
                         self.accuracy_fake_tracker_discriminator = keras.metrics.Mean(name="disc_acc_fake")
-                        self.accuracy_real_classification_tracker_discriminator = keras.metrics.Mean(name="disc_acc_class_real")
-                        self.accuracy_fake_classification_tracker_discriminator = keras.metrics.Mean(name="disc_acc_class_fake")
 
                 def call(self, x):
                     return x
@@ -194,7 +194,7 @@ class ACCGAN():
                     real_loss = self.element_wise_cross_entropy_from_logits(tf.ones_like(real_output), real_output)
                     fake_loss = self.element_wise_cross_entropy_from_logits(tf.zeros_like(fake_output), fake_output)
                     total_loss = real_loss + fake_loss
-                    return total_loss
+                    return real_loss, fake_loss, total_loss
 
                 def classification_loss(self, labels, logits):
                     ce_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels = tf.cast(labels, tf.int32), logits = logits)
@@ -222,7 +222,7 @@ class ACCGAN():
                             
                             gen_loss = self.classification_loss(fake_labels, fake_output_class)  + self.generator_loss(fake_output_disc)
                             
-                            disc_loss = self.classification_loss(labels, real_output_class) + self.classification_loss(fake_labels, fake_output_class) + self.discriminator_loss(real_output_disc, fake_output_disc)
+                            disc_real_loss, disc_fake_loss, disc_loss = self.classification_loss(labels, real_output_class) + self.classification_loss(fake_labels, fake_output_class) + self.discriminator_loss(real_output_disc, fake_output_disc)
                             
                         gradients_of_generator = gen_tape.gradient(gen_loss, self.generator.trainable_variables)
                         gradients_of_discriminator = disc_tape.gradient(disc_loss, self.discriminator.trainable_variables)
@@ -233,6 +233,8 @@ class ACCGAN():
                         # Compute metrics
                         self.loss_tracker_generator.update_state(gen_loss)
                         self.loss_tracker_discriminator.update_state(disc_loss)
+                        self.loss_true_tracker_discriminator.update_state(disc_real_loss)
+                        self.loss_fake_tracker_discriminator.update_state(disc_fake_loss)
 
                         preds_real = tf.round(tf.sigmoid(real_output_disc))
                         accuracy_real = tf.math.reduce_mean(tf.cast(tf.math.equal(preds_real, tf.ones_like(preds_real)), tf.float32))
@@ -244,6 +246,7 @@ class ACCGAN():
 
 
                         return {'gen_loss': self.loss_tracker_generator.result(), 'disc_loss': self.loss_tracker_discriminator.result(),
+                                'disc_loss_real': self.loss_true_tracker_discriminator.result(), 'disc_loss_fake': self.loss_fake_tracker_discriminator.result(), \
                                 'disc_acc_real': self.accuracy_real_tracker_discriminator.result(), 'disc_acc_fake': self.accuracy_fake_tracker_discriminator.result()}
                             
                 def test_step(self, data):
@@ -293,11 +296,14 @@ class ACCGAN():
                                                                                 model=self.model)
 
                 # creating dictionaries for history and accuracy for the plots
-                history = {}
-                history['G_loss'] = []
-                history['D_loss'] = []
-                history['D_acc_real'] = []
-                history['D_acc_fake'] = []
+                self.history = {}
+                self.history['G loss'] = []
+                self.history['D loss'] = []
+                self.history['D loss Real'] = []
+                self.history['D loss Fake'] = []
+                self.accuracy = {}
+                self.accuracy['D accuracy Real'] = []
+                self.accuracy['D accuracy Fake'] = []
 
                 print("Starting training of the AC-GAN model.")
 
@@ -307,6 +313,8 @@ class ACCGAN():
                         # Keep track of the losses at each step
                         epoch_gen_loss = []
                         epoch_disc_loss = []
+                        epoch_disc_loss_real = []
+                        epoch_disc_loss_fake = []
                         epoch_disc_acc_real = []
                         epoch_disc_acc_fake = []
 
@@ -314,10 +322,12 @@ class ACCGAN():
 
                         for step, batch in enumerate(train_ds):
                                 images, labels = batch
-                                g_loss, d_loss, d_acc_real, d_acc_fake, d_acc_class_real, d_acc_class_fake = self.model.train_on_batch(images, labels)
+                                g_loss, d_loss, d_loss_real, d_loss_fake, d_acc_real, d_acc_fake = self.model.train_on_batch(images, labels)
 
                                 epoch_gen_loss.append(g_loss)
                                 epoch_disc_loss.append(d_loss)
+                                epoch_disc_acc_real.append(d_loss_real)
+                                epoch_disc_acc_fake.append(d_loss_fake)
                                 epoch_disc_acc_real.append(d_acc_real)
                                 epoch_disc_acc_fake.append(d_acc_fake)
 
@@ -327,8 +337,6 @@ class ACCGAN():
                                         print(f"\t\tDiscriminator Loss: {d_loss}")
                                         print(f"\t\tDisc. Acc Real: {d_acc_real}")
                                         print(f"\t\tDisc. Acc Fake: {d_acc_fake}")
-                                        print(f"\t\tDisc. Acc Class Real: {d_acc_class_real}")
-                                        print(f"\t\tDisc. Acc Class Fake: {d_acc_class_fake}")
                         if epoch % self.logging_step == 0:
                             generator_images = self.model.generator((benchmark_noise, benchmark_labels), training=False)
         
@@ -338,14 +346,12 @@ class ACCGAN():
                         if epoch % (self.logging_step*5) == 0:
                             checkpoint.save(file_prefix=checkpoint_prefix)
 
-                        history["G_loss"].append(np.array(epoch_gen_loss).mean())
-                        history["D_loss"].append(np.array(epoch_disc_loss).mean())
-                        history["D_acc_real"].append(np.array(epoch_disc_acc_real).mean())
-                        history["D_acc_fake"].append(np.array(epoch_disc_acc_fake).mean())
-
-                return history
+                        self.history["G loss"].append(np.array(epoch_gen_loss).mean())
+                        self.history["D loss"].append(np.array(epoch_disc_loss).mean())
+                        self.history["D loss real"].append(np.array(epoch_disc_acc_real).mean())
+                        self.history["D loss fake"].append(np.array(epoch_disc_acc_fake).mean())
  
-        def plot_losses(self, data, xaxis, yaxis, ylim=0):
+        def plot_stats(self, data, xaxis, yaxis, ylim=0):
                 pd.DataFrame(data).plot(figsize=(10,8))
                 plt.grid(True)
                 plt.xlabel(xaxis)
