@@ -51,9 +51,10 @@ class XRaysDataset():
         image = tf.image.resize(image, [self.img_height, self.img_width])
         return image
 
-    def configure_for_performance(self, ds, buffer_size, batch_size):
+    def configure_for_performance(self, ds, buffer_size, batch_size, shuffle=True):
         ds = ds.cache()
-        ds = ds.shuffle(buffer_size=buffer_size)
+        if shuffle:
+            ds = ds.shuffle(buffer_size=buffer_size)
         ds = ds.batch(self.batch_size)
         ds = ds.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
         return ds
@@ -91,11 +92,20 @@ class XRaysDataset():
                     file_paths.append(file_path)
             return file_paths
 
-    def load(self, separate_classes=True, train_val_split=False, covid_class=False):
+    def load(self, separate_classes=True, train_val_split=False, covid_class=False, shuffle=True):
         # separate_classes = False is used to load the entire training/test dataset
 
         AUTOTUNE = tf.data.experimental.AUTOTUNE
         label_mapping = {"covid-19": 0, "normal": 1, "viral-pneumonia": 2}
+
+        if shuffle:
+            file_paths, labels = self.get_file_paths(self.dir, label_mapping)
+            ds = tf.data.Dataset.from_tensor_slices((file_paths, labels))
+            ds = ds.map(self.process_path)
+            ds = ds.map(self.preprocessing_function)
+            ds = self.configure_for_performance(ds, buffer_size=1500, batch_size=self.batch_size, shuffle=shuffle)
+            print(f"Number of batches for the dataset: {len(ds)}")
+
 
         if train_val_split:
             
