@@ -401,7 +401,6 @@ class ACCGANUnc():
                                         print(f"\t\tDiscriminator Loss: {d_loss}")
                                         print(f"\t\tDisc. Acc Real: {d_acc_real}")
                                         print(f"\t\tDisc. Acc Fake: {d_acc_fake}")
-                                        print(f"\t\tMean Uncertainty: {mean_unc}")
 
                         if epoch % self.logging_step == 0:
                             generator_images = self.model.generator((benchmark_noise, benchmark_labels), training=False)
