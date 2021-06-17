@@ -352,7 +352,7 @@ class ACCGAN():
 
                         self.history["G loss"].append(np.array(epoch_gen_loss).mean())
                         self.history["D loss"].append(np.array(epoch_disc_loss).mean())
-                        self.history["G loss Real"].append(np.array(epoch_disc_loss_real).mean())
+                        self.history["D loss Real"].append(np.array(epoch_disc_loss_real).mean())
                         self.history["D loss Fake"].append(np.array(epoch_disc_loss_fake).mean())
                         self.accuracy["D acc Real"].append(np.array(epoch_disc_acc_real).mean())
                         self.accuracy["D acc Fake"].append(np.array(epoch_disc_acc_fake).mean())
