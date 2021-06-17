@@ -333,8 +333,15 @@ class cGAN():
 
             return model
 
- 
- 
+        def generate_latent_points(self):
+            # generate points in the latent space
+            x_input = np.random.randn(self.latent_size * self.batch_size)
+            # reshape into a batch of inputs for the network
+            x_input = x_input.reshape(self.batch_size, self.latent_size )
+            # generate labels
+            labels = np.random.randint(0, self.n_classes, self.batch_size)
+            return [x_input, labels]   
+            
         def train_model(self, train_ds, benchmark_noise, benchmark_labels):
             # set checkpoint directory
             checkpoint_prefix = os.path.join(self.checkpoint_dir, "ckpt")
