@@ -12,7 +12,7 @@ def plot_losses(history, isMCD=False, selected_run='3'):
     train_loss = history.history["loss" if "loss" in history.history.keys() else "train_loss"]
     valid_loss = history.history["val_loss"]
   else:
-    train_loss = history[selected_run].history["loss"]
+    train_loss = history[selected_run].history["loss" if "loss" in history.history.keys() else "train_loss"]
     valid_loss = history[selected_run].history["val_loss"]
 
   epochs = range(len(train_loss)) 
