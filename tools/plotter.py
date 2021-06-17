@@ -9,7 +9,7 @@ import json
 
 def plot_losses(history, isMCD=False, selected_run='3'):
   if isMCD:
-    train_loss = history.history["loss"]
+    train_loss = history.history["loss" if "loss" in history.history.keys() else "train_loss"]
     valid_loss = history.history["val_loss"]
   else:
     train_loss = history[selected_run].history["loss"]
