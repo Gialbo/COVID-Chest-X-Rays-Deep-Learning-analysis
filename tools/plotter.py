@@ -73,8 +73,8 @@ def plot_recalls(history, isMCD=False, selected_run='3'):
 
     if len(valid_rec_0) != len(train_rec_0):
       train_rec_0 = train_rec_0[::int(len(train_rec_0)/len(valid_rec_0))]
-      train_rec_1 = train_rec_0[::int(len(train_rec_1)/len(valid_rec_1))]
-      train_rec_2 = train_rec_0[::int(len(train_rec_2)/len(valid_rec_2))]
+      train_rec_1 = train_rec_1[::int(len(train_rec_1)/len(valid_rec_1))]
+      train_rec_2 = train_rec_2[::int(len(train_rec_2)/len(valid_rec_2))]
 
     epochs = range(len(valid_rec_0)) 
 
@@ -125,8 +125,8 @@ def plot_precisions(history, isMCD=False, selected_run='3'):
 
     if len(valid_pre_0) != len(train_pre_0):
       train_pre_0 = train_pre_0[::int(len(train_pre_0)/len(valid_pre_0))]
-      train_pre_1 = train_pre_0[::int(len(train_pre_1)/len(valid_pre_1))]
-      train_pre_2 = train_pre_0[::int(len(train_pre_2)/len(valid_pre_2))]
+      train_pre_1 = train_pre_1[::int(len(train_pre_1)/len(valid_pre_1))]
+      train_pre_2 = train_pre_2[::int(len(train_pre_2)/len(valid_pre_2))]
     epochs = range(len(valid_pre_0)) 
 
     axs[0].plot(epochs, train_pre_0)
