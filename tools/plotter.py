@@ -33,8 +33,8 @@ def plot_accuracies(history, isMCD=False, selected_run='3'):
     train_acc = history.history["accuracy"]
     valid_acc = history.history["val_accuracy"]
   else:
-    train_acc = history[selected_run].history["accuracy" if "accuracy" in history[selected_run].history.keys() else "train_accuracy"]
-    valid_acc = history[selected_run].history["val_accuracy"]
+    train_acc = history[selected_run].history["accuracy" if "accuracy" in history[selected_run].history.keys() else "train_acc"]
+    valid_acc = history[selected_run].history["val_accuracy" if "val_accuracy" in history[selected_run].history.keys() else "val_acc"]
 
   if len(valid_acc) != len(train_acc):
     train_acc = train_acc[::int(len(train_acc)/len(valid_acc))]
