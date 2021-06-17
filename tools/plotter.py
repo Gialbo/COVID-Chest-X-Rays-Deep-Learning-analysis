@@ -15,7 +15,9 @@ def plot_losses(history, isMCD=False, selected_run='3'):
     train_loss = history[selected_run].history["loss" if "loss" in history[selected_run].history.keys() else "train_loss"]
     valid_loss = history[selected_run].history["val_loss"]
 
-  epochs = range(len(train_loss)) 
+  if len(valid_loss) != len(train_loss):
+    train_loss = train_loss[::int(len(train_loss)/len(valid_loss))]
+  epochs = range(len(valid_loss)) 
   plt.figure(figsize=(8,6))
   with plt.style.context('fivethirtyeight'):
     plt.plot(epochs, train_loss)
