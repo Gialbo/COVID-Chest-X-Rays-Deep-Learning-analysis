@@ -316,21 +316,23 @@ class cGANUnc():
 
                                 gen_loss = self.generator_loss(fake_output) - \
                                           (self.unc_mul * self.unc_weight * tf.reduce_mean(uncertainty_fake))
- 
-                                disc_real_loss, disc_fake_loss, disc_loss = self.discriminator_loss(real_output, fake_output, images) + \
+
+                                disc_real_loss, disc_fake_loss, disc_loss = self.discriminator_loss(real_output, fake_output, images)
+
+                                total_disc_loss = disc_loss+ \
                                            (self.unc_mul * self.unc_weight * tf.reduce_mean(total_uncertainty))
  
                         gradients_of_generator = gen_tape.gradient(gen_loss, self.generator.trainable_variables)
-                        gradients_of_discriminator = disc_tape.gradient(disc_loss, self.discriminator.trainable_variables)
+                        gradients_of_discriminator = disc_tape.gradient(total_disc_loss, self.discriminator.trainable_variables)
  
                         self.generator_optimizer.apply_gradients(zip(gradients_of_generator, self.generator.trainable_variables))
                         self.discriminator_optimizer.apply_gradients(zip(gradients_of_discriminator, self.discriminator.trainable_variables))
  
                         # Compute metrics
                         self.loss_tracker_generator.update_state(gen_loss)
-                        self.loss_tracker_discriminator.update_state(disc_loss)
-                        self.loss_true_tracker_discriminator.update_state(disc_real_loss)
-                        self.loss_fake_tracker_discriminator.update_state(disc_fake_loss)
+                        self.loss_tracker_discriminator.update_state(total_disc_loss)
+                        self.loss_true_tracker_discriminator.update_state(disc_real_loss+uncertainty_real)
+                        self.loss_fake_tracker_discriminator.update_state(disc_fake_loss+uncertainty_fake)
                         
                         preds_real = tf.round(tf.sigmoid(real_output))
                         accuracy_real = tf.math.reduce_mean(tf.cast(tf.math.equal(preds_real, tf.ones_like(preds_real)), tf.float32))
