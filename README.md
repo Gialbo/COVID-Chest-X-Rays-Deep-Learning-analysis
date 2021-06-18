@@ -109,6 +109,37 @@ The dataset contains X-rays images from different patients with different patolo
 </p>
 
 
+### cGAN with uncertainty (min)
+
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/cGAN-unc-min/imagesCompared.png">
+ </p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/results/cGAN-unc-min/cGAN_unc_min.gif" width="400">
+</p>
+ 
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/cGAN-unc-min/accuracy.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/cGAN-unc-min/loss.png" width="400">
+</p>
+
+### cGAN with uncertainty (max)
+
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/cGAN-unc-max/imagesCompared.png">
+ </p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/results/cGAN-unc-max/cGAN_unc_max.gif" width="400">
+</p>
+ 
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/cGAN-unc-max/accuracy.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/cGAN-unc-max/loss.png" width="400">
+</p>
+
+
 ### unetCGAN
 
  <p align="center">
@@ -229,6 +260,8 @@ To measure the quality of the generated images compared to the original ones, we
 | unetCGAN                      | 89.76  ± 2.03 |  
 | ACCGAN                        | XXX    ±  XXX |  
 | ACCGAN + unecertainty         | XXX    ± XXX  |  
+| cGAN + unecertainty (min)     | 72.68  ± 0.92 |  
+| cGAN + unecertainty (max)     | 70.02  ± 0.70 |  
 
 # References
 [Can AI help in screening Viral and COVID-19 pneumonia? ( Chowdhury et al., IEEE Access, Vol. 8, 2020, pp. 132665 - 132676.)](https://arxiv.org/ftp/arxiv/papers/2003/2003.13145.pdf)
