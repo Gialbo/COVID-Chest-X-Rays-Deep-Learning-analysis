@@ -261,7 +261,7 @@ To measure the quality of the generated images compared to the original ones, we
 | ACCGAN                        | XXX    ±  XXX |  
 | ACCGAN + unecertainty         | XXX    ± XXX  |  
 | cGAN + unecertainty (min)     | 72.68  ± 0.92 |  
-| cGAN + unecertainty (max)     | 70.02  ± 0.70 |  
+| cGAN + unecertainty (max)     | 62.59  ± 0.61 |  
 
 # References
 [Can AI help in screening Viral and COVID-19 pneumonia? ( Chowdhury et al., IEEE Access, Vol. 8, 2020, pp. 132665 - 132676.)](https://arxiv.org/ftp/arxiv/papers/2003/2003.13145.pdf)
