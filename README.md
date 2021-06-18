@@ -301,7 +301,7 @@ description to do...
   | cGAN + uncertainty (min)     | 0.959 ± 0.008 | 0.197 ± 0.051 |
   | cGAN + uncertainty (max)     | 0.968 ± 0.008 | 0.119 ± 0.042 |
   | AC-CGAN                      | 0.948 ± 0.016 | 0.246 ± 0.092 |
-  | AC-CGAN + uncertainty (min)  | xxxxx ± xxxxx | xxxxx ± xxxxx |
+  | AC-CGAN + uncertainty (min)  | 0.956 ± 0.011 | 0.206 ± 0.063 |
   | AC-CGAN + uncertainty (max)  | xxxxx ± xxxxx | xxxxx ± xxxxx |
 
   | Model                         | Recall, Covid-19  | Recall, Normal | Recall, Viral Pneumonia |
@@ -310,7 +310,7 @@ description to do...
   | cGAN + uncertainty (min)      | 0.974 ± 0.012     | 0.936 ± 0.013  |  0.970 ± 0.013          |
   | cGAN + uncertainty (max)      | 0.981 ± 0.007     | 0.960 ± 0.023  |  0.966 ± 0.010          |
   | AC-CGAN                       | 0.979 ± 0.009     | 0.894 ± 0.039  |  0.975 ± 0.007          |
-  | AC-CGAN + uncertainty (min)   | xxxxx ± xxxxx     | xxxxx ± xxxxx  |  xxxxx ± xxxxx          |
+  | AC-CGAN + uncertainty (min)   | 0.977 ± 0.009     | 0.922 ± 0.024  |  0.970 ± 0.016          |
   | AC-CGAN + uncertainty (max)   | xxxxx ± xxxxx     | xxxxx ± xxxxx  |  xxxxx ± xxxxx          |
 
   | Model                         | Precision, Covid-19  | Precision, Normal | Precision, Viral Pneumonia |
@@ -319,7 +319,7 @@ description to do...
   | cGAN + uncertainty (min)      | 1.000 ± 0.000        | 0.969 ± 0.014     |  0.919 ± 0.018             |
   | cGAN + uncertainty (max)      | 0.997 ± 0.007        | 0.966 ± 0.009     |  0.948 ± 0.019             |
   | AC-CGAN                       | 0.995 ± 0.004        | 0.971 ± 0.014     |  0.897 ± 0.037             |
-  | AC-CGAN + uncertainty (min)   | xxxxx ± xxxxx        | xxxxx ± xxxxx     |  xxxxx ± xxxxx             |
+  | AC-CGAN + uncertainty (min)   | 1.000 ± 0.000        | 0.961 ± 0.023     |  0.921 ± 0.029             |
   | AC-CGAN + uncertainty (max)   | xxxxx ± xxxxx        | xxxxx ± xxxxx     |  xxxxx ± xxxxx             |
 
 ### cGAN 
@@ -379,7 +379,7 @@ description to do...
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN/recall.png">
  </p>
  
- <!--
+
  
   ### AC-CGAN + uncertainty (min)
 <p align="center">
@@ -394,6 +394,8 @@ description to do...
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-min/recall.png">
  </p>
+ 
+  <!--
  
  ### AC-CGAN + uncertainty (max)
 <p align="center">
