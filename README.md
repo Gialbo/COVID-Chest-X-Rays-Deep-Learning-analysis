@@ -161,8 +161,7 @@ The dataset contains X-rays images from different patients with different patolo
 
 ### Classification Task: deterministic inceptionNet vs Monte Carlo Dropout inceptionNet
 
-In the table below are reported the results on the classification task. The recall and precision values are reported for the classes in the following order: covid-19, normal and viral pneumonia.
-
+In the table below are reported the overall results on the classification task. The results of the deterministic model are obtained running the training configuration for five times. Instead for the Monte Carlo Dropout model the evaluation configuration is run five times due to the active dropout layers.
 <!--
 | Model                         |    Accuracy   | Loss    | Recall                 | Precision             |
 | --------------------------    | ------------- | --------| -----------------------| ----------------------|
@@ -195,7 +194,7 @@ In the table below are reported the results on the classification task. The reca
 
 
 To compare the uncertainty of both networks, the following strategies are used:
-* inceptionNet (deterministic): in the deterministic net, the uncertainty of a prediction can be computed looking at the output softmax vector. The uncertainty of the whole test set is expressed as the standard deviation of the softmax vector for every image.
+* inceptionNet (deterministic): in the deterministic net, the uncertainty of a prediction can be computed from the output softmax vector. The uncertainty of the whole test set is expressed as the standard deviation of the softmax vector for every image.
 * inceptionNetMCD: in the Monte Carlo Dropout setting, we compute for n times the predictions of the net (n is set to 100). In this case the uncertainty is the following:
 <p align="center">
   <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/uncertainty_formula.png"  width="300"> 
@@ -217,7 +216,10 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
  
 ## Frechet Inception Distance Results
 
-... TODO: description ...
+To measure the quality of the generated images compared to the original ones, we use a technique called Frechet Inception Distance. Given the statistics of the real and the generated images, the distance is computed as an improvment of the Inception Score (IS) in the following way:
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/images/FID.png">
+ </p>
 
 | Model                         |    FID        | 
 | --------------------------    | ------------- | 
