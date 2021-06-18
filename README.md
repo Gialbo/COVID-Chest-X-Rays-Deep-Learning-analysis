@@ -244,20 +244,20 @@ In the table below are reported the overall results on the classification task. 
 | inceptionNetMCD               |     0.9191    |  0.2434 | 1; 0.8358; 0.9254      | 0.9055; 0.9655; 0.8921| -->
 
 
-  | Model                        | Accuracy      | Loss          |
-  |------------------------------|---------------|---------------|
-  | inceptionNet (deterministic) | 0.944 ± 0.026 | 0.420 ± 0.274 |
-  | inceptionNetMCD              | 0.907 ± 0.007 | 0.326 ± 0.032 |
+  | Model                        | Accuracy        | Loss            |
+  |------------------------------|-----------------|-----------------|
+  | inceptionNet (deterministic) |**0.944 ± 0.026**|**0.420 ± 0.274**|
+  | inceptionNetMCD              | 0.907 ± 0.007   | 0.326 ± 0.032   |
 
-  | Model                         | Recall, Covid-19  | Recall, Normal | Recall, Viral Pneumonia |
-  |-------------------------------|-------------------|----------------|-------------------------|
-  | inceptionNet  (deterministic) | 0.939 ± 0.066     | 0.966 ± 0.025  | 0.928 ± 0.046           |
-  | inceptionNetMCD               | 0.974 ± 0.007     | 0.894 ± 0.009  | 0.861 ± 0.010           |
+  | Model                         | Recall, Covid-19  | Recall, Normal  | Recall, Viral Pneumonia |
+  |-------------------------------|-------------------|-----------------|-------------------------|
+  | inceptionNet  (deterministic) | 0.939 ± 0.066     |**0.966 ± 0.025**| **0.928 ± 0.046**       |
+  | inceptionNetMCD               |**0.974 ± 0.007**  | 0.894 ± 0.009   | 0.861 ± 0.010           |
 
   | Model                         | Precision, Covid-19  | Precision, Normal | Precision, Viral Pneumonia |
   |-------------------------------|----------------------|-------------------|----------------------------|
-  | inceptionNet  (deterministic) | 1.000 ± 0.000        | 0.917 ± 0.060     | 0.936 ± 0.020              |
-  | inceptionNetMCD               | 0.933 ± 0.009        | 0.922 ± 0.011     | 0.878 ± 0.010              |
+  | inceptionNet  (deterministic) | **1.000 ± 0.000**    | 0.917 ± 0.060     | **0.936 ± 0.020**          |
+  | inceptionNetMCD               | 0.933 ± 0.009        | **0.922 ± 0.011** | 0.878 ± 0.010              |
 
 
  <p align="center">
@@ -295,32 +295,32 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
 description to do...
 
 
-  | Model                        | Accuracy      | Loss          |
-  |------------------------------|---------------|---------------|
-  | cGAN                         | 0.959 ± 0.007 | 0.203 ± 0.046 |
-  | cGAN + uncertainty (min)     | 0.968 ± 0.008 | 0.119 ± 0.042 |
-  | cGAN + uncertainty (max)     | 0.959 ± 0.008 | 0.197 ± 0.051 |
-  | AC-CGAN                      | 0.948 ± 0.016 | 0.246 ± 0.092 |
-  | AC-CGAN + uncertainty (min)  | 0.950 ± 0.008 | 0.180 ± 0.061 |
-  | AC-CGAN + uncertainty (max)  | 0.956 ± 0.011 | 0.206 ± 0.063 |
+  | Model                        | Accuracy         | Loss             |
+  |------------------------------|------------------|------------------|
+  | cGAN                         | 0.959 ± 0.007    | 0.203 ± 0.046    |
+  | cGAN + uncertainty (min)     |**0.968 ± 0.008** |**0.119 ± 0.042** |
+  | cGAN + uncertainty (max)     | 0.959 ± 0.008    | 0.197 ± 0.051    |
+  | AC-CGAN                      | 0.948 ± 0.016    | 0.246 ± 0.092    |
+  | AC-CGAN + uncertainty (min)  | 0.950 ± 0.008    | 0.180 ± 0.061    |
+  | AC-CGAN + uncertainty (max)  | 0.956 ± 0.011    | 0.206 ± 0.063    |
 
-  | Model                         | Recall, Covid-19  | Recall, Normal | Recall, Viral Pneumonia |
-  |-------------------------------|-------------------|----------------|-------------------------|
-  | cGAN                          | 0.974 ± 0.012     | 0.930 ± 0.019  |  0.973 ± 0.017          |
-  | cGAN + uncertainty (min)      | 0.981 ± 0.007     | 0.960 ± 0.023  |  0.966 ± 0.010          |
-  | cGAN + uncertainty (max)      | 0.974 ± 0.012     | 0.936 ± 0.013  |  0.970 ± 0.013          |
-  | AC-CGAN                       | 0.979 ± 0.009     | 0.894 ± 0.039  |  0.975 ± 0.007          |
-  | AC-CGAN + uncertainty (min)   | 0.977 ± 0.017     | 0.921 ± 0.017  |  0.954 ± 0.027          |
-  | AC-CGAN + uncertainty (max)   | 0.977 ± 0.009     | 0.922 ± 0.024  |  0.970 ± 0.016          |
+  | Model                         | Recall, Covid-19  | Recall, Normal  | Recall, Viral Pneumonia |
+  |-------------------------------|-------------------|-----------------|-------------------------|
+  | cGAN                          | 0.974 ± 0.012     | 0.930 ± 0.019   |  0.973 ± 0.017          |
+  | cGAN + uncertainty (min)      | **0.981 ± 0.007** |**0.960 ± 0.023**|  0.966 ± 0.010          |
+  | cGAN + uncertainty (max)      | 0.974 ± 0.012     | 0.936 ± 0.013   |  0.970 ± 0.013          |
+  | AC-CGAN                       | 0.979 ± 0.009     | 0.894 ± 0.039   |  **0.975 ± 0.007**      |
+  | AC-CGAN + uncertainty (min)   | 0.977 ± 0.017     | 0.921 ± 0.017   |  0.954 ± 0.027          |
+  | AC-CGAN + uncertainty (max)   | 0.977 ± 0.009     | 0.922 ± 0.024   |  0.970 ± 0.016          |
 
   | Model                         | Precision, Covid-19  | Precision, Normal | Precision, Viral Pneumonia |
   |-------------------------------|----------------------|-------------------|----------------------------|
-  | cGAN                          | 1.000 ± 0.000        | 0.972 ± 0.016     |  0.917 ± 0.023             |
-  | cGAN + uncertainty (min)      | 0.997 ± 0.007        | 0.966 ± 0.009     |  0.948 ± 0.019             |
-  | cGAN + uncertainty (max)      | 1.000 ± 0.000        | 0.969 ± 0.014     |  0.919 ± 0.018             |
+  | cGAN                          | **1.000 ± 0.000**    | **0.972 ± 0.016** |  0.917 ± 0.023             |
+  | cGAN + uncertainty (min)      | 0.997 ± 0.007        | 0.966 ± 0.009     |  **0.948 ± 0.019**         |
+  | cGAN + uncertainty (max)      | **1.000 ± 0.000**    | 0.969 ± 0.014     |  0.919 ± 0.018             |
   | AC-CGAN                       | 0.995 ± 0.004        | 0.971 ± 0.014     |  0.897 ± 0.037             |
   | AC-CGAN + uncertainty (min)   | 0.995 ± 0.004        | 0.955 ± 0.028     |  0.912 ± 0.011             |
-  | AC-CGAN + uncertainty (max)   | 1.000 ± 0.000        | 0.961 ± 0.023     |  0.921 ± 0.029             |
+  | AC-CGAN + uncertainty (max)   | **1.000 ± 0.000**    | 0.961 ± 0.023     |  0.921 ± 0.029             |
 
 ### cGAN 
 
@@ -417,17 +417,17 @@ To measure the quality of the generated images compared to the original ones, we
  </p>
  To run the experiments, we create 5 different sets of points from the latent space and/or random labels. 
 
-| Model                         |    FID        | 
-| --------------------------    | ------------- | 
-| covidGAN                      | 313.84 ± 2.48 |  
-| covidUnetGAN                  | 188.48 ± 3.84 |  
-| cGAN                          | 80.65  ± 1.27 | 
-| cGAN + uncertainty (min)      | 72.68  ± 0.92 |  
-| cGAN + uncertainty (max)      | 62.59  ± 0.61 |  
-| unetCGAN                      | 89.76  ± 2.03 |  
-| AC-CGAN                       | 81.87  ± 1.85 |  
-| AC-CGAN + uncertainty (min)   | 89.65  ± 1.45 |  
-| AC-CGAN + uncertainty (max)   | 78.54  ± 1.59 |  
+| Model                         |    FID          | 
+| --------------------------    | --------------- | 
+| covidGAN                      | 313.84 ± 2.48   |  
+| covidUnetGAN                  | 188.48 ± 3.84   |  
+| cGAN                          | 80.65  ± 1.27   | 
+| cGAN + uncertainty (min)      | 72.68  ± 0.92   |  
+| cGAN + uncertainty (max)      |**62.59  ± 0.61**|  
+| unetCGAN                      | 89.76  ± 2.03   |  
+| AC-CGAN                       | 81.87  ± 1.85   |  
+| AC-CGAN + uncertainty (min)   | 89.65  ± 1.45   |  
+| AC-CGAN + uncertainty (max)   | 78.54  ± 1.59   |  
 
 
 # References
