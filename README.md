@@ -43,8 +43,9 @@ The dataset contains X-rays images from different patients with different patolo
 * [`inceptionNetMCD.py`](./models/inceptionNetMCD.py): Monte Carlo Dropout inceptionNet. The main difference are the following: the inceptionNetV3MCD is used and dropout layers are added after every fully connected layer. 
 * [`covidGAN.py`](./models/covidGAN.py):  Generative Adversial Network to generate synthetic COVID-19 x-rays samples  from the *COVID-19 Radiography Database* database.
 * [`covidUnetCGAN`](./models/unetCGAN.py): Particular version of a classical Generative Adversarial Network in which the discriminator is substituted with a Unet net. The Uney will becomposed by an encoder and a decoder. If we shrink to $1$ the output of the encoder we obtain the oputput of a classical discriminator net. But additionally we re decode the image and we tell the network to maximize the pixel-wise cross entropy of the decoded output. This means that in output of the decode we will have a map in which each pixel tells us in a grayscale rapresentation how much confident the network is for that pixel of the image being true. A value for a pixel close the $1$ (white) means that for that pixel the networ is sure of the image being real and viceversa for a value closs to $0$ (black) the network is sure for the image of being fake.
-* [`cGAN.py`](./models/cGAN.py): starting from the covidGAN, we added to the model to ability to distinguish between the tree different classes. This architecture is called Conditional GAN. Futhermore, to make the training more stable, we added residual connections in the generator.
+* [`cGAN.py`](./models/cGAN.py): starting from the covidGAN, we added random labels as input of the generator to generate images according to a given class. This architecture is called Conditional GAN. Futhermore, to make the training more stable, we added residual connections in the generator.
 * [`unetCGAN.py`](): to do...
+* [`ACCGAN.py`](): to do...
 
 
 
@@ -56,6 +57,7 @@ The dataset contains X-rays images from different patients with different patolo
 * [`covidUnetGAN.ipynb`](./experiments/covidUnetGAN.ipynb): notebook reporting the experiment using the covidUnetGAN model.
 * [`cGAN.ipynb`](./experiments/cGAN.ipynb): notebook reporting the experiment using the cGAN model.
 * [`unetcGAN.ipynb`](./experiments/cGAN.ipynb): notebook reporting the experiment using the unetcGAN model.
+* [`AC-CGAN.ipynb`](./experiments/AC-CGAN.ipynb): notebook reporting the experiment using the ACCGAN model.
 
 
  
@@ -156,8 +158,11 @@ The dataset contains X-rays images from different patients with different patolo
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/unetCGAN/loss.png" width="400">
 </p>
 
-### ACCGAN
+### AC-CGAN
 
+### AC-CGAN with uncertainty (min)
+
+### AC-CGAN with uncertainty (max)
 
 ## Classification Results
 
@@ -251,17 +256,20 @@ To measure the quality of the generated images compared to the original ones, we
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/images/FID.png">
  </p>
+ To run the experiments, we create 5 different sets of points from the latent space and/or random labels. 
 
 | Model                         |    FID        | 
 | --------------------------    | ------------- | 
 | covidGAN                      | 313.84 ± 2.48 |  
 | covidUnetGAN                  | 188.48 ± 3.84 |  
-| cGAN                          | 80.65  ± 1.27 |  
-| unetCGAN                      | 89.76  ± 2.03 |  
-| ACCGAN                        | XXX    ±  XXX |  
-| ACCGAN + unecertainty         | XXX    ± XXX  |  
+| cGAN                          | 80.65  ± 1.27 | 
 | cGAN + unecertainty (min)     | 72.68  ± 0.92 |  
 | cGAN + unecertainty (max)     | 62.59  ± 0.61 |  
+| unetCGAN                      | 89.76  ± 2.03 |  
+| AC-CGAN                       | 81.87  ± 1.85 |  
+| AC-CGAN + uncertainty (min)   | 89.65  ± 1.45 |  
+| AC-CGAN + uncertainty (max)   | 78.54  ± 1.59 |  
+
 
 # References
 [Can AI help in screening Viral and COVID-19 pneumonia? ( Chowdhury et al., IEEE Access, Vol. 8, 2020, pp. 132665 - 132676.)](https://arxiv.org/ftp/arxiv/papers/2003/2003.13145.pdf)
