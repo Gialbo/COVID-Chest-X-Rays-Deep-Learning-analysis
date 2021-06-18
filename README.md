@@ -337,7 +337,7 @@ description to do...
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN/recall.png">
  </p>
  
- ### cGAN uncertainty (min)
+ ### cGAN + uncertainty (min)
 <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-min/loss.png" width="400">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-min/accuracy.png" width="400">
@@ -351,7 +351,7 @@ description to do...
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-min/recall.png">
  </p>
  
-  ### cGAN uncertainty (max)
+  ### cGAN + uncertainty (max)
 <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-max/loss.png" width="400">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-max/accuracy.png" width="400">
@@ -381,7 +381,7 @@ description to do...
  
  <!--
  
-  ### AC-CGAN uncertainty (min)
+  ### AC-CGAN + uncertainty (min)
 <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-min/loss.png" width="400">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-min/accuracy.png" width="400">
@@ -395,7 +395,7 @@ description to do...
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-min/recall.png">
  </p>
  
- ### AC-CGAN uncertainty (max)
+ ### AC-CGAN + uncertainty (max)
 <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-max/loss.png" width="400">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-max/accuracy.png" width="400">
