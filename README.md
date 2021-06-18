@@ -8,8 +8,9 @@ Final project code for the course "Bioinformatics", A.Y. 2020/2021.
 4. [Experiments](#experiments)
 5. [Generation Results](#generation-results)
 6. [Classification Results](#classification-results)
-7. [Frechet Inception Distance Results](#frechet-inception-distance-results)
-8. [References](#references)
+7. [Generative Classification Results](#generative-classification-results)
+8. [Frechet Inception Distance Results](#frechet-inception-distance-results)
+9. [References](#references)
 <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/samples.png"> 
 <center><em>Real images coming from the dataset</em></center>
 
@@ -288,6 +289,126 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/wrongPredictions.png">
  </p>
  
+
+## Generative Classification Results
+
+description to do...
+
+
+  | Model                        | Accuracy      | Loss          |
+  |------------------------------|---------------|---------------|
+  | cGAN                         | 0.959 ± 0.007 | 0.203 ± 0.046 |
+  | cGAN + uncertainty (min)     | 0.959 ± 0.008 | 0.197 ± 0.051 |
+  | cGAN + uncertainty (max)     | 0.968 ± 0.008 | 0.119 ± 0.042 |
+  | AC-CGAN                      | 0.948 ± 0.016 | 0.246 ± 0.092 |
+  | AC-CGAN + uncertainty (min)  | xxxxx ± xxxxx | xxxxx ± xxxxx |
+  | AC-CGAN + uncertainty (max)  | xxxxx ± xxxxx | xxxxx ± xxxxx |
+
+  | Model                         | Recall, Covid-19  | Recall, Normal | Recall, Viral Pneumonia |
+  |-------------------------------|-------------------|----------------|-------------------------|
+  | cGAN                          | 0.974 ± 0.012     | 0.930 ± 0.019  |  0.973 ± 0.017          |
+  | cGAN + uncertainty (min)      | 0.974 ± 0.012     | 0.936 ± 0.013  |  0.970 ± 0.013          |
+  | cGAN + uncertainty (max)      | 0.981 ± 0.007     | 0.960 ± 0.023  |  0.966 ± 0.010          |
+  | AC-CGAN                       | 0.979 ± 0.009     | 0.894 ± 0.039  |  0.975 ± 0.007          |
+  | AC-CGAN + uncertainty (min)   | xxxxx ± xxxxx     | xxxxx ± xxxxx  |  xxxxx ± xxxxx          |
+  | AC-CGAN + uncertainty (max)   | xxxxx ± xxxxx     | xxxxx ± xxxxx  |  xxxxx ± xxxxx          |
+
+  | Model                         | Precision, Covid-19  | Precision, Normal | Precision, Viral Pneumonia |
+  |-------------------------------|----------------------|-------------------|----------------------------|
+  | cGAN                          | 1.000 ± 0.000        | 0.972 ± 0.016     |  0.917 ± 0.023             |
+  | cGAN + uncertainty (min)      | 1.000 ± 0.000        | 0.969 ± 0.014     |  0.919 ± 0.018             |
+  | cGAN + uncertainty (max)      | 0.997 ± 0.007        | 0.966 ± 0.009     |  0.948 ± 0.019             |
+  | AC-CGAN                       | 0.995 ± 0.004        | 0.971 ± 0.014     |  0.897 ± 0.037             |
+  | AC-CGAN + uncertainty (min)   | xxxxx ± xxxxx        | xxxxx ± xxxxx     |  xxxxx ± xxxxx             |
+  | AC-CGAN + uncertainty (max)   | xxxxx ± xxxxx        | xxxxx ± xxxxx     |  xxxxx ± xxxxx             |
+
+### cGAN 
+
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN/loss.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN/accuracy.png" width="400">
+ </p>
+ 
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN/precision.png">
+ </p>
+ 
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN/recall.png">
+ </p>
+ 
+ ### cGAN uncertainty (min)
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-min/loss.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-min/accuracy.png" width="400">
+ </p>
+ 
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-min/precision.png">
+ </p>
+ 
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-min/recall.png">
+ </p>
+ 
+  ### cGAN uncertainty (max)
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-max/loss.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-max/accuracy.png" width="400">
+ </p>
+ 
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-max/precision.png">
+ </p>
+ 
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-max/recall.png">
+ </p>
+
+### AC-CGAN 
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN/loss.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN/accuracy.png" width="400">
+ </p>
+ 
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN/precision.png">
+ </p>
+ 
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN/recall.png">
+ </p>
+ 
+ <!--
+ 
+  ### AC-CGAN uncertainty (min)
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-min/loss.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-min/accuracy.png" width="400">
+ </p>
+ 
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-min/precision.png">
+ </p>
+ 
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-min/recall.png">
+ </p>
+ 
+ ### AC-CGAN uncertainty (max)
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-max/loss.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-max/accuracy.png" width="400">
+ </p>
+ 
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-max/precision.png">
+ </p>
+ 
+ <p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-max/recall.png">
+ </p>
+  -->
 ## Frechet Inception Distance Results
 
 To measure the quality of the generated images compared to the original ones, we use a technique called Frechet Inception Distance. Given the statistics of the real and the generated images, the distance is computed as an improvment of the Inception Score (IS) in the following way:
@@ -301,8 +422,8 @@ To measure the quality of the generated images compared to the original ones, we
 | covidGAN                      | 313.84 ± 2.48 |  
 | covidUnetGAN                  | 188.48 ± 3.84 |  
 | cGAN                          | 80.65  ± 1.27 | 
-| cGAN + unecertainty (min)     | 72.68  ± 0.92 |  
-| cGAN + unecertainty (max)     | 62.59  ± 0.61 |  
+| cGAN + uncertainty (min)      | 72.68  ± 0.92 |  
+| cGAN + uncertainty (max)      | 62.59  ± 0.61 |  
 | unetCGAN                      | 89.76  ± 2.03 |  
 | AC-CGAN                       | 81.87  ± 1.85 |  
 | AC-CGAN + uncertainty (min)   | 89.65  ± 1.45 |  
