@@ -16,11 +16,12 @@ def plot_losses(history, isMCD=False, selected_run='3'):
     valid_loss = history[selected_run].history["val_loss"]
 
   if len(valid_loss) != len(train_loss):
-    train_loss = train_loss[::int(len(train_loss)/len(valid_loss))]
+    ind = int(len(train_loss)/len(valid_loss))-1
+    train_loss = train_loss[ind::ind]
   epochs = range(len(valid_loss)) 
   plt.figure(figsize=(8,6))
   with plt.style.context('fivethirtyeight'):
-    plt.plot(epochs, train_loss)
+    plt.plot(epochs, train_loss[:len(valid_loss)])
     plt.plot(epochs, valid_loss)
     plt.legend(["Training Loss", "Validation Loss"])
     plt.title("Training and Validation Loss")
@@ -37,12 +38,13 @@ def plot_accuracies(history, isMCD=False, selected_run='3'):
     valid_acc = history[selected_run].history["val_accuracy" if "val_accuracy" in history[selected_run].history.keys() else "val_acc"]
 
   if len(valid_acc) != len(train_acc):
-    train_acc = train_acc[::int(len(train_acc)/len(valid_acc))]
+    ind = int(len(train_acc)/len(valid_acc))-1
+    train_acc = train_acc[ind::ind]
   epochs = range(len(valid_acc)) 
   plt.figure(figsize=(8,6))
 
   with plt.style.context('fivethirtyeight'):
-    plt.plot(epochs, train_acc)
+    plt.plot(epochs, train_acc[:len(valid_acc)])
     plt.plot(epochs, valid_acc)
     plt.legend(["Training Accuracy", "Validation Accuracy"])
     plt.title("Training and Validation Accuracy")
@@ -72,28 +74,31 @@ def plot_recalls(history, isMCD=False, selected_run='3'):
       valid_rec_2 = history[selected_run].history[keys[12]]
 
     if len(valid_rec_0) != len(train_rec_0):
-      train_rec_0 = train_rec_0[::int(len(train_rec_0)/len(valid_rec_0))]
-      train_rec_1 = train_rec_1[::int(len(train_rec_1)/len(valid_rec_1))]
-      train_rec_2 = train_rec_2[::int(len(train_rec_2)/len(valid_rec_2))]
+      ind_0 = int(len(train_rec_0)/len(valid_rec_0))-1
+      ind_1 = int(len(train_rec_1)/len(valid_rec_1))-1
+      ind_2 = int(len(train_rec_2)/len(valid_rec_2))-1
+      train_rec_0 = train_rec_0[ind_0::ind_0]
+      train_rec_1 = train_rec_1[ind_1::ind_1]
+      train_rec_2 = train_rec_2[ind_2::ind_2]
 
     epochs = range(len(valid_rec_0)) 
 
 
-    axs[0].plot(epochs, train_rec_0)
+    axs[0].plot(epochs, train_rec_0[:len(valid_rec_0)])
     axs[0].plot(epochs, valid_rec_0)
     axs[0].legend(["Training Recall", "Validation Recall"])
     axs[0].set_title("Recall, Covid-19")
     axs[0].set_xlabel("Epochs")
     axs[0].set_ylabel("Recall")
 
-    axs[1].plot(epochs, train_rec_1)
+    axs[1].plot(epochs, train_rec_1[:len(valid_rec_0)])
     axs[1].plot(epochs, valid_rec_1)
     axs[1].legend(["Training Recall", "Validation Recall"])
     axs[1].set_title("Recall, Normal")
     axs[1].set_xlabel("Epochs")
     axs[1].set_ylabel("Recall")
 
-    axs[2].plot(epochs, train_rec_2)
+    axs[2].plot(epochs, train_rec_2[:len(valid_rec_0)])
     axs[2].plot(epochs, valid_rec_2)
     axs[2].legend(["Training Recall", "Validation Recall"])
     axs[2].set_title("Recall, Viral Pneumonia")
@@ -124,26 +129,29 @@ def plot_precisions(history, isMCD=False, selected_run='3'):
       valid_pre_2 = history[selected_run].history[keys[15]]
 
     if len(valid_pre_0) != len(train_pre_0):
-      train_pre_0 = train_pre_0[::int(len(train_pre_0)/len(valid_pre_0))]
-      train_pre_1 = train_pre_1[::int(len(train_pre_1)/len(valid_pre_1))]
-      train_pre_2 = train_pre_2[::int(len(train_pre_2)/len(valid_pre_2))]
+      ind_0 = int(len(train_pre_0)/len(valid_pre_0))-1
+      ind_1 = int(len(train_pre_1)/len(valid_pre_1))-1
+      ind_2 = int(len(train_pre_2)/len(valid_pre_2))-1
+      train_pre_0 = train_pre_0[ind_0::ind_0]
+      train_pre_1 = train_pre_1[ind_1::ind_1]
+      train_pre_2 = train_pre_2[ind_2::ind_2]
     epochs = range(len(valid_pre_0)) 
 
-    axs[0].plot(epochs, train_pre_0)
+    axs[0].plot(epochs, train_pre_0[:valid_pre_0])
     axs[0].plot(epochs, valid_pre_0)
     axs[0].legend(["Training Precision", "Validation Precision"])
     axs[0].set_title("Precision, Covid-19")
     axs[0].set_xlabel("Epochs")
     axs[0].set_ylabel("Precision")
 
-    axs[1].plot(epochs, train_pre_1)
+    axs[1].plot(epochs, train_pre_1[:valid_pre_0])
     axs[1].plot(epochs, valid_pre_1)
     axs[1].legend(["Training Precision", "Validation Precision"])
     axs[1].set_title("Precision, Normal")
     axs[1].set_xlabel("Epochs")
     axs[1].set_ylabel("Precision")
 
-    axs[2].plot(epochs, train_pre_2)
+    axs[2].plot(epochs, train_pre_2[:valid_pre_0])
     axs[2].plot(epochs, valid_pre_2)
     axs[2].legend(["Training Precision", "Validation Precision"])
     axs[2].set_title("Precision, Viral Pneumonia")
