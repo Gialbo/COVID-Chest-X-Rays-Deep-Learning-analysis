@@ -159,10 +159,48 @@ The dataset contains X-rays images from different patients with different patolo
 </p>
 
 ### AC-CGAN
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/AC-CGAN/imagesCompared.png">
+ </p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/results/AC-CGAN/AC-CGAN.gif" width="400">
+</p>
+ 
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/AC-CGAN/accuracy.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/AC-CGAN/loss.png" width="400">
+</p>
+
 
 ### AC-CGAN with uncertainty (min)
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/AC-CGAN-unc-min/imagesCompared.png">
+ </p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/results/AC-CGAN-unc-min/AC-CGAN_unc_min.gif" width="400">
+</p>
+ 
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/AC-CGAN-unc-min/accuracy.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/AC-CGAN-unc-min/loss.png" width="400">
+</p>
 
 ### AC-CGAN with uncertainty (max)
+
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/AC-CGAN-unc-max/imagesCompared.png">
+ </p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/results/AC-CGAN-unc-max/AC-CGAN_unc_max.gif" width="400">
+</p>
+ 
+<p align="center">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/AC-CGAN-unc-max/accuracy.png" width="400">
+  <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/AC-CGAN-unc-max/loss.png" width="400">
+</p>
 
 ## Classification Results
 
