@@ -395,8 +395,6 @@ description to do...
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-min/recall.png">
  </p>
  
-  <!--
- 
  ### AC-CGAN + uncertainty (max)
 <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-max/loss.png" width="400">
@@ -410,7 +408,7 @@ description to do...
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-max/recall.png">
  </p>
-  -->
+ 
 ## Frechet Inception Distance Results
 
 To measure the quality of the generated images compared to the original ones, we use a technique called Frechet Inception Distance. Given the statistics of the real and the generated images, the distance is computed as an improvment of the Inception Score (IS) in the following way:
