@@ -137,21 +137,21 @@ def plot_precisions(history, isMCD=False, selected_run='3'):
       train_pre_2 = train_pre_2[ind_2::ind_2]
     epochs = range(len(valid_pre_0)) 
 
-    axs[0].plot(epochs, train_pre_0[:valid_pre_0])
+    axs[0].plot(epochs, train_pre_0[:len(valid_pre_0)])
     axs[0].plot(epochs, valid_pre_0)
     axs[0].legend(["Training Precision", "Validation Precision"])
     axs[0].set_title("Precision, Covid-19")
     axs[0].set_xlabel("Epochs")
     axs[0].set_ylabel("Precision")
 
-    axs[1].plot(epochs, train_pre_1[:valid_pre_0])
+    axs[1].plot(epochs, train_pre_1[:len(valid_pre_0)])
     axs[1].plot(epochs, valid_pre_1)
     axs[1].legend(["Training Precision", "Validation Precision"])
     axs[1].set_title("Precision, Normal")
     axs[1].set_xlabel("Epochs")
     axs[1].set_ylabel("Precision")
 
-    axs[2].plot(epochs, train_pre_2[:valid_pre_0])
+    axs[2].plot(epochs, train_pre_2[:len(valid_pre_0)])
     axs[2].plot(epochs, valid_pre_2)
     axs[2].legend(["Training Precision", "Validation Precision"])
     axs[2].set_title("Precision, Viral Pneumonia")
