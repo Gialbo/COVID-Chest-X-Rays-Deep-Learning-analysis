@@ -45,20 +45,26 @@ The dataset contains X-rays images from different patients with different patolo
 * [`covidGAN.py`](./models/covidGAN.py):  Generative Adversial Network to generate synthetic COVID-19 x-rays samples  from the *COVID-19 Radiography Database* database.
 * [`covidUnetCGAN`](./models/unetCGAN.py): Particular version of a classical Generative Adversarial Network in which the discriminator is substituted with a Unet net. The Uney will becomposed by an encoder and a decoder. If we shrink to $1$ the output of the encoder we obtain the oputput of a classical discriminator net. But additionally we re decode the image and we tell the network to maximize the pixel-wise cross entropy of the decoded output. This means that in output of the decode we will have a map in which each pixel tells us in a grayscale rapresentation how much confident the network is for that pixel of the image being true. A value for a pixel close the $1$ (white) means that for that pixel the networ is sure of the image being real and viceversa for a value closs to $0$ (black) the network is sure for the image of being fake.
 * [`cGAN.py`](./models/cGAN.py): starting from the covidGAN, we added random labels as input of the generator to generate images according to a given class. This architecture is called Conditional GAN. Futhermore, to make the training more stable, we added residual connections in the generator.
-* [`unetCGAN.py`](): to do...
-* [`ACCGAN.py`](): to do...
+* [`unetCGAN.py`](./models/unetCGAN.py): to do...
+* [`ACCGAN.py`](./models/ACCGAN.py): to do...
+* [`cGAN_Uncertainty.py`](./models/cGAN_Uncertainty.py): to do...
+* [`ACCGAN_Uncertainty.py`](./models/ACCGAN_Uncertainty.py): to do...
+* [`GenerativeClassification.py`](./models/GenerativeClassification.py): to do...
 
 
 
 
 ## [`Experiments`](./experiments)
+* [`dataExploration.ipynb`](./experiments/dataExploration.ipynb): visualize the images and the class distribution.
 * [`inceptionNet.ipynb`](./experiments/inceptionNet.ipynb): notebook reporting the experiment using the inceptionNet model.
 * [`inceptionNetMCD.ipynb`](./experiments/inceptionNetMCD.ipynb): notebook reporting the experiment using the modified version of the inceptionNet model with Monte Carlo dropout.
 * [`covidGAN.ipynb`](./experiments/covidGAN.ipynb): notebook reporting the experiment using the covidGAN model.
 * [`covidUnetGAN.ipynb`](./experiments/covidUnetGAN.ipynb): notebook reporting the experiment using the covidUnetGAN model.
-* [`cGAN.ipynb`](./experiments/cGAN.ipynb): notebook reporting the experiment using the cGAN model.
+* [`cGAN.ipynb`](./experiments/cGAN.ipynb): notebook reporting the experiment using the cGAN and cGAN_Uncertainty model.
 * [`unetcGAN.ipynb`](./experiments/cGAN.ipynb): notebook reporting the experiment using the unetcGAN model.
-* [`AC-CGAN.ipynb`](./experiments/AC-CGAN.ipynb): notebook reporting the experiment using the ACCGAN model.
+* [`AC-CGAN.ipynb`](./experiments/AC-CGAN.ipynb): notebook reporting the experiment using the ACCGAN and ACCGAN_Uncertainty model.
+* [`compute_FID.ipynb`](./experiments/compute_FID.ipynb): to do...
+* [`InceptionGenerativeClassification.ipynb`](./experiments/InceptionGenerativeClassification.ipynb): to do...
 
 
  
