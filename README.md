@@ -246,7 +246,7 @@ In the table below are reported the overall results on the classification task. 
   | Model                        | Accuracy       | Loss            |
   |------------------------------|-----------------|-----------------|
   | inceptionNet (deterministic) |**0.944 ± 0.026**|**0.420 ± 0.274**|
-  | inceptionNetMCD              | 0.907 ± 0.007   | 0.326 ± 0.032   |
+  | inceptionNetMCD              | 0.907 ± 0.007   | 0.326 ± 0.033   |
 
   | Model                         | Recall, Covid-19  | Recall, Normal  | Recall, Viral Pneumonia |
   |-------------------------------|-------------------|-----------------|-------------------------|
@@ -291,7 +291,7 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
 
 ## Generative Classification Results
 
-To test the abilities of our model in generating meaningful data we decided to train an Inception classifier with data coming from the GANs, using as baseline the results obtained in the previous section by training a deterministic model only on the real data. For the generative classification (GC) experiments (classification model trained with generated data) we used a setting in which at each training batch half of the data comes from the real dataset and half is generated with a GAN model. In this way the total amount of training samples seen by the network is the same and the results can be compared with the baseline.
+To test the abilities of our model in generating meaningful data we decided to train an Inception classifier with data coming from the GANs, using as baseline the results obtained in the previous section by training a deterministic model only on the real data. For the generative classification (GC) experiments (classification model trained with generated data) we used a setting in which at each training batch half of the data comes from the real dataset and half is generated with a GAN model. In this way the total amount of training samples seen by the network is the same and the results can be compared with the baseline. Results are averaged over 5 runs.
 
 
   | Model                        | Accuracy         | Loss             |
@@ -426,6 +426,127 @@ To test the abilities of our model in generating meaningful data we decided to t
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-max/recall.png">
  </p>
  </details>
+
+## Generative Classification Results using MCD
+We repeated the same experiments of the previous sections, but this time using the InceptionNet MCD classification model. The following Accuracy, Precision and Recall results are sample five times from a MCD model.
+
+
+  | Model                        | Accuracy         | Loss             |
+  |------------------------------|------------------|------------------|
+  | Baseline                     | 0.907 ± 0.007    | 0.326 ± 0.033    |
+  | cGAN                         | **0.944 ± 0.003**    | **0.183 ± 0.008**    |
+  | cGAN + uncertainty (min)     | 0.934 ± 0.003    | 0.260 ± 0.025    |
+  | cGAN + uncertainty (max)     | 0.939 ± 0.005    | 0.311 ± 0.043    |
+  | AC-CGAN                      | 0.926 ± 0.003    | 0.260 ± 0.018    |
+  | AC-CGAN + uncertainty (min)  | 0.908 ± 0.007    | 0.270 ± 0.019    |
+  | AC-CGAN + uncertainty (max)  | 0.930 ± 0.008    | 0.243 ± 0.009    |
+
+  | Model                         | Recall, Covid-19  | Recall, Normal  | Recall, Viral Pneumonia |
+  |-------------------------------|-------------------|-----------------|-------------------------|
+  | Baseline                      | **0.974 ± 0.007**      | 0.894 ± 0.009   | 0.861 ± 0.010           |
+  | cGAN                          | 0.947 ± 0.010     | 0.907 ± 0.010   |  0.977 ± 0.016
+  | cGAN + uncertainty (min)      | 0.961 ± 0.009     | 0.866 ± 0.016   |  0.978 ± 0.005          |
+  | cGAN + uncertainty (max)      | 0.951 ± 0.009     | 0.870 ± 0.011   |  **0.994 ± 0.003**          |
+  | AC-CGAN                       | 0.951 ± 0.007     | **0.921 ± 0.017**  |  0.906 ± 0.014      |
+  | AC-CGAN + uncertainty (min)   | 0.956 ± 0.009     | 0.870 ± 0.004   |  0.904 ± 0.017          |
+  | AC-CGAN + uncertainty (max)   | 0.962 ± 0.004     | 0.913 ± 0.012   |  0.918 ± 0.013          |
+
+  | Model                         | Precision, Covid-19  | Precision, Normal | Precision, Viral Pneumonia |
+  |-------------------------------|----------------------|-------------------|----------------------------|
+  | Baseline               | 0.933 ± 0.009        | 0.922 ± 0.011 | 0.878 ± 0.010         
+  | cGAN                          | **0.994 ± 0.004**    | 0.973 ± 0.015 |  0.891 ± 0.008             |
+  | cGAN + uncertainty (min)      | 0.991 ± 0.001        | 0.975 ± 0.005     |  0.860 ± 0.007         |
+  | cGAN + uncertainty (max)      | 0.987 ± 0.007        | **0.988 ± 0.004**    |  0.867 ± 0.006             |
+  | AC-CGAN                       | 0.989 ± 0.009        | 0.898 ± 0.010     |  0.904 ± 0.019             |
+  | AC-CGAN + uncertainty (min)   | 0.959 ± 0.004        | 0.904 ± 0.014     |  0.873 ± 0.007             |
+  | AC-CGAN + uncertainty (max)   | 0.991 ± 0.001        | 0.896 ± 0.015     |  **0.918 ± 0.010**             |
+
+  ### Uncertainty plots
+  <details>
+  <summary>cGAN GC MCD</summary>
+
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_tot.png" width="400">
+  </p>
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_true.png" width="400">
+  </p>
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_false.png" width="400">
+  </p>
+  </details>
+
+  <details>
+  <summary>cGAN + uncertainty (min) GC MCD</summary>
+
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_min_tot.png" width="400">
+  </p>
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_min_true.png" width="400">
+  </p>
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_min_false.png" width="400">
+  </p>
+  </details>
+
+  <details>
+  <summary>cGAN + uncertainty (max) GC MCD</summary>
+
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_max_tot.png" width="400">
+  </p>
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_max_true.png" width="400">
+  </p>
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_max_false.png" width="400">
+  </p>
+  </details>
+
+  <details>
+  <summary>AC-cGAN GC MCD</summary>
+
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_tot.png" width="400">
+  </p>
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_true.png" width="400">
+  </p>
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_false.png" width="400">
+  </p>
+  </details>
+
+  <details>
+  <summary>AC-cGAN + uncertainty (min) GC MCD</summary>
+
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_min_tot.png" width="400">
+  </p>
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_min_true.png" width="400">
+  </p>
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_min_false.png" width="400">
+  </p>
+  </details>
+
+  <details>
+  <summary>AC-cGAN + uncertainty (max) GC MCD</summary>
+
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_max_tot.png" width="400">
+  </p>
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_max_true.png" width="400">
+  </p>
+  <p align="center">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_max_false.png" width="400">
+  </p>
+  </details>
+  
+
  
 ## Frechet Inception Distance Results
 
