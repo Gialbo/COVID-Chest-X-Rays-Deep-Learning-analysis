@@ -16,36 +16,35 @@ Final project for the course "Bioinformatics", A.Y. 2020/2021.
 
 
 ##  [`Data`](./data)
-We used the COVID-19 RadioGraphy Database. Further information about the dataset are reported below.
-Starting From the dataset we applied some preprocessing techniques in order to have the data ready for our experiments. 
-* [`train_test_split.py`](./data/train_test_split.py): create a new folder divided in two subfolders: train and test.
-* [`resize_images.py`](./data/resize_images.py): resize all the images in the dataset to 224x224 pixels.
-
-After these passages, we are ready to train our models. Our final dataset can be downloaded here: [`COVID-19 Radiography Database`](https://drive.google.com/drive/folders/1-7se3aMXMXtDF89ALV07pru3kELmWTTo?usp=sharing).
-
-#### [`COVID-19 Radiography Database`](https://www.kaggle.com/tawsifurrahman/covid19-radiography-database)
-The dataset contains X-rays images from different patients with different patologies: there are 1027 COVID-19 positive images, 1206 normal images, and 1210 viral pneumonia images.
+We used the [`COVID-19 Radiography Database`](https://www.kaggle.com/tawsifurrahman/covid19-radiography-database). The dataset contains X-rays images from different patients with different patologies: there are 1027 COVID-19 positive images, 1206 normal images, and 1210 viral pneumonia images.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/dataDistribution.png"> 
 </p>
 
+Starting From the dataset we applied some preprocessing techniques in order to have the data ready for our experiments. 
+* [`train_test_split.py`](./data/train_test_split.py): create a new folder divided in two subfolders: train and test.
+* [`resize_images.py`](./data/resize_images.py): resize all the images in the dataset to 224x224 pixels.
+
+After these passages, we are ready to train our models. Our final dataset can be downloaded here: [`Modified COVID-19 Radiography Database`](https://drive.google.com/drive/folders/1-7se3aMXMXtDF89ALV07pru3kELmWTTo?usp=sharing).
 
 
 ## [`Models`](./models)
-* [`inceptionNet.py`](./models/inceptionNet.py): CNN model used for the classification task on *COVID-19 Radiography Database*. We first loaded the inceptionV3 model with imagenet weight and added more layers at the top. We do not freeze any layer, so during training the preloaded weights from Imagenet will be updated;
-* [`inceptionV3MCD.py`](./models/inceptionV3MCD.py): modified version of InceptionV3 implemented in Keras. To each block a dropout layer is added at the end of it. The rate of the dropout layer can be passed calling the function;
-* [`inceptionNetMCD.py`](./models/inceptionNetMCD.py): Monte Carlo Dropout inceptionNet. The main difference are the following: the inceptionNetV3MCD is used and dropout layers are added after every fully connected layer. 
+* [`inceptionNet.py`](./models/inceptionNet.py): CNN model used for the classification task on *COVID-19 Radiography Database*. We first loaded the inceptionV3 model with imagenet weights and added more layers at the top. We did not freeze any layer, so during training the preloaded weights from Imagenet are be updated;
+* [`inceptionV3MCD.py`](./models/inceptionV3MCD.py): modified version of InceptionV3 implemented in Keras in which dropout is added after each layer. The rate of the dropout layer can be passed as parameter;
+* [`inceptionNetMCD.py`](./models/inceptionNetMCD.py): Monte Carlo Dropout inceptionNet. The main difference are the following: the inceptionNetV3MCD is used and dropout layers are added after every layer. 
 * [`covidGAN.py`](./models/covidGAN.py):  Generative Adversial Network to generate synthetic COVID-19 x-rays samples  from the *COVID-19 Radiography Database* database.
-* [`covidUnetCGAN`](./models/unetCGAN.py): Particular version of a classical Generative Adversarial Network in which the discriminator is substituted with a Unet model. The Unet is composed by an encoder and a decoder. If we shrink to *1* the output of the encoder we obtain the oputput of a classical discriminator net. Additionally the image  is decoded and the network tries to maximize the pixel-wise cross entropy of the decoded output. The output of the decoder is a greyscale map in which each pixel stands for how much confident the network is for that pixel of the image being true. A value for a pixel close the *1* (white) means that for that pixel the network is sure of the image being real and viceversa for a value closs to *0* (black) the network is sure for the image of being fake.
-* [`cGAN.py`](./models/cGAN.py): starting from the covidGAN, we added random labels as input of the generator to generate images according to a given class. This architecture is called Conditional GAN. Futhermore, to make the training more stable, we added residual connections in the generator.
-* [`unetCGAN.py`](./models/unetCGAN.py): as the cGAN, the unetCGAN is the conditional variation of the covidUnetCGAN. 
-* [`ACCGAN.py`](./models/ACCGAN.py): to do...
-* [`cGAN_Uncertainty.py`](./models/cGAN_Uncertainty.py): to do...
-* [`ACCGAN_Uncertainty.py`](./models/ACCGAN_Uncertainty.py): to do...
-* [`GenerativeClassification.py`](./models/GenerativeClassification.py): to do...
-
-
+* [`covidUnetCGAN`](./models/unetGAN.py): Particular version of a classical Generative Adversarial Network in which the discriminator is substituted by a U-Net autoencoder. This architecture allows the discriminator to provide a per-pixel feedback to the generator. The network was trained only on the COVID-19 data.
+ <!-- This means that in output of the decode we will have a map in which each pixel tells us in a grayscale rapresentation how much confident the network is for that pixel of the image being true. A value for a pixel close the $1$ (white) means that for that pixel the networ is sure of the image being real and viceversa for a value closs to $0$ (black) the network is sure for the image of being fake. -->
+* [`cGAN.py`](./models/cGAN.py): starting from the covidGAN, we added random labels as input of the generator to generate images according to a given class. This architecture is called Conditional GAN. 
+<!-- Futhermore, to make the training more stable, we added residual connections in the generator. -->
+* [`unetCGAN.py`](./models/unetCGAN.py): Conditional extension of the covidUnetGAN model in which the class conditioning is added.
+* [`AcCGAN.py`](./models/ACCGAN.py): The Auxiliary Classifier Conditional GAN is an extension of the cGAN model in which the discriminator instead of receiving the class label as a condition has to predict it. More precisely the discriminator has also the goal of classifying the images rather than just predicting if they are real or fake.
+* [`cGAN_Uncertainty.py`](./models/cGAN_Uncertainty.py): cGAN model with the uncertainty regularizer. Uncertainty is computed using MC Dropout at the discriminator and is inserted into the loss function. This model has two running modes:
+    - Min Uncertainty. In this case the generator is trained to minimize the discriminator's uncertainty on fake images, while the discriminator is trained to maximize it's own uncertainty on both real and fake images.
+    - Max Uncertainty. Viceversa in this case the generator wants to maximize the discriminator's uncertainty while the discriminator wants to minimize it.
+* [`AcCGAN_Uncertainty.py`](./models/ACCGAN_Uncertainty.py): Uncertainty regularization method applied to the Ac-cGAN model. Uncertainty is applied only at the discriminator binary output, not at the classification output. The model supports the same running modes of the cGAN Uncertainty
+* [`GenerativeClassification.py`](./models/GenerativeClassification.py): Wrapper class that performs the training of a classification network using generated data (from a GAN model) as input. In our experiments we considered a setting in which half of the training data comes from a generative model and half of the data comes from the real training set.
 
 
 ## [`Experiments`](./experiments)
@@ -58,14 +57,14 @@ The dataset contains X-rays images from different patients with different patolo
 * [`unetcGAN.ipynb`](./experiments/cGAN.ipynb): notebook reporting the experiment using the unetcGAN model.
 * [`AC-CGAN.ipynb`](./experiments/AC-CGAN.ipynb): notebook reporting the experiment using the ACCGAN and ACCGAN_Uncertainty model.
 * [`compute_FID.ipynb`](./experiments/compute_FID.ipynb):  notebook reporting the experiment to compute FID for all the generated images by each model.
-* [`InceptionGenerativeClassification.ipynb`](./experiments/InceptionGenerativeClassification.ipynb): to do...
+* [`InceptionGenerativeClassification.ipynb`](./experiments/InceptionGenerativeClassification.ipynb): notebook reporting the results of the Inception models trained on generated data.
 
 ##  [`Tools`](./tools)
 * [`FID.py`](./tools/FID.py): class used to compute FID (Frechet Inception Distance);
 * [`images_to_gif.py`](./tools/images_to_gif.py): create a gif from the generated images by the model;
 * [`plotter.py`](./tools/plotter.py): utility functions for plotting results;
 * [`uncertainty.py`](./tools/uncertainty.py): utility functions to compute uncertainty for deterministic and Monte Carlo Dropout models;
-* [`XRaysDataset.py`](./tools/XRaysDataset.py): load and preprocess data from given directory. This tools permits to set the final image size needed to pass the images to the model and sets up the prefetching of thedataset for increased performances.
+* [`XRaysDataset.py`](./tools/XRaysDataset.py): load and preprocess data from given directory. This tools permits to set the final image size needed to pass the images to the model and sets up the prefetching of the dataset for increased performances.
 
  
 ## Generation Results
@@ -242,7 +241,7 @@ The dataset contains X-rays images from different patients with different patolo
 
 ### Classification Task: deterministic inceptionNet vs Monte Carlo Dropout inceptionNet
 
-In the table below are reported the overall results on the classification task. The results of the deterministic model are obtained running the training configuration for five times. Instead for the Monte Carlo Dropout model the evaluation configuration is run five times due to the active dropout layers.
+In the table below are reported the overall results on the classification task. The results for the deterministic model are obtained averaging the results over five runs. Instead for the Monte Carlo Dropout models the results are obtained by sampling five times from the network.
 <!--
 | Model                         |    Accuracy   | Loss    | Recall                 | Precision             |
 | --------------------------    | ------------- | --------| -----------------------| ----------------------|
@@ -250,7 +249,7 @@ In the table below are reported the overall results on the classification task. 
 | inceptionNetMCD               |     0.9191    |  0.2434 | 1; 0.8358; 0.9254      | 0.9055; 0.9655; 0.8921| -->
 
 
-  | Model                        | Accuracy        | Loss            |
+  | Model                        | Accuracy       | Loss            |
   |------------------------------|-----------------|-----------------|
   | inceptionNet (deterministic) |**0.944 ± 0.026**|**0.420 ± 0.274**|
   | inceptionNetMCD              | 0.907 ± 0.007   | 0.326 ± 0.032   |
@@ -264,7 +263,7 @@ In the table below are reported the overall results on the classification task. 
   |-------------------------------|----------------------|-------------------|----------------------------|
   | inceptionNet  (deterministic) | **1.000 ± 0.000**    | 0.917 ± 0.060     | **0.936 ± 0.020**          |
   | inceptionNetMCD               | 0.933 ± 0.009        | **0.922 ± 0.011** | 0.878 ± 0.010              |
-
+<center><em>Results are reported as: mean ± std</em></center>
 
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNet/confMatrix.png" width="400">
@@ -284,12 +283,12 @@ To compare the uncertainty of both networks, the following strategies are used:
 
 
 
-Once we compute the uncertainties for both networks, the experiments can be easily compared using barplots. A low level of uncertainty means the network is sure about the prediction and viceversa. The deterministic net (left) behave as expected, even if the accuracy is high on the test set, most of the prediction are highly unsure. Instead the Monte Carlo Dropout network (right) is more confident in the predictions. The behaviour can be fully exploited filtering the prediction in correct and wrong.
+Once we compute the uncertainties for both networks, the experiments can be easily compared using barplots. For the MCD experiments a low level of uncertainty means the network is sure about the prediction and viceversa. The deterministic net (left) behave as expected, even if the accuracy is high on the test set, most of the prediction may be quite overconfident as the network assigns high probabilities values to samples. Instead the Monte Carlo Dropout network (right) is less over confident in the predictions. The behaviour can be fully exploited filtering the prediction in correct and wrong.
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/allPredictions.png">
  </p>
  
-Plotting only correct or wrong predictions shows how the Monte Carlo Dropout network is working in the desired way. For correct prediction, most of them have a lower uncertainty. Instead, for the wrong ones, the uncertainty is very high, even if it is lower than the max value found with the deterministic model.
+Plotting only correct or wrong predictions shows how the Monte Carlo Dropout network is working in the desired way. For correct prediction, most of them have a lower uncertainty. Instead, for the wrong ones, the uncertainty is very high. The deterministic network on the other hand is overconfident about its predictions even for the wrongly classified samples.
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/correctPredictions.png">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/wrongPredictions.png">
@@ -298,11 +297,12 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
 
 ## Generative Classification Results
 
-description to do...
+To test the abilities of our model in generating meaningful data we decided to train an Inception classifier with data coming from the GANs, using as baseline the results obtained in the previous section by training a deterministic model only on the real data. For the generative classification experiments (classification model trained with generated data) we used a setting in which at each training batch half of the data comes from the real dataset and half is generated with a GAN model. In this way the total amount of training samples seen by the network is the same and the results can be compared with the baseline.
 
 
   | Model                        | Accuracy         | Loss             |
   |------------------------------|------------------|------------------|
+  | Baseline                     |0.944 ± 0.026     | 0.420 ± 0.274    |
   | cGAN                         | 0.959 ± 0.007    | 0.203 ± 0.046    |
   | cGAN + uncertainty (min)     |**0.968 ± 0.008** |**0.119 ± 0.042** |
   | cGAN + uncertainty (max)     | 0.965 ± 0.004    | 0.167 ± 0.054    |
@@ -312,8 +312,9 @@ description to do...
 
   | Model                         | Recall, Covid-19  | Recall, Normal  | Recall, Viral Pneumonia |
   |-------------------------------|-------------------|-----------------|-------------------------|
+  | Baseline                      | 0.939 ± 0.066     | **0.966 ± 0.025**   | 0.928 ± 0.046       |
   | cGAN                          | 0.974 ± 0.012     | 0.930 ± 0.019   |  0.973 ± 0.017          |
-  | cGAN + uncertainty (min)      | **0.981 ± 0.007** |**0.960 ± 0.023**|  0.966 ± 0.010          |
+  | cGAN + uncertainty (min)      | **0.981 ± 0.007** |0.960 ± 0.023|  0.966 ± 0.010          |
   | cGAN + uncertainty (max)      | 0.979 ± 0.009     | 0.951 ± 0.013   |  0.967 ± 0.012          |
   | AC-CGAN                       | 0.979 ± 0.009     | 0.894 ± 0.039   |  **0.975 ± 0.007**      |
   | AC-CGAN + uncertainty (min)   | 0.977 ± 0.017     | 0.921 ± 0.017   |  0.954 ± 0.027          |
@@ -321,6 +322,7 @@ description to do...
 
   | Model                         | Precision, Covid-19  | Precision, Normal | Precision, Viral Pneumonia |
   |-------------------------------|----------------------|-------------------|----------------------------|
+  | Baseline                      | **1.000 ± 0.000**    | 0.917 ± 0.060     | 0.936 ± 0.020  
   | cGAN                          | **1.000 ± 0.000**    | **0.972 ± 0.016** |  0.917 ± 0.023             |
   | cGAN + uncertainty (min)      | 0.997 ± 0.007        | 0.966 ± 0.009     |  **0.948 ± 0.019**         |
   | cGAN + uncertainty (max)      | **1.000 ± 0.000**    | 0.965 ± 0.014     |  0.937 ± 0.007             |
@@ -417,7 +419,7 @@ description to do...
  
 ## Frechet Inception Distance Results
 
-To measure the quality of the generated images compared to the original ones, we use a technique called Frechet Inception Distance. Given the statistics of the real and the generated images, the distance is computed as an improvment of the Inception Score (IS) in the following way:
+To measure the quality of the generated images compared to the original ones, we use a technique called Frechet Inception Distance. Given the statistics of the real and the generated images, the distance is computed as an improvement of the Inception Score (IS) in the following way:
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/images/FID.png">
  </p>
