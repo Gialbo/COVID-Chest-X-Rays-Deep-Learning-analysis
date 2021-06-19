@@ -466,13 +466,13 @@ We repeated the same experiments of the previous sections, but this time using t
   <summary>cGAN GC MCD</summary>
 
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_tot.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_tot.png"  >
   </p>
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_true.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_true.png"  >
   </p>
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_false.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_false.png"  >
   </p>
   </details>
 
@@ -480,13 +480,13 @@ We repeated the same experiments of the previous sections, but this time using t
   <summary>cGAN + uncertainty (min) GC MCD</summary>
 
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_min_tot.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_min_tot.png"  >
   </p>
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_min_true.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_min_true.png"  >
   </p>
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_min_false.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_min_false.png"  >
   </p>
   </details>
 
@@ -494,13 +494,13 @@ We repeated the same experiments of the previous sections, but this time using t
   <summary>cGAN + uncertainty (max) GC MCD</summary>
 
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_max_tot.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_max_tot.png"  >
   </p>
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_max_true.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_max_true.png"  >
   </p>
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_max_false.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/cgan_mcd_unc_max_false.png"  >
   </p>
   </details>
 
@@ -508,13 +508,13 @@ We repeated the same experiments of the previous sections, but this time using t
   <summary>AC-cGAN GC MCD</summary>
 
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_tot.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_tot.png"  >
   </p>
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_true.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_true.png"  >
   </p>
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_false.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_false.png"  >
   </p>
   </details>
 
@@ -522,13 +522,13 @@ We repeated the same experiments of the previous sections, but this time using t
   <summary>AC-cGAN + uncertainty (min) GC MCD</summary>
 
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_min_tot.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_min_tot.png"  >
   </p>
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_min_true.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_min_true.png"  >
   </p>
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_min_false.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_min_false.png"  >
   </p>
   </details>
 
@@ -536,13 +536,13 @@ We repeated the same experiments of the previous sections, but this time using t
   <summary>AC-cGAN + uncertainty (max) GC MCD</summary>
 
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_max_tot.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_max_tot.png"  >
   </p>
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_max_true.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_max_true.png"  >
   </p>
   <p align="center">
-    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_max_false.png" width="400">
+    <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/accgan_mcd_unc_max_false.png" >
   </p>
   </details>
   
