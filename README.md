@@ -323,6 +323,7 @@ To test the abilities of our model in generating meaningful data we decided to t
   | AC-CGAN                       | 0.995 ± 0.004        | 0.971 ± 0.014     |  0.897 ± 0.037             |
   | AC-CGAN + uncertainty (min)   | 0.995 ± 0.004        | 0.955 ± 0.028     |  0.912 ± 0.011             |
   | AC-CGAN + uncertainty (max)   | **1.000 ± 0.000**    | 0.961 ± 0.023     |  0.921 ± 0.029             |
+  <center><em>Results are reported as: mean ± std</em></center>
 
 ### Plotting curves details
 <details>
@@ -460,8 +461,10 @@ We repeated the same experiments of the previous sections, but this time using t
   | AC-CGAN                       | 0.989 ± 0.009        | 0.898 ± 0.010     |  0.904 ± 0.019             |
   | AC-CGAN + uncertainty (min)   | 0.959 ± 0.004        | 0.904 ± 0.014     |  0.873 ± 0.007             |
   | AC-CGAN + uncertainty (max)   | 0.991 ± 0.001        | 0.896 ± 0.015     |  **0.918 ± 0.010**             |
+  <center><em>Results are reported as: mean ± std</em></center>
 
   ### Uncertainty plots
+  As additional results we report here the uncertainty plots for the MCD generative classification tasks. Uncertainty is compute sampling from the network 100 times.
   <details>
   <summary>cGAN GC MCD</summary>
 
