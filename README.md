@@ -3,9 +3,9 @@ Comparison of different GAN-based synthetic data generation methods applied to c
 Final project for the course "Bioinformatics", A.Y. 2020/2021. 
 # Table of Contents
 1. [Data](#data)
-2. [Tools](#tools)
-3. [Models](#models)
-4. [Experiments](#experiments)
+2. [Models](#models)
+3. [Experiments](#experiments)
+4. [Tools](#tools)
 5. [Generation Results](#generation-results)
 6. [Classification Results](#classification-results)
 7. [Generative Classification Results](#generative-classification-results)
@@ -22,12 +22,6 @@ Starting From the dataset we applied some preprocessing techniques in order to h
 * [`resize_images.py`](./data/resize_images.py): resize all the images in the dataset to 224x224 pixels.
 
 After these passages, we are ready to train our models. Our final dataset can be downloaded here: [`COVID-19 Radiography Database`](https://drive.google.com/drive/folders/1-7se3aMXMXtDF89ALV07pru3kELmWTTo?usp=sharing).
-
-##  [`Tools`](./tools)
-* [`FID.py`](./tools/FID.py): class used to compute FID (Frechet Inception Distance)
-* [`images_to_gif.py`](./tools/images_to_gif.py): create a gif from the generated images by the model;
-* [`XRaysDataset.py`](./tools/XRaysDataset.py): load and preprocess data from given directory. This tools permits to set the final image size needed to pass the images to the model and sets up the prefetching of thedataset for increased performances.
-
 
 #### [`COVID-19 Radiography Database`](https://www.kaggle.com/tawsifurrahman/covid19-radiography-database)
 The dataset contains X-rays images from different patients with different patologies: there are 1027 COVID-19 positive images, 1206 normal images, and 1210 viral pneumonia images.
@@ -63,9 +57,15 @@ The dataset contains X-rays images from different patients with different patolo
 * [`cGAN.ipynb`](./experiments/cGAN.ipynb): notebook reporting the experiment using the cGAN and cGAN_Uncertainty model.
 * [`unetcGAN.ipynb`](./experiments/cGAN.ipynb): notebook reporting the experiment using the unetcGAN model.
 * [`AC-CGAN.ipynb`](./experiments/AC-CGAN.ipynb): notebook reporting the experiment using the ACCGAN and ACCGAN_Uncertainty model.
-* [`compute_FID.ipynb`](./experiments/compute_FID.ipynb): to do...
+* [`compute_FID.ipynb`](./experiments/compute_FID.ipynb):  notebook reporting the experiment to compute FID for all the generated images by each model.
 * [`InceptionGenerativeClassification.ipynb`](./experiments/InceptionGenerativeClassification.ipynb): to do...
 
+##  [`Tools`](./tools)
+* [`FID.py`](./tools/FID.py): class used to compute FID (Frechet Inception Distance);
+* [`images_to_gif.py`](./tools/images_to_gif.py): create a gif from the generated images by the model;
+* [`plotter.py`](./tools/plotter.py): utility functions for plotting results;
+* [`uncertainty.py`](./tools/uncertainty.py): utility functions to compute uncertainty for deterministic and Monte Carlo Dropout models;
+* [`XRaysDataset.py`](./tools/XRaysDataset.py): load and preprocess data from given directory. This tools permits to set the final image size needed to pass the images to the model and sets up the prefetching of thedataset for increased performances.
 
  
 ## Generation Results
