@@ -40,10 +40,10 @@ After these passages, we are ready to train our models. Our final dataset can be
 <!-- Futhermore, to make the training more stable, we added residual connections in the generator. -->
 * [`unetCGAN.py`](./models/unetCGAN.py): Conditional extension of the covidUnetGAN model in which the class conditioning is added.
 * [`AcCGAN.py`](./models/ACCGAN.py): The Auxiliary Classifier Conditional GAN is an extension of the cGAN model in which the discriminator instead of receiving the class label as a condition has to predict it. More precisely the discriminator has also the goal of classifying the images rather than just predicting if they are real or fake.
-* [`cGAN_Uncertainty.py`](./models/cGAN_Uncertainty.py): cGAN model with the uncertainty regularizer. Uncertainty is computed using MC Dropout at the discriminator and is inserted into the loss function. This model has two running modes:
+* [`cGAN_Uncertainty.py`](./models/cGAN_Uncertainty.py): cGAN model with the uncertainty regularizer. Uncertainty is computed using MC Dropout at the discriminator and it is inserted into the loss function. This model has two running modes:
     - Min Uncertainty. In this case the generator is trained to minimize the discriminator's uncertainty on fake images, while the discriminator is trained to maximize it's own uncertainty on both real and fake images.
-    - Max Uncertainty. Viceversa in this case the generator wants to maximize the discriminator's uncertainty while the discriminator wants to minimize it.
-* [`AcCGAN_Uncertainty.py`](./models/ACCGAN_Uncertainty.py): Uncertainty regularization method applied to the Ac-cGAN model. Uncertainty is applied only at the discriminator binary output, not at the classification output. The model supports the same running modes of the cGAN Uncertainty
+    - Max Uncertainty. opposite of the min mode, the generator wants to maximize the discriminator's uncertainty while the discriminator wants to minimize it.
+* [`AcCGAN_Uncertainty.py`](./models/ACCGAN_Uncertainty.py): Uncertainty regularization method applied to the Ac-cGAN model. Uncertainty is applied only at the discriminator binary output, not at the classification output. The model supports the same running modes of the cGAN Uncertainty.
 * [`GenerativeClassification.py`](./models/GenerativeClassification.py): Wrapper class that performs the training of a classification network using generated data (from a GAN model) as input. In our experiments we considered a setting in which half of the training data comes from a generative model and half of the data comes from the real training set.
 
 
@@ -459,12 +459,13 @@ To measure the quality of the generated images compared to the original ones, we
 
 [Generative Adversial Network (Goodfellow et al., 2014)](https://arxiv.org/pdf/1406.2661.pdf)
 
-
 [A U-Net Based Discriminator for Generative Adversarial Networks (Schonfeld et al., CVPR 2020)](https://openaccess.thecvf.com/content_CVPR_2020/papers/Schonfeld_A_U-Net_Based_Discriminator_for_Generative_Adversarial_Networks_CVPR_2020_paper.pdf)
 
 [Conditional Generative Adversarial Nets (Mirza et al., 2014)](https://arxiv.org/pdf/1411.1784.pdf)
 
 [Conditional Image Synthesis with Auxiliary Classifier GANs (Odena et al., 2017)](https://arxiv.org/pdf/1610.09585.pdf)
+
+[Rethinking the Inception Architecture for Computer Vision (Szegedy et al., 2015)](https://arxiv.org/pdf/1512.00567v3.pdf)
 
 [Evaluation of Deep Convolutional Generative Adversarial Networks for data augmentation of chest X-ray images (Venu et al., Future Internet, MDPI AG, 2020)](https://arxiv.org/pdf/2009.01181.pdf)
 
