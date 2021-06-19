@@ -42,7 +42,7 @@ After these passages, we are ready to train our models. Our final dataset can be
 * [`AcCGAN.py`](./models/ACCGAN.py): The Auxiliary Classifier Conditional GAN is an extension of the cGAN model in which the discriminator instead of receiving the class label as a condition has to predict it. More precisely the discriminator has also the goal of classifying the images rather than just predicting if they are real or fake.
 * [`cGAN_Uncertainty.py`](./models/cGAN_Uncertainty.py): cGAN model with the uncertainty regularizer. Uncertainty is computed using MC Dropout at the discriminator and it is inserted into the loss function. This model has two running modes:
     - Min Uncertainty. In this case the generator is trained to minimize the discriminator's uncertainty on fake images, while the discriminator is trained to maximize it's own uncertainty on both real and fake images.
-    - Max Uncertainty. opposite of the min mode, the generator wants to maximize the discriminator's uncertainty while the discriminator wants to minimize it.
+    - Max Uncertainty. Opposite of the min mode, the generator wants to maximize the discriminator's uncertainty while the discriminator wants to minimize it.
 * [`AcCGAN_Uncertainty.py`](./models/ACCGAN_Uncertainty.py): Uncertainty regularization method applied to the Ac-cGAN model. Uncertainty is applied only at the discriminator binary output, not at the classification output. The model supports the same running modes of the cGAN Uncertainty.
 * [`GenerativeClassification.py`](./models/GenerativeClassification.py): Wrapper class that performs the training of a classification network using generated data (from a GAN model) as input. In our experiments we considered a setting in which half of the training data comes from a generative model and half of the data comes from the real training set.
 
@@ -242,12 +242,6 @@ After these passages, we are ready to train our models. Our final dataset can be
 ### Classification Task: deterministic inceptionNet vs Monte Carlo Dropout inceptionNet
 
 In the table below are reported the overall results on the classification task. The results for the deterministic model are obtained averaging the results over five runs. Instead for the Monte Carlo Dropout models the results are obtained by sampling five times from the network.
-<!--
-| Model                         |    Accuracy   | Loss    | Recall                 | Precision             |
-| --------------------------    | ------------- | --------| -----------------------| ----------------------|
-| inceptionNet (deterministic)  |     0.9347    |  0.3558 | 0.9739; 0.9776; 0.8582 | 1; 0.8618; 0.9664     |
-| inceptionNetMCD               |     0.9191    |  0.2434 | 1; 0.8358; 0.9254      | 0.9055; 0.9655; 0.8921| -->
-
 
   | Model                        | Accuracy       | Loss            |
   |------------------------------|-----------------|-----------------|
