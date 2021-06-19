@@ -297,7 +297,7 @@ Plotting only correct or wrong predictions shows how the Monte Carlo Dropout net
 
 ## Generative Classification Results
 
-To test the abilities of our model in generating meaningful data we decided to train an Inception classifier with data coming from the GANs, using as baseline the results obtained in the previous section by training a deterministic model only on the real data. For the generative classification experiments (classification model trained with generated data) we used a setting in which at each training batch half of the data comes from the real dataset and half is generated with a GAN model. In this way the total amount of training samples seen by the network is the same and the results can be compared with the baseline.
+To test the abilities of our model in generating meaningful data we decided to train an Inception classifier with data coming from the GANs, using as baseline the results obtained in the previous section by training a deterministic model only on the real data. For the generative classification (GC) experiments (classification model trained with generated data) we used a setting in which at each training batch half of the data comes from the real dataset and half is generated with a GAN model. In this way the total amount of training samples seen by the network is the same and the results can be compared with the baseline.
 
 
   | Model                        | Accuracy         | Loss             |
@@ -330,7 +330,9 @@ To test the abilities of our model in generating meaningful data we decided to t
   | AC-CGAN + uncertainty (min)   | 0.995 ± 0.004        | 0.955 ± 0.028     |  0.912 ± 0.011             |
   | AC-CGAN + uncertainty (max)   | **1.000 ± 0.000**    | 0.961 ± 0.023     |  0.921 ± 0.029             |
 
-### cGAN 
+### Plotting curves details
+<details>
+  <summary>cGAN GC</summary>
 
 <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN/loss.png" width="400">
@@ -344,8 +346,11 @@ To test the abilities of our model in generating meaningful data we decided to t
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN/recall.png">
  </p>
+</details>
+
+<details>
+  <summary>cGAN + uncertainty (min) GC</summary>
  
- ### cGAN + uncertainty (min)
 <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-min/loss.png" width="400">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-min/accuracy.png" width="400">
@@ -358,8 +363,11 @@ To test the abilities of our model in generating meaningful data we decided to t
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-min/recall.png">
  </p>
+ </details>
  
-  ### cGAN + uncertainty (max)
+<details>
+  <summary>cGAN + uncertainty (max) GC</summary>
+
 <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-max/loss.png" width="400">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-max/accuracy.png" width="400">
@@ -372,8 +380,11 @@ To test the abilities of our model in generating meaningful data we decided to t
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/cGAN-unc-max/recall.png">
  </p>
+ </details>
 
-### AC-CGAN 
+<details>
+  <summary>AC-cGAN GC</summary>
+
 <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN/loss.png" width="400">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN/accuracy.png" width="400">
@@ -386,10 +397,11 @@ To test the abilities of our model in generating meaningful data we decided to t
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN/recall.png">
  </p>
- 
+ </details>
 
- 
-  ### AC-CGAN + uncertainty (min)
+ <details>
+  <summary>AC-CGAN + uncertainty (min) GC</summary>
+  
 <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-min/loss.png" width="400">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-min/accuracy.png" width="400">
@@ -402,8 +414,11 @@ To test the abilities of our model in generating meaningful data we decided to t
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-min/recall.png">
  </p>
+ </details>
  
- ### AC-CGAN + uncertainty (max)
+ <details>
+  <summary>AC-CGAN + uncertainty (max) GC</summary>
+
 <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-max/loss.png" width="400">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-max/accuracy.png" width="400">
@@ -416,6 +431,7 @@ To test the abilities of our model in generating meaningful data we decided to t
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/generative-classification/AC-CGAN-unc-max/recall.png">
  </p>
+ </details>
  
 ## Frechet Inception Distance Results
 
