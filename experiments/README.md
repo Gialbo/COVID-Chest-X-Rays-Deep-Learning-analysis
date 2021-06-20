@@ -19,4 +19,4 @@ checkpoints_classification		       covid-project
 checkpoints_GAN
 ```
 
-To run the code, open the notebbok in Google Colab and you are ready to go!
+To run the code, open the desired notebook in Google Colab and you are ready to go!
