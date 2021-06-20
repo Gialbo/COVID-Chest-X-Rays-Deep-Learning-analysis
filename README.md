@@ -46,7 +46,7 @@ After these passages, we are ready to train our models. Our final dataset can be
   <p align="center">
     <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/cGAN_loss.png" width="400">
   </p> 
-  where y is the label associated with the real or fake image.
+  where y is the class label. For real images, we used the real labels, for fake images the labels were chosen randomly.
 <!-- Futhermore, to make the training more stable, we added residual connections in the generator. -->
 * [`unetCGAN.py`](./models/unetCGAN.py): Conditional extension of the covidUnetGAN model in which the class conditioning is added. Labels y are added in the definition of the loss as done for the cGAN model.
 * [`ACCGAN.py`](./models/ACCGAN.py): The Auxiliary Classifier Conditional GAN is an extension of the cGAN model in which the discriminator instead of receiving the class label as a condition has to predict it. More precisely the discriminator has also the goal of classifying the images rather than just predicting if they are real or fake. The loss is defined as
