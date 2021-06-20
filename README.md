@@ -33,17 +33,34 @@ After these passages, we are ready to train our models. Our final dataset can be
 * [`inceptionNet.py`](./models/inceptionNet.py): CNN model used for the classification task on *COVID-19 Radiography Database*. We first loaded the inceptionV3 model with imagenet weights and added more layers at the top. We did not freeze any layer, so during training the preloaded weights from Imagenet are be updated;
 * [`inceptionV3MCD.py`](./models/inceptionV3MCD.py): modified version of InceptionV3 implemented in Keras in which dropout is added after each layer. The rate of the dropout layer can be passed as parameter;
 * [`inceptionNetMCD.py`](./models/inceptionNetMCD.py): Monte Carlo Dropout inceptionNet. The main difference are the following: the inceptionNetV3MCD is used and dropout layers are added after every layer. 
-* [`covidGAN.py`](./models/covidGAN.py):  Generative Adversial Network to generate synthetic COVID-19 x-rays samples  from the *COVID-19 Radiography Database* database.
-* [`covidUnetCGAN`](./models/unetGAN.py): Particular version of a classical Generative Adversarial Network in which the discriminator is substituted by a U-Net autoencoder. This architecture allows the discriminator to provide a per-pixel feedback to the generator. The network was trained only on the COVID-19 data.
+* [`covidGAN.py`](./models/covidGAN.py):  Generative Adversial Network to generate synthetic COVID-19 x-rays samples  from the *COVID-19 Radiography Database* database. The loss is defined as
+  <p align="center">
+    <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/covidGAN_loss.png" width="600">
+  </p>
+* [`covidUnetCGAN`](./models/unetGAN.py): Particular version of a classical Generative Adversarial Network in which the discriminator is substituted by a U-Net autoencoder. This architecture allows the discriminator to provide a per-pixel feedback to the generator. The network was trained only on the COVID-19 data.The loss is defined as
+  <p align="center">
+    <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/covidUnetGAN_loss.png" width="600">
+  </p>
  <!-- This means that in output of the decode we will have a map in which each pixel tells us in a grayscale rapresentation how much confident the network is for that pixel of the image being true. A value for a pixel close the $1$ (white) means that for that pixel the networ is sure of the image being real and viceversa for a value closs to $0$ (black) the network is sure for the image of being fake. -->
-* [`cGAN.py`](./models/cGAN.py): starting from the covidGAN, we added random labels as input of the generator to generate images according to a given class. This architecture is called Conditional GAN. 
+* [`cGAN.py`](./models/cGAN.py): starting from the covidGAN, we added random labels as input of the generator to generate images according to a given class. This architecture is called Conditional GAN. The loss is defined as
+  <p align="center">
+    <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/cGAN_loss.png" width="400">
+  </p> 
+  where y is the label associated with the real or fake image.
 <!-- Futhermore, to make the training more stable, we added residual connections in the generator. -->
-* [`unetCGAN.py`](./models/unetCGAN.py): Conditional extension of the covidUnetGAN model in which the class conditioning is added.
-* [`AcCGAN.py`](./models/ACCGAN.py): The Auxiliary Classifier Conditional GAN is an extension of the cGAN model in which the discriminator instead of receiving the class label as a condition has to predict it. More precisely the discriminator has also the goal of classifying the images rather than just predicting if they are real or fake.
+* [`unetCGAN.py`](./models/unetCGAN.py): Conditional extension of the covidUnetGAN model in which the class conditioning is added. Labels y are added in the definition of the loss as done for the cGAN model.
+* [`AcCGAN.py`](./models/ACCGAN.py): The Auxiliary Classifier Conditional GAN is an extension of the cGAN model in which the discriminator instead of receiving the class label as a condition has to predict it. More precisely the discriminator has also the goal of classifying the images rather than just predicting if they are real or fake. The loss is defined as
+  <p align="center">
+    <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/AC-CGAN_loss.png" width="600">
+  </p> 
 * [`cGAN_Uncertainty.py`](./models/cGAN_Uncertainty.py): cGAN model with the uncertainty regularizer. Uncertainty is computed using MC Dropout at the discriminator and it is inserted into the loss function. This model has two running modes:
     - Min Uncertainty. In this case the generator is trained to minimize the discriminator's uncertainty on fake images, while the discriminator is trained to maximize it's own uncertainty on both real and fake images.
     - Max Uncertainty. Opposite of the min mode, the generator wants to maximize the discriminator's uncertainty while the discriminator wants to minimize it.
-* [`AcCGAN_Uncertainty.py`](./models/ACCGAN_Uncertainty.py): Uncertainty regularization method applied to the Ac-cGAN model. Uncertainty is applied only at the discriminator binary output, not at the classification output. The model supports the same running modes of the cGAN Uncertainty.
+  The loss is defined as
+  <p align="center">
+    <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/uncertainty_loss.png" width="600">
+  </p> 
+* [`AcCGAN_Uncertainty.py`](./models/ACCGAN_Uncertainty.py): Uncertainty regularization method applied to the Ac-cGAN model. Uncertainty is applied only at the discriminator binary output, not at the classification output. The model supports the same running modes and uncertainty loss of the cGAN Uncertainty. 
 * [`GenerativeClassification.py`](./models/GenerativeClassification.py): Wrapper class that performs the training of a classification network using generated data (from a GAN model) as input. In our experiments we considered a setting in which half of the training data comes from a generative model and half of the data comes from the real training set.
 
 
