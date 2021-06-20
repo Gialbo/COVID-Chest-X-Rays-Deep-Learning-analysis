@@ -49,7 +49,7 @@ After these passages, we are ready to train our models. Our final dataset can be
   where y is the label associated with the real or fake image.
 <!-- Futhermore, to make the training more stable, we added residual connections in the generator. -->
 * [`unetCGAN.py`](./models/unetCGAN.py): Conditional extension of the covidUnetGAN model in which the class conditioning is added. Labels y are added in the definition of the loss as done for the cGAN model.
-* [`AcCGAN.py`](./models/ACCGAN.py): The Auxiliary Classifier Conditional GAN is an extension of the cGAN model in which the discriminator instead of receiving the class label as a condition has to predict it. More precisely the discriminator has also the goal of classifying the images rather than just predicting if they are real or fake. The loss is defined as
+* [`ACCGAN.py`](./models/ACCGAN.py): The Auxiliary Classifier Conditional GAN is an extension of the cGAN model in which the discriminator instead of receiving the class label as a condition has to predict it. More precisely the discriminator has also the goal of classifying the images rather than just predicting if they are real or fake. The loss is defined as
   <p align="center">
     <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/AC-CGAN_loss.png" width="600">
   </p> 
@@ -67,14 +67,14 @@ After these passages, we are ready to train our models. Our final dataset can be
 
 ## [`Experiments`](./experiments)
 * [`dataExploration.ipynb`](./experiments/dataExploration.ipynb): visualize the images and the class distribution.
-* [`inceptionNet.ipynb`](./experiments/inceptionNet.ipynb): notebook reporting the experiment using the inceptionNet model.
-* [`inceptionNetMCD.ipynb`](./experiments/inceptionNetMCD.ipynb): notebook reporting the experiment using the modified version of the inceptionNet model with Monte Carlo dropout.
-* [`covidGAN.ipynb`](./experiments/covidGAN.ipynb): notebook reporting the experiment using the covidGAN model.
-* [`covidUnetGAN.ipynb`](./experiments/covidUnetGAN.ipynb): notebook reporting the experiment using the covidUnetGAN model.
-* [`cGAN.ipynb`](./experiments/cGAN.ipynb): notebook reporting the experiment using the cGAN and cGAN_Uncertainty model.
-* [`unetcGAN.ipynb`](./experiments/cGAN.ipynb): notebook reporting the experiment using the unetcGAN model.
-* [`AC-CGAN.ipynb`](./experiments/AC-CGAN.ipynb): notebook reporting the experiment using the ACCGAN and ACCGAN_Uncertainty model.
-* [`compute_FID.ipynb`](./experiments/compute_FID.ipynb):  notebook reporting the experiment to compute FID for all the generated images by each model.
+* [`inceptionNet.ipynb`](./experiments/inceptionNet.ipynb): notebook reporting the experiments using the inceptionNet model.
+* [`inceptionNetMCD.ipynb`](./experiments/inceptionNetMCD.ipynb): notebook reporting the experiments using the modified version of the inceptionNet model with Monte Carlo dropout.
+* [`covidGAN.ipynb`](./experiments/covidGAN.ipynb): notebook reporting the experiments using the covidGAN model.
+* [`covidUnetGAN.ipynb`](./experiments/covidUnetGAN.ipynb): notebook reporting the experiments using the covidUnetGAN model.
+* [`cGAN.ipynb`](./experiments/cGAN.ipynb): notebook reporting the experiments using the cGAN and cGAN_Uncertainty model.
+* [`unetcGAN.ipynb`](./experiments/cGAN.ipynb): notebook reporting the experiments using the unetcGAN model.
+* [`AC-CGAN.ipynb`](./experiments/AC-CGAN.ipynb): notebook reporting the experiments using the ACCGAN and ACCGAN_Uncertainty model.
+* [`compute_FID.ipynb`](./experiments/compute_FID.ipynb):  notebook reporting the experiments to compute FID for all the generated images by each model.
 * [`InceptionGenerativeClassification.ipynb`](./experiments/InceptionGenerativeClassification.ipynb): notebook reporting the results of the Inception models trained on generated data.
 
 ##  [`Tools`](./tools)
@@ -82,7 +82,7 @@ After these passages, we are ready to train our models. Our final dataset can be
 * [`images_to_gif.py`](./tools/images_to_gif.py): create a gif from the generated images by the model;
 * [`plotter.py`](./tools/plotter.py): utility functions for plotting results;
 * [`uncertainty.py`](./tools/uncertainty.py): utility functions to compute uncertainty for deterministic and Monte Carlo Dropout models;
-* [`XRaysDataset.py`](./tools/XRaysDataset.py): load and preprocess data from given directory. This tools permits to set the final image size needed to pass the images to the model and sets up the prefetching of the dataset for increased performances.
+* [`XRaysDataset.py`](./tools/XRaysDataset.py): load and preprocess data from given directory. This tool permits to set the final image size accepted by the model and sets up the prefetching of the dataset for increased performances.
 
  
 ## Generation Results
@@ -287,7 +287,7 @@ In the table below are reported the overall results on the classification task. 
 
 To compare the uncertainty of both networks, the following strategies are used:
 * inceptionNet (deterministic): in the deterministic net, the uncertainty of a prediction can be computed from the output softmax vector. The uncertainty of the whole test set is expressed as the standard deviation of the softmax vector for every image.
-* inceptionNetMCD: in the Monte Carlo Dropout setting, we compute for n times the predictions of the net (n is set to 100). In this case the uncertainty is the following:
+* inceptionNetMCD: in the Monte Carlo Dropout setting, we compute for T times the predictions of the net (T here is set to 100). In this case the uncertainty is the following:
 <p align="center">
   <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/uncertainty_formula.png"  width="300"> 
 </p>
@@ -295,12 +295,12 @@ To compare the uncertainty of both networks, the following strategies are used:
 
 
 
-Once we compute the uncertainties for both networks, the experiments can be easily compared using barplots. For the MCD experiments a low level of uncertainty means the network is sure about the prediction and viceversa. The deterministic net (left) behave as expected, even if the accuracy is high on the test set, most of the prediction may be quite overconfident as the network assigns high probabilities values to samples. Instead the Monte Carlo Dropout network (right) is less over confident in the predictions. The behaviour can be fully exploited filtering the prediction in correct and wrong.
+Once we compute the uncertainties for both networks, the experiments can be easily compared using barplots. For the MCD experiments a low level of uncertainty means the network is sure about the prediction and viceversa. The deterministic net (left) behave as expected, even if the accuracy is high on the test set, most of the prediction may be quite overconfident as the network assigns high probabilities values to samples. Instead the Monte Carlo Dropout network (right) is less overconfident in the predictions. The behaviour can be fully explored by filtering the predictions in correct and wrong.
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/allPredictions.png">
  </p>
  
-Plotting only correct or wrong predictions shows how the Monte Carlo Dropout network is working in the desired way. For correct prediction, most of them have a lower uncertainty. Instead, for the wrong ones, the uncertainty is very high. The deterministic network on the other hand is overconfident about its predictions even for the wrongly classified samples.
+Plotting only correct or wrong predictions shows that the Monte Carlo Dropout network is working in the desired way. For correct predictions, most of them have a lower uncertainty. Instead, for the wrong ones, the uncertainty is very high. The deterministic network on the other hand is overconfident about its predictions even for the wrongly classified samples.
  <p align="center">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/correctPredictions.png">
   <img src="https://github.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/blob/main/results/inceptionNetMCD/wrongPredictions.png">
@@ -447,7 +447,7 @@ To test the abilities of our model in generating meaningful data we decided to t
  </details>
 
 ## Generative Classification Results using MCD
-We repeated the same experiments of the previous sections, but this time using the InceptionNet MCD classification model. The following Accuracy, Precision and Recall results are sample five times from a MCD model.
+We repeated the same experiments of the previous sections, but this time using the InceptionNet MCD classification model. The following Accuracy, Precision and Recall results are obtained by sampling five times from the MCD model.
 
 
   | Model                        | Accuracy         | Loss             |
@@ -482,7 +482,7 @@ We repeated the same experiments of the previous sections, but this time using t
   <center><em>Results are reported as: mean ± std</em></center>
 
   ### Uncertainty plots
-  As additional results we report here the uncertainty plots for the MCD generative classification tasks. Uncertainty is compute sampling from the network 100 times.
+  As additional results we report here the uncertainty plots for the MCD generative classification tasks. Uncertainty is compute by sampling from the network 100 times.
   <details>
   <summary>cGAN GC MCD</summary>
 
