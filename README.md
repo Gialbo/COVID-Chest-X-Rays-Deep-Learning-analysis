@@ -30,9 +30,9 @@ After these passages, we are ready to train our models. Our final dataset can be
 
 
 ## [`Models`](./models)
-* [`inceptionNet.py`](./models/inceptionNet.py): CNN model used for the classification task on *COVID-19 Radiography Database*. We first loaded the inceptionV3 model with imagenet weights and added more layers at the top. We did not freeze any layer, so during training the preloaded weights from Imagenet are be updated;
-* [`inceptionV3MCD.py`](./models/inceptionV3MCD.py): modified version of InceptionV3 implemented in Keras in which dropout is added after each layer. The rate of the dropout layer can be passed as parameter;
-* [`inceptionNetMCD.py`](./models/inceptionNetMCD.py): Monte Carlo Dropout inceptionNet. The main difference are the following: the inceptionNetV3MCD is used and dropout layers are added after every layer. 
+* [`inceptionNet.py`](./models/inceptionNet.py): CNN model used for the classification task on *COVID-19 Radiography Database*. We first loaded the inceptionV3 model with imagenet weights and added more layers at the top. We did not freeze any layer, so during training the preloaded weights from Imagenet are updated.
+* [`inceptionV3MCD.py`](./models/inceptionV3MCD.py): modified version of InceptionV3 implemented in Keras in which dropout is added after each convolutional layer. 
+* [`inceptionNetMCD.py`](./models/inceptionNetMCD.py): Monte Carlo Dropout inceptionNet using the inceptionNetV3MCD class.
 * [`covidGAN.py`](./models/covidGAN.py):  Generative Adversial Network to generate synthetic COVID-19 x-rays samples  from the *COVID-19 Radiography Database* database. The loss is defined as
   <p align="center">
     <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/covidGAN_loss.png" width="600">
