@@ -37,7 +37,7 @@ After these passages, we are ready to train our models. Our final dataset can be
   <p align="center">
     <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/covidGAN_loss.png" width="600">
   </p>
-* [`covidUnetCGAN`](./models/unetGAN.py): Particular version of a classical Generative Adversarial Network in which the discriminator is substituted by a U-Net autoencoder. This architecture allows the discriminator to provide a per-pixel feedback to the generator. The network was trained only on the COVID-19 data.The loss is defined as
+* [`covidUnetCGAN`](./models/unetGAN.py): Particular version of a classical Generative Adversarial Network in which the discriminator is substituted by a U-Net autoencoder. This architecture allows the discriminator to provide a per-pixel feedback to the generator. The network was trained only on the COVID-19 data. The loss is defined as
   <p align="center">
     <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/covidUnetGAN_loss.png" width="600">
   </p>
@@ -56,6 +56,7 @@ After these passages, we are ready to train our models. Our final dataset can be
 * [`cGAN_Uncertainty.py`](./models/cGAN_Uncertainty.py): cGAN model with the uncertainty regularizer. Uncertainty is computed using MC Dropout at the discriminator and it is inserted into the loss function. This model has two running modes:
     - Min Uncertainty. In this case the generator is trained to minimize the discriminator's uncertainty on fake images, while the discriminator is trained to maximize it's own uncertainty on both real and fake images.
     - Max Uncertainty. Opposite of the min mode, the generator wants to maximize the discriminator's uncertainty while the discriminator wants to minimize it.
+  
   The loss is defined as
   <p align="center">
     <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/uncertainty_loss.png" width="600">
