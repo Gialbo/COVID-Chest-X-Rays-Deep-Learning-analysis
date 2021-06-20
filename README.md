@@ -1,6 +1,6 @@
 # COVID 19 Chest X-Rays Deep Learning analysis
 Comparison of different GAN-based synthetic data generation methods applied to chest X-Rays from COVID-19, Viral Pneumonia and Normal patients. 
-Final project for the course "Bioinformatics", A.Y. 2020/2021. Instructions to run the code are in the experiments folder.
+Final project for the course "Bioinformatics", A.Y. 2020/2021. Instructions to run the code can be found [`here`](./experiments).
 # Table of Contents
 1. [Data](#data)
 2. [Models](#models)
@@ -30,14 +30,14 @@ After these passages, we are ready to train our models. Our final dataset can be
 
 
 ## [`Models`](./models)
-* [`inceptionNet.py`](./models/inceptionNet.py): CNN model used for the classification task on *COVID-19 Radiography Database*. We first loaded the inceptionV3 model with imagenet weights and added more layers at the top. We did not freeze any layer, so during training the preloaded weights from Imagenet are be updated;
-* [`inceptionV3MCD.py`](./models/inceptionV3MCD.py): modified version of InceptionV3 implemented in Keras in which dropout is added after each layer. The rate of the dropout layer can be passed as parameter;
-* [`inceptionNetMCD.py`](./models/inceptionNetMCD.py): Monte Carlo Dropout inceptionNet. The main difference are the following: the inceptionNetV3MCD is used and dropout layers are added after every layer. 
+* [`inceptionNet.py`](./models/inceptionNet.py): CNN model used for the classification task on *COVID-19 Radiography Database*. We first loaded the inceptionV3 model with imagenet weights and added more layers at the top. We did not freeze any layer, so during training the preloaded weights from Imagenet are updated.
+* [`inceptionV3MCD.py`](./models/inceptionV3MCD.py): modified version of InceptionV3 implemented in Keras in which dropout is added after each convolutional layer. 
+* [`inceptionNetMCD.py`](./models/inceptionNetMCD.py): Monte Carlo Dropout inceptionNet using the inceptionNetV3MCD class.
 * [`covidGAN.py`](./models/covidGAN.py):  Generative Adversial Network to generate synthetic COVID-19 x-rays samples  from the *COVID-19 Radiography Database* database. The loss is defined as
   <p align="center">
     <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/covidGAN_loss.png" width="600">
   </p>
-* [`covidUnetCGAN`](./models/unetGAN.py): Particular version of a classical Generative Adversarial Network in which the discriminator is substituted by a U-Net autoencoder. This architecture allows the discriminator to provide a per-pixel feedback to the generator. The network was trained only on the COVID-19 data.The loss is defined as
+* [`covidUnetCGAN`](./models/unetGAN.py): Particular version of a classical Generative Adversarial Network in which the discriminator is substituted by a U-Net autoencoder. This architecture allows the discriminator to provide a per-pixel feedback to the generator. The network was trained only on the COVID-19 data. The loss is defined as
   <p align="center">
     <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/covidUnetGAN_loss.png" width="600">
   </p>
@@ -56,6 +56,7 @@ After these passages, we are ready to train our models. Our final dataset can be
 * [`cGAN_Uncertainty.py`](./models/cGAN_Uncertainty.py): cGAN model with the uncertainty regularizer. Uncertainty is computed using MC Dropout at the discriminator and it is inserted into the loss function. This model has two running modes:
     - Min Uncertainty. In this case the generator is trained to minimize the discriminator's uncertainty on fake images, while the discriminator is trained to maximize it's own uncertainty on both real and fake images.
     - Max Uncertainty. Opposite of the min mode, the generator wants to maximize the discriminator's uncertainty while the discriminator wants to minimize it.
+  
   The loss is defined as
   <p align="center">
     <img src="https://raw.githubusercontent.com/Gialbo/COVID-Chest-X-Rays-Deep-Learning-analysis/main/images/uncertainty_loss.png" width="600">
